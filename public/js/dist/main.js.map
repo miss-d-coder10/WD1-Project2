@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":["message","console","log"],"mappings":"AAAA,YAAa,IAAIA,SAAQ,YAAaC,SAAQC,IAAI,GAAGF","file":"main.js","sourcesContent":["\"use strict\";var message=\"Hello Wold\";console.log(\"\"+message);\n//# sourceMappingURL=main.js.map\n"]}
