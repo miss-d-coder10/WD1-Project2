@@ -7,7 +7,7 @@ const router = require("./config/routes");
 const app = express();
 const port = process.env.PORT || 8000;
 
-let mongoUri = process.env.MONGOD_URL || "mongodb://localhost/teamdanger";
+let mongoUri = process.env.MONGODB_URI || "mongodb://localhost/teamdanger";
 
 mongoose.connect(mongoUri);
 
