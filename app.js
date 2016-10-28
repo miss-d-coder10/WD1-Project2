@@ -6,13 +6,9 @@ const router = require("./config/routes");
 
 const app = express();
 const port = process.env.PORT || 8000;
-
-let mongoUri = process.env.MONGODB_URI || "mongodb://localhost/teamdanger";
+const mongoUri = process.env.MONGODB_URI || "mongodb://localhost/teamdanger";
 
 mongoose.connect(mongoUri);
-
-app.set('view engine', 'ejs');
-app.set('views', `${__dirname}/views`);
 
 app.use(express.static(`${__dirname}/public`));
 app.use(morgan('dev'));

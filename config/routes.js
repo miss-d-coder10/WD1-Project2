@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const pizzasController = require("../controllers/pizzas");
-const authController = require("../controllers/auth");
-const users = require("../controllers/users");
+const router = require('express').Router();
 const jwt = require("jsonwebtoken");
 const secret = require("./tokens").secret;
+
+const pizzasController = require("../controllers/pizzasController");
+const authController = require("../controllers/authController");
+const usersController = require("../controllers/usersController");
 
 function secureRoute(req, res, next) {
  if(!req.headers.authorization) return res.status(401).json({ message: "Unauthorized" });
