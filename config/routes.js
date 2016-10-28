@@ -1,12 +1,15 @@
-const router = require('express').Router();
-const jwt = require("jsonwebtoken");
-const secret = require("./tokens").secret;
 
-const pizzasController = require("../controllers/pizzasController");
+const router = require('express').Router();
+
+const saveEventsController = require("../controllers/saveEventsController");
 const authController = require("../controllers/authController");
 const usersController = require("../controllers/usersController");
 
-function secureRoute(req, res, next) {
+const jwt = require("jsonwebtoken");
+const secret = require("./tokens").secret;
+
+
+function secureRoutes(req, res, next) {
  if(!req.headers.authorization) return res.status(401).json({ message: "Unauthorized" });
 
  let token = req.headers.authorization.replace('Bearer ', '');
@@ -35,15 +38,15 @@ router.route("/users/:id")
   .put(usersController.update)
   .delete(usersController.delete);
 
-router.route("/pizzas")
-  .all(secureRoute)
-  .get(pizzasController.index)
-  .post(pizzasController.create);
+router.route("/saveEvents")
+  .all(secureRoutes)
+  .get(saveEventsController.index)
+  .post(saveEventsController.create);
 
-router.route("/pizzas/:id")
-  .all(secureRoute)
-  .get(pizzasController.show)
-  .put(pizzasController.update)
-  .delete(pizzasController.delete);
+router.route("/saveEvents/:id")
+  .all(secureRoutes)
+  .get(saveEventsController.show)
+  .put(saveEventsController.update)
+  .delete(saveEventsController.delete);
 
 module.exports = router;
