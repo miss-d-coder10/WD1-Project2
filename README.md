@@ -1,3 +1,5 @@
 # WD1-Project2
+Team Members
+Dara
+OLI
 Lawrie
-WDI-23 London Project 2 Node app-- edit

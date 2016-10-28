@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const pizzasController = require("../controllers/pizzas");
-const authController = require("../controllers/auth");
-const users = require("../controllers/users");
+const pizzasController = require("../controllers/saveEventController");
+const authController = require("../controllers/authController");
+const users = require("../controllers/usersController");
 const jwt = require("jsonwebtoken");
 const secret = require("./tokens").secret;
 
@@ -25,15 +25,15 @@ router.route("/register")
 router.route("/login")
   .post(authController.login);
 
-router.route("/pizzas")
+router.route("/events")
   .all(secureRoute)
-  .get(pizzasController.index)
-  .post(pizzasController.create);
+  .get(saveEventController.index)
+  .post(saveEventController.create);
 
-router.route("/pizzas/:id")
+router.route("/events/:id")
   .all(secureRoute)
-  .get(pizzasController.show)
-  .put(pizzasController.update)
-  .delete(pizzasController.delete);
+  .get(saveEventController.show)
+  .put(saveEventController.update)
+  .delete(saveEventController.delete);
 
 module.exports = router;
