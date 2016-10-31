@@ -11,8 +11,8 @@ googleMap.getEvents = function () {
     url: '/api/events',
     method: "GET",
     data: {
-      lat: 51.5074,
-      lng: 0.1278,
+      lat: 51.489915,
+      lng: -0.137818,
       radius: 5,
       eventcode: "LIVE"
     }
@@ -25,7 +25,7 @@ googleMap.getEvents = function () {
 };
 
 googleMap.loopThroughEvents = function (data) {
-  $.each(data.Object, function (index, eventObject) {
+  $.each(data, function (index, eventObject) {
     googleMap.createMarker(eventObject);
   });
 };
@@ -35,7 +35,7 @@ googleMap.loopThroughEvents = function (data) {
 
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
 googleMap.createMarker = function (eventObject) {
-  var latLng = new google.maps.LatLng(eventObject.lat, eventObject.lng);
+  var latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
   var marker = new google.maps.Marker({
     position: latLng,
     map: googleMap.map

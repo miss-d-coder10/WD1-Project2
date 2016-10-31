@@ -9,8 +9,8 @@
       url: '/api/events',
       method: "GET",
       data: {
-        lat:51.5074,
-        lng:0.1278,
+        lat:51.489915,
+        lng:-0.137818,
         radius:5,
         eventcode:"LIVE"
       }
@@ -23,7 +23,7 @@
   };
 
   googleMap.loopThroughEvents = (data) => {
-    $.each(data.Object, (index, eventObject) => {
+    $.each(data, (index, eventObject) => {
       googleMap.createMarker(eventObject);
     });
   };
@@ -34,7 +34,7 @@
 
   //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
   googleMap.createMarker = (eventObject) => {
-    let latLng = new google.maps.LatLng(eventObject.lat, eventObject.lng);
+    let latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
     let marker = new google.maps.Marker({
       position: latLng,
       map: googleMap.map
