@@ -1,7 +1,5 @@
 'use strict';
 
-// $(() =>{
-
 var $main = $('main');
 
 var googleMap = googleMap || {};
@@ -16,12 +14,7 @@ googleMap.getEvents = function () {
       radius: 5,
       eventcode: "LIVE"
     }
-  })
-  // .done((data) => {
-  //   console.log("data", data);
-  //
-  // });
-  .done(this.loopThroughEvents);
+  }).done(this.loopThroughEvents);
 };
 
 googleMap.loopThroughEvents = function (data) {
@@ -46,13 +39,11 @@ googleMap.mapSetup = function () {
   var $mapDiv = $('#map');
 
   var mapOptions = {
-    center: { lat: 51.5014, lng: 0.1419 },
-    zoom: 14
+    center: { lat: 51.5074, lng: -0.1278 },
+    zoom: 12
   };
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
   this.getEvents();
 };
-
-// });
 
 $(googleMap.mapSetup.bind(googleMap));

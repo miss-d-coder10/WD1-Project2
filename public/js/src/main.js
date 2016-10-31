@@ -1,5 +1,3 @@
-// $(() =>{
-
   let $main = $('main');
 
   var googleMap = googleMap || {};
@@ -15,10 +13,6 @@
         eventcode:"LIVE"
       }
     })
-    // .done((data) => {
-    //   console.log("data", data);
-    //
-    // });
     .done(this.loopThroughEvents);
   };
 
@@ -46,14 +40,11 @@
     let $mapDiv = $('#map');
 
     let mapOptions = {
-      center: { lat: 51.5014, lng: 0.1419 },
-      zoom: 14
+      center: { lat: 51.5074, lng: -0.1278 },
+      zoom: 12
     };
     this.map =new google.maps.Map($mapDiv[0], mapOptions);
     this.getEvents();
   };
-
-
-// });
 
 $(googleMap.mapSetup.bind(googleMap));
