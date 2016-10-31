@@ -66,8 +66,6 @@
 };
 
 
-
-
 $(giggity.mapSetup.bind(giggity));
 
 giggity.createPartial = function(partial){
