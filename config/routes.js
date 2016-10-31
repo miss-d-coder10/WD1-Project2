@@ -3,6 +3,7 @@ const router = require('express').Router();
 const saveEventsController = require("../controllers/saveEventsController");
 const authController = require("../controllers/authController");
 const usersController = require("../controllers/usersController");
+const skiddleController = require('../controllers/skiddleController');
 
 const jwt = require("jsonwebtoken");
 const secret = require("./tokens").secret;
@@ -30,6 +31,9 @@ router.route("/login")
 router.route("/users")
   // .all(secureRoutes)
   .get(usersController.index);
+
+router.route("/events")
+  .get(skiddleController.index);
 
 router.route("/users/:id")
   // .all(secureRoutes)

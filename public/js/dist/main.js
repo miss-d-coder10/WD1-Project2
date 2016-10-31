@@ -10,9 +10,21 @@ $(function () {
 
   var googleMap = googleMap || {};
 
-  googleMap.getEvents = function () {
-    $.get("http://www.skiddle.com/api/v1/events/?latitude=" + requestLat + "&longitude=" + requestLon + "&radius=" + requestRadius + "&eventcode=LIVE&api_key=" + apiKey);
-  };
+  // googleMap.getEvents = function() {
+  // };
+
+  $.ajax({
+    url: '/api/events',
+    method: "GET",
+    data: {
+      lat: 51.5074,
+      lng: 0.1278,
+      radius: 5,
+      eventcode: "LIVE"
+    }
+  }).done(function (data) {
+    console.log("data", data);
+  });
 
   // $('.register').on('click', showRegisterForm);
   // $('.login').on('click', showLoginForm);
