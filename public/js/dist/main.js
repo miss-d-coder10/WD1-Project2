@@ -11,13 +11,15 @@ googleMap.getEvents = function () {
     data: {
       lat: 51.489915,
       lng: -0.137818,
-      radius: 5,
-      eventcode: "LIVE"
+      radius: 15,
+      eventcode: "LIVE",
+      limit: 100
     }
   }).done(this.loopThroughEvents);
 };
 
 googleMap.loopThroughEvents = function (data) {
+  console.log(data);
   $.each(data, function (index, eventObject) {
     googleMap.createMarker(eventObject);
   });

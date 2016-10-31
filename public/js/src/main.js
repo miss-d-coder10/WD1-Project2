@@ -9,14 +9,16 @@
       data: {
         lat:51.489915,
         lng:-0.137818,
-        radius:5,
-        eventcode:"LIVE"
+        radius:15,
+        eventcode:"LIVE",
+        limit:100
       }
     })
     .done(this.loopThroughEvents);
   };
 
   googleMap.loopThroughEvents = (data) => {
+    console.log(data);
     $.each(data, (index, eventObject) => {
       googleMap.createMarker(eventObject);
     });

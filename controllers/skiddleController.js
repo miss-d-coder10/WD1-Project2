@@ -9,7 +9,8 @@ const eventsIndex = (req, res) => {
       longitude:req.query.lng,
       radius:req.query.radius,
       eventcode:req.query.eventcode,
-      api_key:process.env.SKIDDLE_KEY
+      api_key:process.env.SKIDDLE_KEY,
+      limit:req.query.limit
     },
     json:true
   })
