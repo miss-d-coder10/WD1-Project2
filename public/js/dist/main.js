@@ -2,7 +2,7 @@
 
 var giggity = giggity || {};
 var $main = $('main');
-var markers = void 0;
+var markers = [];
 
 giggity.map = null;
 giggity.currentLat = null;
@@ -48,14 +48,12 @@ giggity.loopThroughEvents = function (data) {
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
 giggity.createMarker = function (eventObject) {
   var latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
-
-  var markerId = Math.floor(Math.random() * 1000000);
-
   var marker = new google.maps.Marker({
     position: latLng,
     map: this.map
   });
   giggity.addInfoWindow(eventObject, marker);
+  markers.push(marker);
 };
 
 //ADDING INFO WINDOW
@@ -93,7 +91,6 @@ giggity.autoComplete = function () {
     searchBox.setBounds(map.getBounds());
   });
 
-  markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function () {
@@ -127,7 +124,7 @@ giggity.autoComplete = function () {
 giggity.formHandler = function () {
   var $formContainer = $('.formContainer');
   $formContainer.on("submit", '#event-selector', function (e) {
-    emptyMarkerArray();
+    giggity.deleteMarkers();
     var $form = $(this);
     e.preventDefault();
     var data = $form.serializeArray();
@@ -139,20 +136,25 @@ giggity.formHandler = function () {
   });
 };
 
-function emptyMarkerArray() {
-  if (markers !== null) {
-    markers = [];
+// Sets the map on all markers in the array.
+giggity.setMapOnAll = function (map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
   }
-}
+};
 
-// function setMapOnAll(map) {
-//         for (var i = 0; i < markers.length; i++) {
-//           console.log(markers[i]);
-//           markers[i].setMap(map);
-//         }
-//       }
+// Removes the markers from the map, but keeps them in the array.
+giggity.clearMarkers = function () {
+  giggity.setMapOnAll(null);
+};
 
-function deleteMarkers() {
-  setMapOnAll(null);
+// Shows any markers currently in the array.
+giggity.showMarkers = function () {
+  giggity.setMapOnAll(map);
+};
+
+// Deletes all markers in the array by removing references to them.
+giggity.deleteMarkers = function () {
+  giggity.clearMarkers();
   markers = [];
-}
+};
