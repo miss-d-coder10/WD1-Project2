@@ -1,10 +1,8 @@
 'use strict';
 
-// $(() =>{
+var googleMap = googleMap || {};
 
 var $main = $('main');
-
-var googleMap = googleMap || {};
 
 googleMap.getEvents = function () {
   $.ajax({
@@ -16,32 +14,28 @@ googleMap.getEvents = function () {
       radius: 5,
       eventcode: "LIVE"
     }
-  })
-  // .done((data) => {
-  //   console.log("data", data);
-  //
-  // });
-  .done(this.loopThroughEvents);
+  }).done(this.loopThroughEvents.bind(googleMap));
 };
 
 googleMap.loopThroughEvents = function (data) {
+  console.log(this);
   $.each(data, function (index, eventObject) {
     googleMap.createMarker(eventObject);
   });
 };
 
-//BUILDING THE MAP IN THE MAP
-
-
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
 googleMap.createMarker = function (eventObject) {
+
   var latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
   var marker = new google.maps.Marker({
     position: latLng,
     map: googleMap.map
   });
+  googleMap.addInfoWindow(eventObject, marker);
 };
 
+//BUILDING THE MAP IN THE MAP
 googleMap.mapSetup = function () {
   var $mapDiv = $('#map');
 
@@ -49,10 +43,27 @@ googleMap.mapSetup = function () {
     center: { lat: 51.5014, lng: 0.1419 },
     zoom: 14
   };
+
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
   this.getEvents();
 };
 
-// });
+//ADDING INFO WINDOW
+googleMap.addInfoWindow = function (eventObject, marker) {
+  var _this = this;
+
+  console.log("In add info window");
+
+  google.maps.event.addListener(marker, "click", function () {
+
+    if (_this.infoWindow) {
+      _this.infoWindow.close();
+    }
+    _this.infoWindow = new google.maps.InfoWindow({
+      content: '<h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.venue.name + '</p>\n                <p>' + eventObject.venue.address + '</p>\n                <p>' + eventObject.date + '</p>\n                <p>' + eventObject.entryprice + '</p>\n                <img src=\'' + eventObject.imageurl + '\'</>'
+    });
+    _this.infoWindow.open(_this.map, marker);
+  });
+};
 
 $(googleMap.mapSetup.bind(googleMap));
