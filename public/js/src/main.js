@@ -1,47 +1,40 @@
-  var googleMap = googleMap || {};
-
-
+  const giggity = giggity || {};
   let $main = $('main');
 
-
-
-  googleMap.getEvents = function() {
+  giggity.getEvents = function() {
     $.ajax({
       url: '/api/events',
       method: "GET",
       data: {
         lat:51.489915,
         lng:-0.137818,
-        radius:15,
-        eventcode:"LIVE",
+        radius:5,
+        eventcode:"COMEDY",
         limit:100
       }
     })
-
-    .done(this.loopThroughEvents.bind(googleMap));
+    .done(this.loopThroughEvents.bind(giggity));
   };
 
 
-  googleMap.loopThroughEvents = function(data) {
-    console.log(data);
+  giggity.loopThroughEvents = function(data) {
     $.each(data, (index, eventObject) => {
-      googleMap.createMarker(eventObject);
+      giggity.createMarker(eventObject);
     });
   };
 
   //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
-  googleMap.createMarker = function (eventObject) {
-
+  giggity.createMarker = function (eventObject) {
     let latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
     let marker = new google.maps.Marker({
       position: latLng,
-      map: googleMap.map
+      map: giggity.map
     });
-    googleMap.addInfoWindow(eventObject, marker);
+    giggity.addInfoWindow(eventObject, marker);
   };
 
   //BUILDING THE MAP IN THE MAP
-  googleMap.mapSetup = function() {
+  giggity.mapSetup = function() {
     let $mapDiv = $('#map');
 
     let mapOptions = {
@@ -51,14 +44,12 @@
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
     this.getEvents();
+    this.createPartial('formContainer');
   };
 
   //ADDING INFO WINDOW
-  googleMap.addInfoWindow = function (eventObject, marker) {
-
-
+  giggity.addInfoWindow = function (eventObject, marker) {
     google.maps.event.addListener(marker, "click", () => {
-
       if(this.infoWindow) {
         this.infoWindow.close();
       }
@@ -75,4 +66,41 @@
 };
 
 
-$(googleMap.mapSetup.bind(googleMap));
+$(giggity.mapSetup.bind(giggity));
+
+giggity.createPartial = function(partial){
+  let load_from = `/partials/_${partial}.html`;
+  let data = "";
+  $.get(load_from, data, function(data)
+  {
+      $(`.${partial}`).html(data);
+  });
+};
+
+
+
+
+
+$(() =>{
+  // Create the search box and link it to the UI element.
+          var input = document.getElementById('pac-input');
+          var searchBox = new google.maps.places.SearchBox(input);
+          map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+          // Bias the SearchBox results towards current map's viewport.
+          map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+          });
+
+          var markers = [];
+          // Listen for the event fired when the user selects a prediction and retrieve
+          // more details for that place.
+          searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+              return;
+            }
+          });
+});
+>>>>>>> 3b88cf21c44e5f20c9e477b49d401e81dab033b3
