@@ -11,14 +11,15 @@ googleMap.getEvents = function () {
     data: {
       lat: 51.489915,
       lng: -0.137818,
-      radius: 5,
-      eventcode: "LIVE"
+      radius: 15,
+      eventcode: "LIVE",
+      limit: 100
     }
   }).done(this.loopThroughEvents.bind(googleMap));
 };
 
 googleMap.loopThroughEvents = function (data) {
-  console.log(this);
+  console.log(data);
   $.each(data, function (index, eventObject) {
     googleMap.createMarker(eventObject);
   });
@@ -40,8 +41,8 @@ googleMap.mapSetup = function () {
   var $mapDiv = $('#map');
 
   var mapOptions = {
-    center: { lat: 51.5014, lng: 0.1419 },
-    zoom: 14
+    center: { lat: 51.5074, lng: -0.1278 },
+    zoom: 12
   };
 
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
@@ -51,8 +52,6 @@ googleMap.mapSetup = function () {
 //ADDING INFO WINDOW
 googleMap.addInfoWindow = function (eventObject, marker) {
   var _this = this;
-
-  console.log("In add info window");
 
   google.maps.event.addListener(marker, "click", function () {
 
