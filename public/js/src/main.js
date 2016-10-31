@@ -75,6 +75,4 @@
 };
 
 
-
-
 $(googleMap.mapSetup.bind(googleMap));
