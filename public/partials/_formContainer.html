@@ -1,19 +1,28 @@
-<form class="event-selector">
+<form id="event-selector">
+  <label for="date">Date</label>
+  <input class="formInput" type="date" name="date" placeholder="date">
 
-        <label for="date-from">Date Frome</label>
-        <input type="date" name="event[date-from]" placeholder="date-from">
+  <label for="Location">Location</label>
+  <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
 
-        <label for="date-to">Date To</label>
-        <input type="date" name="event[date-to]" placeholder="date-to">
+  <label for="radius">Radius</label>
+  <input class="formInput" type="number" name="radius" placeholder="radius">
 
-        <label for="Location">Location</label>
-        <input id="pac-input" class="controls" name="event[Location]" type="text" placeholder="Location">
+  <label for="type">Type</label>
+  <select class="formInput" type="text" name="eventcode" placeholder="type">
+    <option value="FEST">Festivals</option>
+    <option value="LIVE">Gigs</option>
+    <option value="CLUB">Clubbing</option>
+    <option value="DATE">Dating</option>
+    <option value="THEATRE">Theatre</option>
+    <option value="COMEDY">Comedy</option>
+    <option value="EXHIB">Exhibitions</option>
+    <option value="KIDS">Kids and Family</option>
+    <option value="BARPUB">Pubs and Bars</option>
+    <option value="LGB">LGBT</option>
+    <option value="SPORT">Sport</option>
+    <option value="ART">Arts</option>
+  </select>
 
-        <label for="radius">Radius</label>
-        <input type="number" name="event[radius]" placeholder="radius">
-
-        <label for="type">Type</label>
-        <input type="text" name="event[type]" placeholder="type">
-
-        <button type="submit" id="submit-button">Create</button>
+  <button type="submit">Create</button>
 </form>
