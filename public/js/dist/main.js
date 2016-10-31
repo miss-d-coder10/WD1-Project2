@@ -55,6 +55,7 @@ giggity.createMarker = function (eventObject) {
     position: latLng,
     map: this.map
   });
+  markers.push(marker);
   giggity.addInfoWindow(eventObject, marker);
 };
 
@@ -127,7 +128,7 @@ giggity.autoComplete = function () {
 giggity.formHandler = function () {
   var $formContainer = $('.formContainer');
   $formContainer.on("submit", '#event-selector', function (e) {
-    emptyMarkerArray();
+    deleteMarkers();
     var $form = $(this);
     e.preventDefault();
     var data = $form.serializeArray();
@@ -139,20 +140,13 @@ giggity.formHandler = function () {
   });
 };
 
-function emptyMarkerArray() {
-  if (markers !== null) {
-    markers = [];
-  }
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setMapOnAll(null);
 }
 
-// function setMapOnAll(map) {
-//         for (var i = 0; i < markers.length; i++) {
-//           console.log(markers[i]);
-//           markers[i].setMap(map);
-//         }
-//       }
-
+// Deletes all markers in the array by removing references to them.
 function deleteMarkers() {
-  setMapOnAll(null);
+  clearMarkers();
   markers = [];
 }
