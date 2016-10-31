@@ -35,7 +35,7 @@ googleMap.loopThroughEvents = function (data) {
 
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
 googleMap.createMarker = function (eventObject) {
-  var latLng = new google.maps.Map(eventObject.lat, eventObject.lng);
+  var latLng = new google.maps.LatLng(eventObject.lat, eventObject.lng);
   var marker = new google.maps.Marker({
     position: latLng,
     map: googleMap.map
