@@ -1,8 +1,16 @@
 $(() =>{
+  const apiKey = "db7f4c46a760159833430e5dd92e1711";
+  const requestRadius = '5';
+  const requestLat = "51.5074";
+  const requestLon = '0.1278';
 
   let $main = $('main');
 
-  
+  var googleMap = googleMap || {};
+
+  googleMap.getEvents = function() {
+    $.get(`http://www.skiddle.com/api/v1/events/?latitude=${requestLat}&longitude=${requestLon}&radius=${requestRadius}&eventcode=LIVE&api_key=${apiKey}`);
+  };
 
   // $('.register').on('click', showRegisterForm);
   // $('.login').on('click', showLoginForm);
