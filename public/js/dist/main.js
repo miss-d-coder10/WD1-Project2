@@ -1,6 +1,7 @@
-"use strict";
+'use strict';
 
 $(function () {
+  console.log('JQ working');
   var apiKey = "db7f4c46a760159833430e5dd92e1711";
   var requestRadius = '5';
   var requestLat = "51.5074";
@@ -11,7 +12,7 @@ $(function () {
   var googleMap = googleMap || {};
 
   googleMap.getEvents = function () {
-    $.get("http://www.skiddle.com/api/v1/events/?latitude=" + requestLat + "&longitude=" + requestLon + "&radius=" + requestRadius + "&eventcode=LIVE&api_key=" + apiKey);
+    $.get('http://www.skiddle.com/api/v1/events/?latitude=' + requestLat + '&longitude=' + requestLon + '&radius=' + requestRadius + '&eventcode=LIVE&api_key=' + apiKey);
   };
 
   // $('.register').on('click', showRegisterForm);
@@ -225,4 +226,11 @@ $(function () {
   //   localStorage.removeItem('token');
   //   showLoginForm();
   // }
+
+  //BUILDING THE MAP IN THE MAP
+  var $mapDiv = $('#map');
+  var map = new google.maps.Map($mapDiv[0], {
+    center: { lat: 51.5014, lng: 0.1419 },
+    zoom: 14
+  });
 });
