@@ -29,22 +29,22 @@ router.route("/login")
   .post(authController.login);
 
 router.route("/users")
-  .all(secureRoutes)
+  // .all(secureRoutes)
   .get(usersController.index);
 
 router.route("/users/:id")
-  .all(secureRoutes)
+  // .all(secureRoutes)
   .get(usersController.show)
   .put(usersController.update)
   .delete(usersController.delete);
 
 router.route("/saveEvents")
-  .all(secureRoutes)
+  // .all(secureRoutes)
   .get(saveEventsController.index)
   .post(saveEventsController.create);
 
 router.route("/saveEvents/:id")
-  .all(secureRoutes)
+  // .all(secureRoutes)
   .get(saveEventsController.show)
   .put(saveEventsController.update)
   .delete(saveEventsController.delete);
