@@ -245,4 +245,13 @@ $(function () {
     center: { lat: 51.5014, lng: 0.1419 },
     zoom: 14
   });
+
+  //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
+  googleMap.createMarker = function (eventObject) {
+    var latLng = new google.maps.Map(eventObject.lat, eventObject.lng);
+    var marker = new google.maps.Marker({
+      position: latLng,
+      map: googleMap.map
+    });
+  };
 });

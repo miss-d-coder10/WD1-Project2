@@ -17,6 +17,7 @@ const eventsIndex = (req, res) => {
     res.json(data.results);
   })
   .catch((err) => {
+    console.log(err);
     res.status(500).json(err);
   });
 };

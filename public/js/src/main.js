@@ -245,4 +245,14 @@ $(() =>{
     zoom: 14
   });
 
+  //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
+  googleMap.createMarker = (eventObject) => {
+    let latLng = new google.maps.Map(eventObject.lat, eventObject.lng);
+    let marker = new google.maps.Marker({
+      position: latLng,
+      map: googleMap.map
+    });
+  };
+
+
 });
