@@ -5,6 +5,9 @@ const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify');
+const livereload = require('gulp-livereload');
+const nodemon    = require("gulp-nodemon");
+
 
 gulp.task('es6', () => {
     return gulp.src('public/js/src/**/*.js')
@@ -39,9 +42,21 @@ gulp.task('minify-css', function() {
         .pipe(gulp.dest('public/styles/'));
 });
 
-gulp.task('default', function() {
-    gulp.watch('public/js/src/**/*.js', ['es6']);
-    gulp.watch('public/styles/sass/**/*.scss', ['sass']);
-    // gulp.watch('public/js/dist/*.js', ['compress']);
-    // gulp.watch('public/styles/*.css', ['minify-css']);
+gulp.task('nodemon', () => {
+  return nodemon({
+    script: 'app.js',
+    ext: 'js html',
+    env: { 'NODE_ENV': 'development' }
+  });
 });
+
+gulp.task("watch", () => {
+	livereload.listen();
+  gulp.watch('public/js/src/**/*.js', ['es6']);
+  gulp.watch('public/styles/sass/**/*.scss', ['sass']);
+});
+
+gulp.task("default", [
+  'watch',
+  'nodemon'
+]);
