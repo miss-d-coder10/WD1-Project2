@@ -143,20 +143,39 @@ giggity.getEvents = function (date, lat, lng, radius, eventcode) {
 
 giggity.loopThroughEvents = function (data) {
     $.each(data, function (index, eventObject) {
-        giggity.createMarker(eventObject);
+        giggity.createMarker(eventObject, "pin");
     });
 };
 
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
-giggity.createMarker = function (eventObject) {
-    var latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
+giggity.createMarker = function (markerObject, markerType) {
+    var latLng = void 0;
+    if (markerObject.venue) {
+        latLng = new google.maps.LatLng(markerObject.venue.latitude, markerObject.venue.longitude);
+    } else if (markerObject.coords) {
+        latLng = new google.maps.LatLng(markerObject.coords.latitude, markerObject.coords.longitude);
+    }
+
     var marker = new google.maps.Marker({
         position: latLng,
-        map: this.map
+        icon: giggity.icons[markerType].icon,
+        map: this.map,
+        metadata: {
+            id: markerType
+        }
     });
     markers.push(marker);
-    giggity.addInfoWindow(eventObject, marker);
+    giggity.addInfoWindow(markerObject, marker);
     markers.push(marker);
+};
+
+giggity.icons = {
+    pin: {
+        icon: "https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png"
+    },
+    location: {
+        icon: "https://maps.google.com/mapfiles/kml/shapes/library_maps.png"
+    }
 };
 
 //ADDING INFO WINDOW
@@ -290,41 +309,25 @@ giggity.deleteMarkers = function () {
 };
 
 //current location
-
-
 setTimeout(function () {
     $(".locationbutton").on("click", giggity.getLocation);
 }, 500);
 
-// let clicked = false;
-
 giggity.getLocation = function () {
-    console.log("click");
-    // if(clicked === false){
-    //   // this.infoWindow.close();
-    // }
-    navigator.geolocation.getCurrentPosition(function (position) {
+    markers.forEach(function (marker) {
+        if (marker.metadata.id == "location") {
+            var index = markers.indexOf(marker);
+            markers[index].setMap(null);
+        }
+    });
 
+    navigator.geolocation.getCurrentPosition(function (position) {
         var latLng = { lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        console.log(position.coords.latitude, position.coords.longitude);
 
+        giggity.createMarker(position, "location");
         giggity.map.panTo(latLng);
         giggity.map.setZoom(16);
-        var marker = new google.maps.Marker({
-            position: latLng,
-            map: giggity.map
-        });
-        var circle = new google.maps.Circle({
-            center: latLng,
-            radius: position.coords.accuracy,
-            map: giggity.map,
-            fillColor: '#0000FF',
-            fillOpacity: 0.1,
-            strokeColor: '#0000FF',
-            strokeOpacity: 0.2
-        });
-        giggity.map.fitBounds(circle.getBounds());
     });
 };
