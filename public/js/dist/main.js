@@ -53,6 +53,7 @@ giggity.createMarker = function (eventObject) {
     position: latLng,
     map: this.map
   });
+  markers.push(marker);
   giggity.addInfoWindow(eventObject, marker);
   markers.push(marker);
 };
