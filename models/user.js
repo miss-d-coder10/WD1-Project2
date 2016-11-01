@@ -68,6 +68,7 @@ userSchema.set("toJSON", {
     delete json.passwordHash;
     delete json.email;
     delete json.__v;
+    delete json._id;
     return json;
   }
 });
