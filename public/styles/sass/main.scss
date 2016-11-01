@@ -1,16 +1,40 @@
 @import "../bourbon/bourbon";
+@import "variables";
+@import "buttons";
+@import "font";
 
 body{
   margin: 0;
+  font-family: brandon;
   .header{
     width: 100vw;
     height: 100px;
-    background: red;
+    background: $blue-color;
   }
   main{
     #map {
       width: 100vw;
       height: 70vh;
+    }
+    .formContainer{
+      @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $blue-color 60%, $red-color 100%));
+      height: 30vh;
+      @include display(flex);
+      @include justify-content(center);
+      @include align-items(center);
+      @include flex-direction(row);
+      form{
+        width: 100vw;
+        @include display(flex);
+        @include justify-content(space-around);
+        @include align-items(center);
+        @include flex-direction(row);
+        .query-elems{
+          input, select{
+            margin-right: 15px;
+          }
+        }
+      }
     }
   }
 }
