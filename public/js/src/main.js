@@ -194,8 +194,65 @@
     $.each(data, (index, eventObject) => {
       giggity.createMarker(eventObject, "pin");
     });
+    let $formContainer = $('.formContainer');
+    $formContainer.on("click", '#removeEventButton', function() {
+      console.log("In the remove section");
+      $('.eventObects').remove();
+    });
+
+    //RESTAURANTS
+    $formContainer.on("click", '#nearbyRestaurantsButton', function() {
+      let $info = $('.eventObects');
+      let lat = $info.data('lat');
+      let lng = $info.data('lng');
+      let latLng = { lat: lat, lng: lng };
+
+      let service = new google.maps.places.PlacesService(giggity.map);
+      service.nearbySearch({
+        location: latLng,
+        radius: 500,
+        types: ['restaurant']
+      }, giggity.callback);
+    });
+    //PUBS AND BARS
+    $formContainer.on("click", '#nearbyPubsButton', function() {
+      console.log("trying to find pub");
+      let $info = $('.eventObects');
+      let lat = $info.data('lat');
+      let lng = $info.data('lng');
+      let latLng = { lat: lat, lng: lng };
+
+      let service = new google.maps.places.PlacesService(giggity.map);
+      service.nearbySearch({
+        location: latLng,
+        radius: 500,
+        types: ['pub']
+      }, giggity.callback);
+    });
   };
 
+  giggity.callback = function(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      console.log(results);
+      for (var i = 0; i < results.length; i++) {
+        giggity.restaurantMarkerFunction(results[i]);
+      }
+    }
+  };
+
+  giggity.restaurantMarkerFunction = function(place) {
+    let placeLoc = place.geometry.location;
+    let marker = new google.maps.Marker({
+      map: this.map,
+      position: place.geometry.location
+    });
+
+    let infowindow = new google.maps.InfoWindow();
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.setContent(place.name);
+      infowindow.open(this.map, this);
+    });
+  };
 
   //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
   giggity.createMarker = function (markerObject, markerType) {
@@ -219,13 +276,14 @@
     markers.push(marker);
   };
 
-
-
   giggity.icons = {
     pin: {
       icon: "../../assets/images/pin.png"
     },
     location: {
+      icon: "../../assets/images/location.png"
+    },
+    restuarant: {
       icon: "../../assets/images/location.png"
     }
   };
@@ -374,38 +432,23 @@ giggity.formHandler = function() {
     markers = [];
   };
 
-
   giggity.eventInformation = function(eventObject, marker) {
     // console.log(eventObject);
     let $removeEventButton = $('#removeEventButton');
     let $formContainer = $('.formContainer');
     google.maps.event.addListener(marker, "click", () => {
-      $formContainer.append(`<div class="eventObects">
-                              <h2>${eventObject.eventname}</h2>
-                              <p>${eventObject.venue.name}</p>
-                              <p>${eventObject.venue.address}</p>
-                              <p>${eventObject.date}</p>
-                              <p>${eventObject.entryprice}</p>
-                              <img src='${eventObject.imageurl}'>
-                              <button id="removeEventButton">Remove</button>
-                              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-                              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
-                              <button id="getDirectionsButton">Get Directions</button>
-                            </div>`);
-    });
-    $formContainer.on("click", '#removeEventButton', function() {
-      console.log("In the remove section");
-      $('.eventObects').remove();
-    });
-    $formContainer.on("click", '#nearbyRestaurantsButton', function() {
-      console.log(this);
-      // let latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
-      // var service = new google.maps.places.PlacesService(map);
-      // service.nearbySearch({
-      //   position: latLng,
-      //   radius: 500,
-      //   type: ['restaurants']
-      //   };
+      $formContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
+        <h2>${eventObject.eventname}</h2>
+        <p>${eventObject.venue.name}</p>
+        <p>${eventObject.venue.address}</p>
+        <p>${eventObject.date}</p>
+        <p>${eventObject.entryprice}</p>
+        <img src='${eventObject.imageurl}'>
+        <button id="removeEventButton">Remove</button>
+        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+        <button id="getDirectionsButton">Get Directions</button>
+      </div>`);
     });
   };
 
