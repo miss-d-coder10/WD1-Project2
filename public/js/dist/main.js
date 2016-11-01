@@ -256,7 +256,6 @@ giggity.formHandler = function () {
         var $form = $(this);
         e.preventDefault();
         var data = $form.serializeArray();
-        console.log(data);
         var unformattedDate = data[0];
         var date = giggity.dateFormat(unformattedDate);
         var lat = giggity.currentLat;
