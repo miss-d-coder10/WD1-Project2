@@ -222,7 +222,7 @@ giggity.autoComplete = function () {
     // more details for that place.
     searchBox.addListener('places_changed', function () {
         var places = searchBox.getPlaces();
-        if (places.length == 0) {
+        if (places.length === 0) {
             return;
         }
         // For each place, get the icon, name and location.
@@ -349,4 +349,15 @@ giggity.getLocation = function () {
         giggity.map.panTo(latLng);
         giggity.map.setZoom(16);
     });
+};
+"use strict";
+
+var user = user || {};
+
+setTimeout(function () {
+  $(".signupbutton").on("click", user.signUp);
+}, 500);
+
+user.signUp = function () {
+  $("body").append("<div class='signupform'></div>");
 };

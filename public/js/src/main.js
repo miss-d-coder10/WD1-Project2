@@ -1,4 +1,4 @@
-  const giggity = giggity || {};
+  let giggity = giggity || {};
   let $main = $('main');
   let markers = [];
 
@@ -281,7 +281,7 @@ giggity.autoComplete = function(){
   // more details for that place.
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
-    if (places.length == 0) {
+    if (places.length === 0) {
       return;
     }
     // For each place, get the icon, name and location.
