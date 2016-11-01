@@ -18,9 +18,8 @@ giggity.mapSetup = function () {
   };
 
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
-  this.createPartial('formContainer');
+  this.createPartial('formContainer', 'formContainer');
   setTimeout(function () {
-    giggity.autoComplete();
     giggity.formHandler();
   }, 1000);
 };
@@ -54,33 +53,43 @@ giggity.createMarker = function (eventObject) {
     map: this.map
   });
   markers.push(marker);
-  giggity.addInfoWindow(eventObject, marker);
-  markers.push(marker);
+  giggity.eventInformation(eventObject, marker);
+  // markers.push(marker);
 };
 
-//ADDING INFO WINDOW
-giggity.addInfoWindow = function (eventObject, marker) {
-  var _this = this;
-
-  google.maps.event.addListener(marker, "click", function () {
-    if (_this.infoWindow) {
-      _this.infoWindow.close();
-    }
-    _this.infoWindow = new google.maps.InfoWindow({
-      content: '<h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.venue.name + '</p>\n                <p>' + eventObject.venue.address + '</p>\n                <p>' + eventObject.date + '</p>\n                <p>' + eventObject.entryprice + '</p>\n                <img src=\'' + eventObject.imageurl + '\'</>'
-    });
-    _this.infoWindow.open(_this.map, marker);
-  });
-};
+//   //ADDING INFO WINDOW
+//   giggity.addInfoWindow = function (eventObject, marker) {
+//     google.maps.event.addListener(marker, "click", () => {
+//       if(this.infoWindow) {
+//         this.infoWindow.close();
+//       }
+//       this.infoWindow = new google.maps.InfoWindow({
+//       content: `<h2>${eventObject.eventname}</h2>
+//                 <p>${eventObject.venue.name}</p>
+//                 <p>${eventObject.venue.address}</p>
+//                 <p>${eventObject.date}</p>
+//                 <p>${eventObject.entryprice}</p>
+//                 <img src='${eventObject.imageurl}'</>
+//                 <button>Select</button>`
+//     });
+//     this.infoWindow.open(this.map, marker);
+//   });
+// };
 
 $(giggity.mapSetup.bind(giggity));
 
-giggity.createPartial = function (partial) {
+giggity.createPartial = function (partial, toGoIn) {
   var load_from = '/partials/_' + partial + '.html';
   var data = "";
   $.get(load_from, data, function (data) {
-    $('.' + partial).html(data);
+    $('.' + toGoIn).html(data);
   });
+  setTimeout(function () {
+    if (partial === "formContainer") {
+      giggity.autoComplete();
+    }
+  }, 500);
+  return;
 };
 
 giggity.autoComplete = function () {
@@ -129,29 +138,25 @@ giggity.dateFormat = function (date) {
 
   if (date.value === 'Today') {
     maxDate = moment(today).format("YYYY-MM-DD");
-    // console.log(maxDate);
   } else if (date.value === 'Next 7 days') {
     var week = today.add(7, 'days');
     maxDate = moment(week).format("YYYY-MM-DD");
-    // return console.log(maxDate);
   } else if (date.value === 'Tomorrow') {
     var tomorrow = today.add(1, 'days');
     maxDate = moment(tomorrow).format("YYYY-MM-DD");
-    // return console.log(maxDate);
   } else if (date.value === 'Next 14 days') {
     var twoWeeks = today.add(14, 'days');
     maxDate = moment(twoWeeks).format("YYYY-MM-DD");
-    // return console.log(maxDate);
   } else if (date.value === 'Next 1 Month') {
     var month = today.add(30, 'days');
     maxDate = moment(month).format("YYYY-MM-DD");
-    // return console.log(maxDate);
   }
   return maxDate;
 };
 
 giggity.formHandler = function () {
   var $formContainer = $('.formContainer');
+  var $newSearchButton = $('#newSearchButton');
   $formContainer.on("submit", '#event-selector', function (e) {
     giggity.deleteMarkers();
     var $form = $(this);
@@ -165,6 +170,12 @@ giggity.formHandler = function () {
     var radius = data[2].value;
     var eventcode = data[3].value;
     giggity.getEvents(date, lat, lng, radius, eventcode);
+    giggity.createPartial('submittedFormContainer', 'formContainer');
+    setTimeout(function () {
+      $formContainer.on("click", '#newSearchButton', function () {
+        giggity.createPartial('formContainer', 'formContainer');
+      });
+    }, 500);
   });
 };
 
@@ -189,4 +200,35 @@ giggity.showMarkers = function () {
 giggity.deleteMarkers = function () {
   giggity.clearMarkers();
   markers = [];
+};
+
+//   //ADDING INFO WINDOW
+//   giggity.addInfoWindow = function (eventObject, marker) {
+//     google.maps.event.addListener(marker, "click", () => {
+//       if(this.infoWindow) {
+//         this.infoWindow.close();
+//       }
+//       this.infoWindow = new google.maps.InfoWindow({
+//       content: `<h2>${eventObject.eventname}</h2>
+//                 <p>${eventObject.venue.name}</p>
+//                 <p>${eventObject.venue.address}</p>
+//                 <p>${eventObject.date}</p>
+//                 <p>${eventObject.entryprice}</p>
+//                 <img src='${eventObject.imageurl}'</>
+//                 <button>Select</button>`
+//     });
+//     this.infoWindow.open(this.map, marker);
+//   });
+// };
+
+giggity.eventInformation = function (eventObject, marker) {
+  var $removeEventButton = $('#removeEventButton');
+  var $formContainer = $('.formContainer');
+  google.maps.event.addListener(marker, "click", function () {
+    $formContainer.append('<div>\n                            <h2>' + eventObject.eventname + '</h2>\n                            <p>' + eventObject.venue.name + '</p>\n                            <p>' + eventObject.venue.address + '</p>\n                            <p>' + eventObject.date + '</p>\n                            <p>' + eventObject.entryprice + '</p>\n                            <img src=\'' + eventObject.imageurl + '\'</>\n                            <button>Save</button><button id="removeEventButton">Remove</button>\n                            </div>');
+  });
+  $formContainer.on("click", '#removeEventButton', function () {
+    console.log("In the remove section");
+    $removeEventButton.parent.html('');
+  });
 };
