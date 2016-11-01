@@ -225,10 +225,10 @@
 
   giggity.icons = {
     pin: {
-      icon: "https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png"
+      icon: "../../assets/images/pin.png"
     },
     location: {
-      icon: "https://maps.google.com/mapfiles/kml/shapes/library_maps.png"
+      icon: "../../assets/images/location.png"
     }
   };
 
