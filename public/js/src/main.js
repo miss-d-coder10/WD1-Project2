@@ -129,6 +129,32 @@ giggity.autoComplete = function(){
   });
 };
 
+giggity.dateFormat = function(date){
+  let today = moment();
+  let maxDate;
+
+  if (date.value === 'Today') {
+    maxDate = moment(today).format("YYYY-MM-DD");
+    // console.log(maxDate);
+  } else if (date.value === 'Next 7 days') {
+      let week = today.add(7, 'days');
+      maxDate = moment(week).format("YYYY-MM-DD");
+      // return console.log(maxDate);
+  } else if (date.value === 'Tomorrow') {
+      let tomorrow = today.add(1, 'days');
+      maxDate = moment(tomorrow).format("YYYY-MM-DD");
+      // return console.log(maxDate);
+  } else if (date.value === 'Next 14 days'){
+      let twoWeeks = today.add(14, 'days');
+      maxDate = moment(twoWeeks).format("YYYY-MM-DD");
+      // return console.log(maxDate);
+  } else if (date.value === 'Next 1 Month'){
+      let month = today.add(30, 'days');
+      maxDate = moment(month).format("YYYY-MM-DD");
+      // return console.log(maxDate);
+  }
+  return maxDate;
+};
 
 giggity.formHandler = function() {
   let $formContainer = $('.formContainer');
@@ -138,7 +164,8 @@ giggity.formHandler = function() {
     e.preventDefault();
     let data = $form.serializeArray();
     console.log(data);
-    let date = data[0];
+    let unformattedDate = data[0];
+    let date = giggity.dateFormat(unformattedDate);
     let lat = giggity.currentLat;
     let lng = giggity.currentLng;
     let radius = data[2].value;

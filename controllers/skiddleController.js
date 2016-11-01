@@ -5,7 +5,7 @@ const eventsIndex = (req, res) => {
     url:"http://www.skiddle.com/api/v1/events/",
     method: "GET",
     qs: {
-      date:req.query.date,
+      maxDate:req.query.date,
       latitude:req.query.lat,
       longitude:req.query.lng,
       radius:req.query.radius,

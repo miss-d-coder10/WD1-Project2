@@ -123,6 +123,33 @@ giggity.autoComplete = function () {
   });
 };
 
+giggity.dateFormat = function (date) {
+  var today = moment();
+  var maxDate = void 0;
+
+  if (date.value === 'Today') {
+    maxDate = moment(today).format("YYYY-MM-DD");
+    // console.log(maxDate);
+  } else if (date.value === 'Next 7 days') {
+    var week = today.add(7, 'days');
+    maxDate = moment(week).format("YYYY-MM-DD");
+    // return console.log(maxDate);
+  } else if (date.value === 'Tomorrow') {
+    var tomorrow = today.add(1, 'days');
+    maxDate = moment(tomorrow).format("YYYY-MM-DD");
+    // return console.log(maxDate);
+  } else if (date.value === 'Next 14 days') {
+    var twoWeeks = today.add(14, 'days');
+    maxDate = moment(twoWeeks).format("YYYY-MM-DD");
+    // return console.log(maxDate);
+  } else if (date.value === 'Next 1 Month') {
+    var month = today.add(30, 'days');
+    maxDate = moment(month).format("YYYY-MM-DD");
+    // return console.log(maxDate);
+  }
+  return maxDate;
+};
+
 giggity.formHandler = function () {
   var $formContainer = $('.formContainer');
   $formContainer.on("submit", '#event-selector', function (e) {
@@ -131,7 +158,8 @@ giggity.formHandler = function () {
     e.preventDefault();
     var data = $form.serializeArray();
     console.log(data);
-    var date = data[0];
+    var unformattedDate = data[0];
+    var date = giggity.dateFormat(unformattedDate);
     var lat = giggity.currentLat;
     var lng = giggity.currentLng;
     var radius = data[2].value;

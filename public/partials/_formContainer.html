@@ -1,15 +1,23 @@
-<form id="event-selector">
-  <label for="date">Date</label>
-  <input class="formInput" type="date" name="date" placeholder="date">
+<form id="event-selector"
 
-  <label for="Location">Location</label>
+  <label for="type"></label>
+  <select class="formInput" name="date" placeholder="When">
+    <option selected="selected" disabled="disabled">Anytime</option>
+    <option type="date">Today</option>
+    <option>Tomorrow</option>
+    <option>Next 7 days</option>
+    <option>Next 14 days</option>
+    <option>Next 1 Month</option>
+
+  <label for="Location"></label>
   <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
 
-  <label for="radius">Radius</label>
-  <input class="formInput" type="number" name="radius" placeholder="radius">
+  <label for="radius"></label>
+  <input class="formInput" type="number" name="radius" placeholder="Radius">
 
-  <label for="type">Type</label>
+  <label for="type"></label>
   <select class="formInput" type="text" name="eventcode" placeholder="type">
+    <option selected="selected" disabled="disabled">Choose your event</option>
     <option value="FEST">Festivals</option>
     <option value="LIVE">Gigs</option>
     <option value="CLUB">Clubbing</option>
