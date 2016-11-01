@@ -12,7 +12,159 @@
 
     let mapOptions = {
       center: { lat: 51.5074, lng: -0.1278 },
-      zoom: 12
+      zoom: 12,
+      styles: [
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#6195a0"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "color": "#f2f2f2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#e6f3d6"
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "saturation": -100
+                        },
+                        {
+                            "lightness": 45
+                        },
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#f4d2c5"
+                        },
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels.text",
+                    "stylers": [
+                        {
+                            "color": "#4e4e4e"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#f4f4f4"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#787878"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "color": "#eaf6f8"
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#eaf6f8"
+                        }
+                    ]
+                }
+            ]
     };
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
@@ -40,40 +192,62 @@
 
   giggity.loopThroughEvents = function(data) {
     $.each(data, (index, eventObject) => {
-      giggity.createMarker(eventObject);
+      giggity.createMarker(eventObject, "pin");
     });
   };
+
 
   //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
-  giggity.createMarker = function (eventObject) {
-    let latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
+  giggity.createMarker = function (markerObject, markerType) {
+    let latLng;
+    if (markerObject.venue){
+      latLng = new google.maps.LatLng(markerObject.venue.latitude, markerObject.venue.longitude);
+    } else if (markerObject.coords){
+      latLng = new google.maps.LatLng(markerObject.coords.latitude, markerObject.coords.longitude);
+    }
+
     let marker = new google.maps.Marker({
       position: latLng,
-      map: this.map
+      icon: giggity.icons[markerType].icon,
+      map: this.map,
+      metadata: {
+        id: markerType
+      }
     });
     markers.push(marker);
-    giggity.eventInformation(eventObject, marker);
-    // markers.push(marker);
+    giggity.eventInformation(markerObject, marker);
+    markers.push(marker);
   };
 
-//   //ADDING INFO WINDOW
-//   giggity.addInfoWindow = function (eventObject, marker) {
-//     google.maps.event.addListener(marker, "click", () => {
-//       if(this.infoWindow) {
-//         this.infoWindow.close();
-//       }
-//       this.infoWindow = new google.maps.InfoWindow({
-//       content: `<h2>${eventObject.eventname}</h2>
-//                 <p>${eventObject.venue.name}</p>
-//                 <p>${eventObject.venue.address}</p>
-//                 <p>${eventObject.date}</p>
-//                 <p>${eventObject.entryprice}</p>
-//                 <img src='${eventObject.imageurl}'</>
-//                 <button>Select</button>`
-//     });
-//     this.infoWindow.open(this.map, marker);
-//   });
-// };
+
+
+  giggity.icons = {
+    pin: {
+      icon: "https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png"
+    },
+    location: {
+      icon: "https://maps.google.com/mapfiles/kml/shapes/library_maps.png"
+    }
+  };
+
+  //ADDING INFO WINDOW
+  giggity.addInfoWindow = function (eventObject, marker) {
+    google.maps.event.addListener(marker, "click", () => {
+      if(this.infoWindow) {
+        this.infoWindow.close();
+      }
+      this.infoWindow = new google.maps.InfoWindow({
+      content: `<h2>${eventObject.eventname}</h2>
+                <p>${eventObject.venue.name}</p>
+                <p>${eventObject.venue.address}</p>
+                <p>${eventObject.date}</p>
+                <p>${eventObject.entryprice}</p>
+                <img src='${eventObject.imageurl}'</>`
+    });
+    this.infoWindow.open(this.map, marker);
+  });
+};
+
 
 $(giggity.mapSetup.bind(giggity));
 
@@ -107,11 +281,9 @@ giggity.autoComplete = function(){
   // more details for that place.
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
-
     if (places.length == 0) {
       return;
     }
-
     // For each place, get the icon, name and location.
     var bounds = new google.maps.LatLngBounds();
 
@@ -163,7 +335,6 @@ giggity.formHandler = function() {
     let $form = $(this);
     e.preventDefault();
     let data = $form.serializeArray();
-    console.log(data);
     let unformattedDate = data[0];
     let date = giggity.dateFormat(unformattedDate);
     let lat = giggity.currentLat;
@@ -203,24 +374,6 @@ giggity.formHandler = function() {
     markers = [];
   };
 
-  //   //ADDING INFO WINDOW
-  //   giggity.addInfoWindow = function (eventObject, marker) {
-  //     google.maps.event.addListener(marker, "click", () => {
-  //       if(this.infoWindow) {
-  //         this.infoWindow.close();
-  //       }
-  //       this.infoWindow = new google.maps.InfoWindow({
-  //       content: `<h2>${eventObject.eventname}</h2>
-  //                 <p>${eventObject.venue.name}</p>
-  //                 <p>${eventObject.venue.address}</p>
-  //                 <p>${eventObject.date}</p>
-  //                 <p>${eventObject.entryprice}</p>
-  //                 <img src='${eventObject.imageurl}'</>
-  //                 <button>Select</button>`
-  //     });
-  //     this.infoWindow.open(this.map, marker);
-  //   });
-  // };
 
   giggity.eventInformation = function(eventObject, marker) {
     let $removeEventButton = $('#removeEventButton');
@@ -241,3 +394,27 @@ giggity.formHandler = function() {
       $removeEventButton.parent.html('');
     });
   };
+
+//current location
+setTimeout(function(){
+  $(".locationbutton").on("click", giggity.getLocation);
+}, 500);
+
+giggity.getLocation = function(){
+  markers.forEach(function(marker){
+    if (marker.metadata.id == "location"){
+      let index = markers.indexOf(marker);
+      markers[index].setMap(null);
+    }
+  });
+
+  navigator.geolocation.getCurrentPosition((position) => {
+    let latLng = {lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                };
+
+    giggity.createMarker(position, "location");
+    giggity.map.panTo(latLng);
+    giggity.map.setZoom(16);
+  });
+};
