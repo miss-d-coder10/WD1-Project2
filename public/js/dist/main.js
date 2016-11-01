@@ -25,11 +25,12 @@ giggity.mapSetup = function () {
   }, 1000);
 };
 
-giggity.getEvents = function (lat, lng, radius, eventcode) {
+giggity.getEvents = function (date, lat, lng, radius, eventcode) {
   $.ajax({
     url: '/api/events',
     method: "GET",
     data: {
+      date: date,
       lat: lat,
       lng: lng,
       radius: radius,
@@ -128,11 +129,13 @@ giggity.formHandler = function () {
     var $form = $(this);
     e.preventDefault();
     var data = $form.serializeArray();
+    console.log(data);
+    var date = data[0];
     var lat = giggity.currentLat;
     var lng = giggity.currentLng;
     var radius = data[2].value;
     var eventcode = data[3].value;
-    giggity.getEvents(lat, lng, radius, eventcode);
+    giggity.getEvents(date, lat, lng, radius, eventcode);
   });
 };
 

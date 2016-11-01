@@ -23,11 +23,12 @@
     }, 1000);
   };
 
-  giggity.getEvents = function(lat, lng, radius, eventcode) {
+  giggity.getEvents = function(date, lat, lng, radius, eventcode) {
     $.ajax({
       url: '/api/events',
       method: "GET",
       data: {
+        date: date,
         lat:lat,
         lng:lng,
         radius:radius,
@@ -135,11 +136,13 @@ giggity.formHandler = function() {
     let $form = $(this);
     e.preventDefault();
     let data = $form.serializeArray();
+    console.log(data);
+    let date = data[0];
     let lat = giggity.currentLat;
     let lng = giggity.currentLng;
     let radius = data[2].value;
     let eventcode = data[3].value;
-    giggity.getEvents(lat, lng, radius, eventcode);
+    giggity.getEvents(date, lat, lng, radius, eventcode);
   });
 };
 
