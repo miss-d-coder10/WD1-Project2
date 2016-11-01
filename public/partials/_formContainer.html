@@ -1,36 +1,33 @@
-<form id="event-selector"
+<form id="event-selector">
+  <div class="query-elems">
+    <select class="formInput" name="date" placeholder="When">
+      <option selected="selected" disabled="disabled">Anytime</option>
+      <option type="date">Today</option>
+      <option>Tomorrow</option>
+      <option>Next 7 days</option>
+      <option>Next 14 days</option>
+      <option>Next 1 Month</option>
 
-  <label for="type"></label>
-  <select class="formInput" name="date" placeholder="When">
-    <option selected="selected" disabled="disabled">Anytime</option>
-    <option type="date">Today</option>
-    <option>Tomorrow</option>
-    <option>Next 7 days</option>
-    <option>Next 14 days</option>
-    <option>Next 1 Month</option>
+    <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
 
-  <label for="Location"></label>
-  <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
+    <input class="formInput" type="number" name="radius" placeholder="Radius">
 
-  <label for="radius"></label>
-  <input class="formInput" type="number" name="radius" placeholder="Radius">
-
-  <label for="type"></label>
-  <select class="formInput" type="text" name="eventcode" placeholder="type">
-    <option selected="selected" disabled="disabled">Choose your event</option>
-    <option value="FEST">Festivals</option>
-    <option value="LIVE">Gigs</option>
-    <option value="CLUB">Clubbing</option>
-    <option value="DATE">Dating</option>
-    <option value="THEATRE">Theatre</option>
-    <option value="COMEDY">Comedy</option>
-    <option value="EXHIB">Exhibitions</option>
-    <option value="KIDS">Kids and Family</option>
-    <option value="BARPUB">Pubs and Bars</option>
-    <option value="LGB">LGBT</option>
-    <option value="SPORT">Sport</option>
-    <option value="ART">Arts</option>
-  </select>
-
-  <button type="submit">Create</button>
+    <select class="formInput" type="text" name="eventcode" placeholder="Category">
+      <option value="FEST">Festivals</option>
+      <option value="LIVE">Gigs</option>
+      <option value="CLUB">Clubbing</option>
+      <option value="DATE">Dating</option>
+      <option value="THEATRE">Theatre</option>
+      <option value="COMEDY">Comedy</option>
+      <option value="EXHIB">Exhibitions</option>
+      <option value="KIDS">Kids and Family</option>
+      <option value="BARPUB">Pubs and Bars</option>
+      <option value="LGB">LGBT</option>
+      <option value="SPORT">Sport</option>
+      <option value="ART">Arts</option>
+    </select>
+  </div>
+  <div class="submit-elems">
+    <button type="submit">Search</button>
+  </div>
 </form>
