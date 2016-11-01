@@ -119,9 +119,8 @@ giggity.mapSetup = function () {
     };
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
-    this.createPartial('formContainer');
+    this.createPartial('formContainer', 'formContainer');
     setTimeout(function () {
-        giggity.autoComplete();
         giggity.formHandler();
     }, 1000);
 };
@@ -165,7 +164,7 @@ giggity.createMarker = function (markerObject, markerType) {
         }
     });
     markers.push(marker);
-    giggity.addInfoWindow(markerObject, marker);
+    giggity.eventInformation(markerObject, marker);
     markers.push(marker);
 };
 
@@ -195,12 +194,18 @@ giggity.addInfoWindow = function (eventObject, marker) {
 
 $(giggity.mapSetup.bind(giggity));
 
-giggity.createPartial = function (partial) {
+giggity.createPartial = function (partial, toGoIn) {
     var load_from = '/partials/_' + partial + '.html';
     var data = "";
     $.get(load_from, data, function (data) {
-        $('.' + partial).html(data);
+        $('.' + toGoIn).html(data);
     });
+    setTimeout(function () {
+        if (partial === "formContainer") {
+            giggity.autoComplete();
+        }
+    }, 500);
+    return;
 };
 
 giggity.autoComplete = function () {
@@ -247,29 +252,25 @@ giggity.dateFormat = function (date) {
 
     if (date.value === 'Today') {
         maxDate = moment(today).format("YYYY-MM-DD");
-        // console.log(maxDate);
     } else if (date.value === 'Next 7 days') {
         var week = today.add(7, 'days');
         maxDate = moment(week).format("YYYY-MM-DD");
-        // return console.log(maxDate);
     } else if (date.value === 'Tomorrow') {
         var tomorrow = today.add(1, 'days');
         maxDate = moment(tomorrow).format("YYYY-MM-DD");
-        // return console.log(maxDate);
     } else if (date.value === 'Next 14 days') {
         var twoWeeks = today.add(14, 'days');
         maxDate = moment(twoWeeks).format("YYYY-MM-DD");
-        // return console.log(maxDate);
     } else if (date.value === 'Next 1 Month') {
         var month = today.add(30, 'days');
         maxDate = moment(month).format("YYYY-MM-DD");
-        // return console.log(maxDate);
     }
     return maxDate;
 };
 
 giggity.formHandler = function () {
     var $formContainer = $('.formContainer');
+    var $newSearchButton = $('#newSearchButton');
     $formContainer.on("submit", '#event-selector', function (e) {
         giggity.deleteMarkers();
         var $form = $(this);
@@ -282,6 +283,12 @@ giggity.formHandler = function () {
         var radius = data[2].value;
         var eventcode = data[3].value;
         giggity.getEvents(date, lat, lng, radius, eventcode);
+        giggity.createPartial('submittedFormContainer', 'formContainer');
+        setTimeout(function () {
+            $formContainer.on("click", '#newSearchButton', function () {
+                giggity.createPartial('formContainer', 'formContainer');
+            });
+        }, 500);
     });
 };
 
@@ -306,6 +313,18 @@ giggity.showMarkers = function () {
 giggity.deleteMarkers = function () {
     giggity.clearMarkers();
     markers = [];
+};
+
+giggity.eventInformation = function (eventObject, marker) {
+    var $removeEventButton = $('#removeEventButton');
+    var $formContainer = $('.formContainer');
+    google.maps.event.addListener(marker, "click", function () {
+        $formContainer.append('<div>\n                            <h2>' + eventObject.eventname + '</h2>\n                            <p>' + eventObject.venue.name + '</p>\n                            <p>' + eventObject.venue.address + '</p>\n                            <p>' + eventObject.date + '</p>\n                            <p>' + eventObject.entryprice + '</p>\n                            <img src=\'' + eventObject.imageurl + '\'</>\n                            <button>Save</button><button id="removeEventButton">Remove</button>\n                            </div>');
+    });
+    $formContainer.on("click", '#removeEventButton', function () {
+        console.log("In the remove section");
+        $removeEventButton.parent.html('');
+    });
 };
 
 //current location

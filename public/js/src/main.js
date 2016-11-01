@@ -168,9 +168,8 @@
     };
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
-    this.createPartial('formContainer');
+    this.createPartial('formContainer', 'formContainer');
     setTimeout(function(){
-      giggity.autoComplete();
       giggity.formHandler();
     }, 1000);
   };
@@ -190,7 +189,6 @@
     })
     .done(this.loopThroughEvents.bind(giggity));
   };
-
 
   giggity.loopThroughEvents = function(data) {
     $.each(data, (index, eventObject) => {
@@ -217,7 +215,7 @@
       }
     });
     markers.push(marker);
-    giggity.addInfoWindow(markerObject, marker);
+    giggity.eventInformation(markerObject, marker);
     markers.push(marker);
   };
 
@@ -253,13 +251,19 @@
 
 $(giggity.mapSetup.bind(giggity));
 
-giggity.createPartial = function(partial){
+giggity.createPartial = function(partial, toGoIn){
   let load_from = `/partials/_${partial}.html`;
   let data = "";
   $.get(load_from, data, function(data)
   {
-      $(`.${partial}`).html(data);
+      $(`.${toGoIn}`).html(data);
   });
+  setTimeout(function() {
+    if (partial === "formContainer"){
+    giggity.autoComplete();
+  }
+}, 500);
+  return;
 };
 
 giggity.autoComplete = function(){
@@ -307,29 +311,25 @@ giggity.dateFormat = function(date){
 
   if (date.value === 'Today') {
     maxDate = moment(today).format("YYYY-MM-DD");
-    // console.log(maxDate);
   } else if (date.value === 'Next 7 days') {
       let week = today.add(7, 'days');
       maxDate = moment(week).format("YYYY-MM-DD");
-      // return console.log(maxDate);
   } else if (date.value === 'Tomorrow') {
       let tomorrow = today.add(1, 'days');
       maxDate = moment(tomorrow).format("YYYY-MM-DD");
-      // return console.log(maxDate);
   } else if (date.value === 'Next 14 days'){
       let twoWeeks = today.add(14, 'days');
       maxDate = moment(twoWeeks).format("YYYY-MM-DD");
-      // return console.log(maxDate);
   } else if (date.value === 'Next 1 Month'){
       let month = today.add(30, 'days');
       maxDate = moment(month).format("YYYY-MM-DD");
-      // return console.log(maxDate);
   }
   return maxDate;
 };
 
 giggity.formHandler = function() {
   let $formContainer = $('.formContainer');
+  let $newSearchButton = $('#newSearchButton');
   $formContainer.on("submit", '#event-selector', function(e) {
     giggity.deleteMarkers();
     let $form = $(this);
@@ -342,6 +342,12 @@ giggity.formHandler = function() {
     let radius = data[2].value;
     let eventcode = data[3].value;
     giggity.getEvents(date, lat, lng, radius, eventcode);
+    giggity.createPartial('submittedFormContainer', 'formContainer');
+    setTimeout(function(){
+      $formContainer.on("click", '#newSearchButton', function() {
+        giggity.createPartial('formContainer', 'formContainer');
+      });
+    }, 500);
   });
 };
 
@@ -366,6 +372,27 @@ giggity.formHandler = function() {
   giggity.deleteMarkers = function() {
     giggity.clearMarkers();
     markers = [];
+  };
+
+
+  giggity.eventInformation = function(eventObject, marker) {
+    let $removeEventButton = $('#removeEventButton');
+    let $formContainer = $('.formContainer');
+    google.maps.event.addListener(marker, "click", () => {
+      $formContainer.append(`<div>
+                            <h2>${eventObject.eventname}</h2>
+                            <p>${eventObject.venue.name}</p>
+                            <p>${eventObject.venue.address}</p>
+                            <p>${eventObject.date}</p>
+                            <p>${eventObject.entryprice}</p>
+                            <img src='${eventObject.imageurl}'</>
+                            <button>Save</button><button id="removeEventButton">Remove</button>
+                            </div>`);
+    });
+    $formContainer.on("click", '#removeEventButton', function() {
+      console.log("In the remove section");
+      $removeEventButton.parent.html('');
+    });
   };
 
 //current location
