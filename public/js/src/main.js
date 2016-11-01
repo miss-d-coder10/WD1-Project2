@@ -376,22 +376,36 @@ giggity.formHandler = function() {
 
 
   giggity.eventInformation = function(eventObject, marker) {
+    // console.log(eventObject);
     let $removeEventButton = $('#removeEventButton');
     let $formContainer = $('.formContainer');
     google.maps.event.addListener(marker, "click", () => {
-      $formContainer.append(`<div>
-                            <h2>${eventObject.eventname}</h2>
-                            <p>${eventObject.venue.name}</p>
-                            <p>${eventObject.venue.address}</p>
-                            <p>${eventObject.date}</p>
-                            <p>${eventObject.entryprice}</p>
-                            <img src='${eventObject.imageurl}'</>
-                            <button>Save</button><button id="removeEventButton">Remove</button>
+      $formContainer.append(`<div class="eventObects">
+                              <h2>${eventObject.eventname}</h2>
+                              <p>${eventObject.venue.name}</p>
+                              <p>${eventObject.venue.address}</p>
+                              <p>${eventObject.date}</p>
+                              <p>${eventObject.entryprice}</p>
+                              <img src='${eventObject.imageurl}'>
+                              <button id="removeEventButton">Remove</button>
+                              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+                              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+                              <button id="getDirectionsButton">Get Directions</button>
                             </div>`);
     });
     $formContainer.on("click", '#removeEventButton', function() {
       console.log("In the remove section");
-      $removeEventButton.parent.html('');
+      $('.eventObects').remove();
+    });
+    $formContainer.on("click", '#nearbyRestaurantsButton', function() {
+      console.log(this);
+      // let latLng = new google.maps.LatLng(eventObject.venue.latitude, eventObject.venue.longitude);
+      // var service = new google.maps.places.PlacesService(map);
+      // service.nearbySearch({
+      //   position: latLng,
+      //   radius: 500,
+      //   type: ['restaurants']
+      //   };
     });
   };
 
