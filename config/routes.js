@@ -28,12 +28,12 @@ router.route("/register")
 router.route("/login")
   .post(authController.login);
 
+router.route("/events")
+  .get(skiddleController.index);
+
 router.route("/users")
   // .all(secureRoutes)
   .get(usersController.index);
-
-router.route("/events")
-  .get(skiddleController.index);
 
 router.route("/users/:id")
   // .all(secureRoutes)

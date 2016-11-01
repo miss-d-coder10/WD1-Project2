@@ -168,7 +168,8 @@
     };
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
-    this.createPartial('formContainer', 'formContainer');
+    this.createPartial('formContainer', '.formContainer');
+    this.createPartial('header', 'header')
     setTimeout(function(){
       giggity.formHandler();
     }, 1000);
@@ -256,7 +257,7 @@ giggity.createPartial = function(partial, toGoIn){
   let data = "";
   $.get(load_from, data, function(data)
   {
-      $(`.${toGoIn}`).html(data);
+      $(`${toGoIn}`).html(data);
   });
   setTimeout(function() {
     if (partial === "formContainer"){
@@ -342,10 +343,10 @@ giggity.formHandler = function() {
     let radius = data[2].value;
     let eventcode = data[3].value;
     giggity.getEvents(date, lat, lng, radius, eventcode);
-    giggity.createPartial('submittedFormContainer', 'formContainer');
+    giggity.createPartial('submittedFormContainer', '.formContainer');
     setTimeout(function(){
       $formContainer.on("click", '#newSearchButton', function() {
-        giggity.createPartial('formContainer', 'formContainer');
+        giggity.createPartial('formContainer', '.formContainer');
       });
     }, 500);
   });

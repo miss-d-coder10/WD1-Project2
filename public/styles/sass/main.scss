@@ -8,13 +8,13 @@ body{
   font-family: brandon;
   .header{
     width: 100vw;
-    height: 100px;
+    height: 10vh;
     background: $blue-color;
   }
   main{
     #map {
       width: 100vw;
-      height: 70vh;
+      height: 60vh;
     }
     .formContainer{
       @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $blue-color 60%, $red-color 100%));

@@ -7,11 +7,11 @@ function register(req, res){
   User.create(req.body.user, (err, user) => {
     if(err) return res.status(500).json({ message: "Something went wrong" + err });
 
-    let payload = { _id: user._id, username: user.username};
+    let payload = { _id: user._id, username: user.firstName};
     let token = jwt.sign(payload, secret, {expiresIn: 60*60*24}); //make a a code and encode it with payload and secret.
 
     return res.status(201).json({
-      message: `welcome ${user.username}`,
+      message: `welcome ${user.firstName}`,
       user,
       token
     });
@@ -25,11 +25,11 @@ function login(req, res){
       return res.status(401).json({message: "unauthorised"});
     }
 
-    let payload = { _id: user._id, username: user.username};
+    let payload = { _id: user._id, username: user.firstName};
     let token = jwt.sign(payload, secret, {expiresIn: 60*60*24}); //make a a code and encode it with payload and secret.
 
     return res.status(200).json({
-      message: `welcome ${user.username}`,
+      message: `welcome ${user.firstName}`,
       user,
       token
     });
