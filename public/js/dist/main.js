@@ -288,3 +288,43 @@ giggity.deleteMarkers = function () {
     giggity.clearMarkers();
     markers = [];
 };
+
+//current location
+
+
+setTimeout(function () {
+    $(".locationbutton").on("click", giggity.getLocation);
+}, 500);
+
+// let clicked = false;
+
+giggity.getLocation = function () {
+    console.log("click");
+    // if(clicked === false){
+    //   // this.infoWindow.close();
+    // }
+    navigator.geolocation.getCurrentPosition(function (position) {
+
+        var latLng = { lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        console.log(position.coords.latitude, position.coords.longitude);
+
+        giggity.map.panTo(latLng);
+        giggity.map.setZoom(16);
+        var marker = new google.maps.Marker({
+            position: latLng,
+            map: giggity.map
+        });
+        var circle = new google.maps.Circle({
+            center: latLng,
+            radius: position.coords.accuracy,
+            map: giggity.map,
+            fillColor: '#0000FF',
+            fillOpacity: 0.1,
+            strokeColor: '#0000FF',
+            strokeOpacity: 0.2
+        });
+        giggity.map.fitBounds(circle.getBounds());
+    });
+};
