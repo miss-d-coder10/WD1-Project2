@@ -11,10 +11,34 @@ body{
     height: 10vh;
     background: $blue-color;
   }
+  .signupform{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 2;
+    @include display(flex);
+    @include justify-content(center);
+    @include align-items(center);
+    .registercontainer{
+      height: 600px;
+      width: 400px;
+      background-color: rgba(0,0,0,0.98);
+      color: white;
+      text-align: center;
+    }
+    .login{
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      color: black;
+    }
+  }
   main{
     #map {
       width: 100vw;
       height: 60vh;
+      z-index: 1;
     }
     .formContainer{
       @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $blue-color 60%, $red-color 100%));
