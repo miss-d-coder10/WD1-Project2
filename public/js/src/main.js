@@ -1,6 +1,10 @@
   let giggity = giggity || {};
   let $main = $('main');
   let markers = [];
+  let currentlatLng;
+  let lat;
+  let lng;
+  let $info = $('.eventObects');
 
   giggity.map = null;
   giggity.currentLat = null;
@@ -8,10 +12,12 @@
 
   //BUILDING THE MAP IN THE MAP
   giggity.mapSetup = function() {
+    giggity.getLocation();
+
+
     let $mapDiv = $('#map');
 
     let mapOptions = {
-      center: { lat: 51.5074, lng: -0.1278 },
       zoom: 12,
       styles: [
                 {
@@ -203,9 +209,10 @@
 
     //RESTAURANTS
     $formContainer.on("click", '#nearbyRestaurantsButton', function() {
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
+      $info = $('.eventObects');
+      lat = $info.data('lat');
+      lng = $info.data('lng');
+
       let latLng = { lat: lat, lng: lng };
 
       let service = new google.maps.places.PlacesService(giggity.map);
@@ -217,10 +224,12 @@
     });
     //PUBS AND BARS
     $formContainer.on("click", '#nearbyPubsButton', function() {
+      let methodOfTravel;
+
       console.log("trying to find pub");
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
+      $info = $('.eventObects');
+      lat = $info.data('lat');
+      lng = $info.data('lng');
       let latLng = { lat: lat, lng: lng };
       let service = new google.maps.places.PlacesService(giggity.map);
       service.nearbySearch({
@@ -229,31 +238,46 @@
         types: ['pub']
       }, giggity.callback);
     });
+    //DIRECTIONS
 
     $formContainer.on("click", '#getDirectionsButton', function() {
-      console.log("IN DIRECTIONS");
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
-      let latLng = { lat: lat, lng: lng };
-      let directionsService = new google.maps.DirectionsService();
-       let directionsRequest = {
-         origin: "SW166QX",
-         destination: latLng,
-         travelMode: google.maps.DirectionsTravelMode.DRIVING,
-         unitSystem: google.maps.UnitSystem.METRIC
-       };
-
-    directionsService.route(directionsRequest, function(response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          new google.maps.DirectionsRenderer({
-          map: giggity.map,
-          directions: response
-        });
-      }
-        else
-          $("#error").append("Unable to retrieve your route<br />");
+      var directionsDisplay;
+      directionsDisplay = new google.maps.DirectionsRenderer({
+        map: null
       });
+      let $methodOfTravel = ($('#methodofTravel').val());
+      navigator.geolocation.getCurrentPosition((position) => {
+        currentlatLng = {     lat: position.coords.latitude,
+                              lng: position.coords.longitude
+                        };
+        console.log(currentlatLng);
+
+        $info = $('.eventObects');
+        lat = $info.data('lat');
+        lng = $info.data('lng');
+        console.log(lat);
+        console.log(lng);
+        let latLng = { lat: lat, lng: lng };
+        let directionsService = new google.maps.DirectionsService();
+         let directionsRequest = {
+           origin: currentlatLng,
+           destination: latLng,
+           travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
+           unitSystem: google.maps.UnitSystem.METRIC
+         };
+
+        directionsService.route(directionsRequest, function(response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay = new google.maps.DirectionsRenderer({
+            map: giggity.map,
+            directions: response
+          });
+        }
+          else
+            $("#error").append("Unable to retrieve your route<br />");
+        });
+      });
+
     });
   };
 
@@ -274,6 +298,7 @@
     });
 
     let infowindow = new google.maps.InfoWindow();
+
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.setContent(place.name);
       infowindow.open(this.map, this);
@@ -429,6 +454,7 @@ giggity.formHandler = function() {
     giggity.createPartial('submittedFormContainer', '.formContainer');
     setTimeout(function(){
       $formContainer.on("click", '#newSearchButton', function() {
+        giggity.deleteMarkers();
         giggity.createPartial('formContainer', '.formContainer');
       });
     }, 500);
@@ -459,45 +485,54 @@ giggity.formHandler = function() {
   };
 
   giggity.eventInformation = function(eventObject, marker) {
-    // console.log(eventObject);
     let $removeEventButton = $('#removeEventButton');
-    let $formContainer = $('.formContainer');
+    let $eventContainer = $('.eventContainer');
     google.maps.event.addListener(marker, "click", () => {
-      $formContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
-        <h2>${eventObject.eventname}</h2>
-        <p>${eventObject.venue.name}</p>
-        <p>${eventObject.venue.address}</p>
-        <p>${eventObject.date}</p>
-        <p>${eventObject.entryprice}</p>
-        <img src='${eventObject.imageurl}'>
-        <button id="removeEventButton">Remove</button>
-        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
-        <button id="getDirectionsButton">Get Directions</button>
-      </div>`);
+    // if (!$eventContainer.contains('.eventObects')) {
+    $eventContainer.html(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
+      <h2>${eventObject.eventname}</h2>
+      <p>${eventObject.venue.name}</p>
+      <p>${eventObject.venue.address}</p>
+      <p>${eventObject.date}</p>
+      <p>${eventObject.entryprice}</p>
+      <img src='${eventObject.imageurl}'>
+      <button id="removeEventButton">Remove</button>
+      <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+      <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+      <button id="getDirectionsButton">Get Directions</button>
+      <select id="methodofTravel">
+      <option disabled="disabled">How are you travelling?</option>
+        <option value="DRIVING">DRIVING</option>
+        <option value="WALKING">WALKING</option>
+        <option value="BICYCLING">BICYCLING</option>
+        <option value="TRANSIT">TRANSIT</option>
+      </select>
+    </div>`);
     });
   };
 
-//current location
-setTimeout(function(){
-  $(".locationbutton").on("click", giggity.getLocation);
-}, 500);
 
-giggity.getLocation = function(){
-  markers.forEach(function(marker){
-    if (marker.metadata.id == "location"){
-      let index = markers.indexOf(marker);
-      markers[index].setMap(null);
-    }
-  });
+  //current location
+  setTimeout(function(){
+    $(".locationbutton").on("click", giggity.getLocation);
+  }, 500);
 
-  navigator.geolocation.getCurrentPosition((position) => {
-    let latLng = {lat: position.coords.latitude,
-                  lng: position.coords.longitude
-                };
+  giggity.getLocation = function(){
+    markers.forEach(function(marker){
+      if (marker.metadata.id == "location"){
+        let index = markers.indexOf(marker);
+        markers[index].setMap(null);
+      }
+    });
 
-    giggity.createMarker(position, "location");
-    giggity.map.panTo(latLng);
-    giggity.map.setZoom(16);
-  });
-};
+    navigator.geolocation.getCurrentPosition((position) => {
+      let latLng = {lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                  };
+      giggity.createMarker(position, "location");
+      giggity.map.panTo(latLng);
+      giggity.map.setZoom(16);
+    });
+  };
+
+  //PROFILE PAGE
