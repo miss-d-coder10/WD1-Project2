@@ -162,12 +162,8 @@ giggity.loopThroughEvents = function (data) {
     }, giggity.callback);
   });
   //DIRECTIONS
-
   giggity.$formContainer.on("click", '#getDirectionsButton', function () {
     var directionsDisplay;
-    directionsDisplay = new google.maps.DirectionsRenderer({
-      map: null
-    });
     var $methodOfTravel = $('#methodofTravel').val();
     navigator.geolocation.getCurrentPosition(function (position) {
       currentlatLng = { lat: position.coords.latitude,

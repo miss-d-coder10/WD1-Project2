@@ -163,12 +163,8 @@
       }, giggity.callback);
     });
     //DIRECTIONS
-
     giggity.$formContainer.on("click", '#getDirectionsButton', function() {
-      var directionsDisplay;
-      directionsDisplay = new google.maps.DirectionsRenderer({
-        map: null
-      });
+
       let $methodOfTravel = ($('#methodofTravel').val());
       navigator.geolocation.getCurrentPosition((position) => {
         currentlatLng = {     lat: position.coords.latitude,
@@ -178,7 +174,7 @@
         lat = $info.data('lat');
         lng = $info.data('lng');
         let latLng = { lat: lat, lng: lng };
-        let directionsService = new google.maps.DirectionsService();
+        directionsService = new google.maps.DirectionsService();
          let directionsRequest = {
            origin: currentlatLng,
            destination: latLng,
