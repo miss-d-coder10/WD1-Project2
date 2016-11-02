@@ -2,6 +2,9 @@
   let $main = $('main');
   let markers = [];
   let currentlatLng;
+  let lat;
+  let lng;
+  let $info = $('.eventObects');
 
   giggity.map = null;
   giggity.currentLat = null;
@@ -206,9 +209,10 @@
 
     //RESTAURANTS
     $formContainer.on("click", '#nearbyRestaurantsButton', function() {
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
+      $info = $('.eventObects');
+      lat = $info.data('lat');
+      lng = $info.data('lng');
+
       let latLng = { lat: lat, lng: lng };
 
       let service = new google.maps.places.PlacesService(giggity.map);
@@ -220,10 +224,12 @@
     });
     //PUBS AND BARS
     $formContainer.on("click", '#nearbyPubsButton', function() {
+      let methodOfTravel;
+
       console.log("trying to find pub");
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
+      $info = $('.eventObects');
+      lat = $info.data('lat');
+      lng = $info.data('lng');
       let latLng = { lat: lat, lng: lng };
       let service = new google.maps.places.PlacesService(giggity.map);
       service.nearbySearch({
@@ -235,34 +241,43 @@
     //DIRECTIONS
 
     $formContainer.on("click", '#getDirectionsButton', function() {
+      var directionsDisplay;
+      directionsDisplay = new google.maps.DirectionsRenderer({
+        map: null
+      });
+      let $methodOfTravel = ($('#methodofTravel').val());
       navigator.geolocation.getCurrentPosition((position) => {
-        currentlatLng = {lat: position.coords.latitude,
+        currentlatLng = {     lat: position.coords.latitude,
                               lng: position.coords.longitude
-                            };
+                        };
         console.log(currentlatLng);
-      });
-      let $info = $('.eventObects');
-      let lat = $info.data('lat');
-      let lng = $info.data('lng');
-      let latLng = { lat: lat, lng: lng };
-      let directionsService = new google.maps.DirectionsService();
-       let directionsRequest = {
-         origin: currentlatLng,
-         destination: latLng,
-         travelMode: google.maps.DirectionsTravelMode.DRIVING,
-         unitSystem: google.maps.UnitSystem.METRIC
-       };
 
-    directionsService.route(directionsRequest, function(response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          new google.maps.DirectionsRenderer({
-          map: giggity.map,
-          directions: response
+        $info = $('.eventObects');
+        lat = $info.data('lat');
+        lng = $info.data('lng');
+        console.log(lat);
+        console.log(lng);
+        let latLng = { lat: lat, lng: lng };
+        let directionsService = new google.maps.DirectionsService();
+         let directionsRequest = {
+           origin: currentlatLng,
+           destination: latLng,
+           travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
+           unitSystem: google.maps.UnitSystem.METRIC
+         };
+
+        directionsService.route(directionsRequest, function(response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay = new google.maps.DirectionsRenderer({
+            map: giggity.map,
+            directions: response
+          });
+        }
+          else
+            $("#error").append("Unable to retrieve your route<br />");
         });
-      }
-        else
-          $("#error").append("Unable to retrieve your route<br />");
       });
+
     });
   };
 
@@ -283,6 +298,7 @@
     });
 
     let infowindow = new google.maps.InfoWindow();
+
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.setContent(place.name);
       infowindow.open(this.map, this);
@@ -438,6 +454,7 @@ giggity.formHandler = function() {
     giggity.createPartial('submittedFormContainer', '.formContainer');
     setTimeout(function(){
       $formContainer.on("click", '#newSearchButton', function() {
+        giggity.deleteMarkers();
         giggity.createPartial('formContainer', '.formContainer');
       });
     }, 500);
@@ -469,10 +486,10 @@ giggity.formHandler = function() {
 
   giggity.eventInformation = function(eventObject, marker) {
     let $removeEventButton = $('#removeEventButton');
-    let $formtContainer = $('.formContainer');
+    let $eventContainer = $('.eventContainer');
     google.maps.event.addListener(marker, "click", () => {
-    if (!$formtContainer.contains('.eventObects')) {
-    $formtContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
+    // if (!$eventContainer.contains('.eventObects')) {
+    $eventContainer.html(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
       <h2>${eventObject.eventname}</h2>
       <p>${eventObject.venue.name}</p>
       <p>${eventObject.venue.address}</p>
@@ -483,10 +500,14 @@ giggity.formHandler = function() {
       <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
       <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
       <button id="getDirectionsButton">Get Directions</button>
+      <select id="methodofTravel">
+      <option disabled="disabled">How are you travelling?</option>
+        <option value="DRIVING">DRIVING</option>
+        <option value="WALKING">WALKING</option>
+        <option value="BICYCLING">BICYCLING</option>
+        <option value="TRANSIT">TRANSIT</option>
+      </select>
     </div>`);
-      } else {
-        $('.eventObects').remove();
-      }
     });
   };
 
@@ -513,3 +534,5 @@ giggity.formHandler = function() {
       giggity.map.setZoom(16);
     });
   };
+
+  //PROFILE PAGE
