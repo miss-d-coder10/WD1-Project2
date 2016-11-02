@@ -4,7 +4,7 @@ giggity.isLoggedIn = function () {
   return !!localStorage.getItem('token');
 };
 
-//create user
+//create user and log in
 giggity.signUp = function () {
   if (!$(".signUpForm").length) {
     console.log("CLICK");
@@ -16,9 +16,7 @@ giggity.signUp = function () {
 
 giggity.handleUserForm = function () {
   if (event) event.preventDefault();
-  console.log("test");
   var token = localStorage.getItem("token");
-
   var $form = $(this);
   var url = $form.attr("action");
   var method = $form.attr("method");
@@ -32,25 +30,30 @@ giggity.handleUserForm = function () {
       if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
     }
   }).done(function (data) {
+    console.log(data);
     if (data.token) localStorage.setItem('token', data.token);
+    giggity.getUsers();
     $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
-  }).fail(console.log("failed to log in"));
+  }).fail(function () {
+    console.log("failed to log in");
+  });
 };
 
 //get users
 giggity.getUsers = function () {
   if (event) event.preventDefault();
-  // let token = localStorage.getItem("token");
+  var token = localStorage.getItem("token");
 
   $.ajax({
     url: "/api/users",
-    method: "GET"
-    // beforeSend: function(jqXHR) {
-    //   if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-  }).done(function () {
-    console.log("test");
-    console.log(data);
+    method: "GET",
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
+    }
+  }).done(function (data) {
+    console.log("success");
+    console.log(data.users);
   });
 };

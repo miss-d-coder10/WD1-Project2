@@ -20,8 +20,12 @@ function register(req, res){
 
 function login(req, res){
   User.findOne({email: req.body.email}, (err, user) => {
-    if(err) return res.status(500).json({ message: "Something went wrong" + err });
+    if(err) {
+      console.log(err);
+      return res.status(500).json({ message: "Something went wrong" + err });
+    }
     if (!user || !user.validatePassword(req.body.password)) {
+      console.log("Password Was Invalid");
       return res.status(401).json({message: "unauthorised"});
     }
 
