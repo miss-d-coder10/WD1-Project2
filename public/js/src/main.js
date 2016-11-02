@@ -1,6 +1,7 @@
   let giggity = giggity || {};
   let $main = $('main');
   let markers = [];
+  let currentlatLng;
 
   giggity.map = null;
   giggity.currentLat = null;
@@ -8,10 +9,12 @@
 
   //BUILDING THE MAP IN THE MAP
   giggity.mapSetup = function() {
+    giggity.getLocation();
+
+
     let $mapDiv = $('#map');
 
     let mapOptions = {
-      center: { lat: 51.5074, lng: -0.1278 },
       zoom: 12,
       styles: [
                 {
@@ -229,16 +232,22 @@
         types: ['pub']
       }, giggity.callback);
     });
+    //DIRECTIONS
 
     $formContainer.on("click", '#getDirectionsButton', function() {
-      console.log("IN DIRECTIONS");
+      navigator.geolocation.getCurrentPosition((position) => {
+        currentlatLng = {lat: position.coords.latitude,
+                              lng: position.coords.longitude
+                            };
+        console.log(currentlatLng);
+      });
       let $info = $('.eventObects');
       let lat = $info.data('lat');
       let lng = $info.data('lng');
       let latLng = { lat: lat, lng: lng };
       let directionsService = new google.maps.DirectionsService();
        let directionsRequest = {
-         origin: "SW166QX",
+         origin: currentlatLng,
          destination: latLng,
          travelMode: google.maps.DirectionsTravelMode.DRIVING,
          unitSystem: google.maps.UnitSystem.METRIC
@@ -459,45 +468,48 @@ giggity.formHandler = function() {
   };
 
   giggity.eventInformation = function(eventObject, marker) {
-    // console.log(eventObject);
     let $removeEventButton = $('#removeEventButton');
-    let $formContainer = $('.formContainer');
+    let $formtContainer = $('.formContainer');
     google.maps.event.addListener(marker, "click", () => {
-      $formContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
-        <h2>${eventObject.eventname}</h2>
-        <p>${eventObject.venue.name}</p>
-        <p>${eventObject.venue.address}</p>
-        <p>${eventObject.date}</p>
-        <p>${eventObject.entryprice}</p>
-        <img src='${eventObject.imageurl}'>
-        <button id="removeEventButton">Remove</button>
-        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
-        <button id="getDirectionsButton">Get Directions</button>
-      </div>`);
+    if (!$formtContainer.contains('.eventObects')) {
+    $formtContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
+      <h2>${eventObject.eventname}</h2>
+      <p>${eventObject.venue.name}</p>
+      <p>${eventObject.venue.address}</p>
+      <p>${eventObject.date}</p>
+      <p>${eventObject.entryprice}</p>
+      <img src='${eventObject.imageurl}'>
+      <button id="removeEventButton">Remove</button>
+      <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+      <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+      <button id="getDirectionsButton">Get Directions</button>
+    </div>`);
+      } else {
+        $('.eventObects').remove();
+      }
     });
   };
 
-//current location
-setTimeout(function(){
-  $(".locationbutton").on("click", giggity.getLocation);
-}, 500);
 
-giggity.getLocation = function(){
-  markers.forEach(function(marker){
-    if (marker.metadata.id == "location"){
-      let index = markers.indexOf(marker);
-      markers[index].setMap(null);
-    }
-  });
+  //current location
+  setTimeout(function(){
+    $(".locationbutton").on("click", giggity.getLocation);
+  }, 500);
 
-  navigator.geolocation.getCurrentPosition((position) => {
-    let latLng = {lat: position.coords.latitude,
-                  lng: position.coords.longitude
-                };
+  giggity.getLocation = function(){
+    markers.forEach(function(marker){
+      if (marker.metadata.id == "location"){
+        let index = markers.indexOf(marker);
+        markers[index].setMap(null);
+      }
+    });
 
-    giggity.createMarker(position, "location");
-    giggity.map.panTo(latLng);
-    giggity.map.setZoom(16);
-  });
-};
+    navigator.geolocation.getCurrentPosition((position) => {
+      let latLng = {lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                  };
+      giggity.createMarker(position, "location");
+      giggity.map.panTo(latLng);
+      giggity.map.setZoom(16);
+    });
+  };

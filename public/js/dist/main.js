@@ -3,6 +3,7 @@
 var giggity = giggity || {};
 var $main = $('main');
 var markers = [];
+var currentlatLng = void 0;
 
 giggity.map = null;
 giggity.currentLat = null;
@@ -10,10 +11,11 @@ giggity.currentLng = null;
 
 //BUILDING THE MAP IN THE MAP
 giggity.mapSetup = function () {
+  giggity.getLocation();
+
   var $mapDiv = $('#map');
 
   var mapOptions = {
-    center: { lat: 51.5074, lng: -0.1278 },
     zoom: 12,
     styles: [{
       "featureType": "administrative",
@@ -179,16 +181,22 @@ giggity.loopThroughEvents = function (data) {
       types: ['pub']
     }, giggity.callback);
   });
+  //DIRECTIONS
 
   $formContainer.on("click", '#getDirectionsButton', function () {
-    console.log("IN DIRECTIONS");
+    navigator.geolocation.getCurrentPosition(function (position) {
+      currentlatLng = { lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      console.log(currentlatLng);
+    });
     var $info = $('.eventObects');
     var lat = $info.data('lat');
     var lng = $info.data('lng');
     var latLng = { lat: lat, lng: lng };
     var directionsService = new google.maps.DirectionsService();
     var directionsRequest = {
-      origin: "SW166QX",
+      origin: currentlatLng,
       destination: latLng,
       travelMode: google.maps.DirectionsTravelMode.DRIVING,
       unitSystem: google.maps.UnitSystem.METRIC
@@ -401,11 +409,14 @@ giggity.deleteMarkers = function () {
 };
 
 giggity.eventInformation = function (eventObject, marker) {
-  // console.log(eventObject);
   var $removeEventButton = $('#removeEventButton');
-  var $formContainer = $('.formContainer');
+  var $formtContainer = $('.formContainer');
   google.maps.event.addListener(marker, "click", function () {
-    $formContainer.append('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n        <h2>' + eventObject.eventname + '</h2>\n        <p>' + eventObject.venue.name + '</p>\n        <p>' + eventObject.venue.address + '</p>\n        <p>' + eventObject.date + '</p>\n        <p>' + eventObject.entryprice + '</p>\n        <img src=\'' + eventObject.imageurl + '\'>\n        <button id="removeEventButton">Remove</button>\n        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n        <button id="getDirectionsButton">Get Directions</button>\n      </div>');
+    if (!$formtContainer.contains('.eventObects')) {
+      $formtContainer.append('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n      <h2>' + eventObject.eventname + '</h2>\n      <p>' + eventObject.venue.name + '</p>\n      <p>' + eventObject.venue.address + '</p>\n      <p>' + eventObject.date + '</p>\n      <p>' + eventObject.entryprice + '</p>\n      <img src=\'' + eventObject.imageurl + '\'>\n      <button id="removeEventButton">Remove</button>\n      <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n      <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n      <button id="getDirectionsButton">Get Directions</button>\n    </div>');
+    } else {
+      $('.eventObects').remove();
+    }
   });
 };
 
@@ -426,7 +437,6 @@ giggity.getLocation = function () {
     var latLng = { lat: position.coords.latitude,
       lng: position.coords.longitude
     };
-
     giggity.createMarker(position, "location");
     giggity.map.panTo(latLng);
     giggity.map.setZoom(16);
