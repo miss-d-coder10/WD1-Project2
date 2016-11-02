@@ -31,6 +31,7 @@ giggity.initEventListeners = function () {
   this.$formContainer.on("click", '.locationButton', giggity.getLocation);
   this.$header.on("click", ".signUpButton", giggity.signUp);
   this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
+  this.$header.on("click", ".profileButton", giggity.showProfilePage);
   this.$body.on("submit", ".authform", giggity.handleUserForm);
 };
 
