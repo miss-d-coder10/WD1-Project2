@@ -52,4 +52,7 @@ router.route("/saveEvents/:id")
   .put(saveEventsController.update)
   .delete(saveEventsController.delete);
 
+router.route("/saveEvents/users/:userId")
+  .get(saveEventsController.userSearch);
+
 module.exports = router;
