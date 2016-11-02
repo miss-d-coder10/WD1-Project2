@@ -10,8 +10,14 @@ body{
     width: 100vw;
     height: 10vh;
     background: $blue-color;
+    @include display(flex);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    .signUpButton, .accountButton{
+      display: none;
+    }
   }
-  .signupform{
+  .signUpForm{
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -20,18 +26,12 @@ body{
     @include display(flex);
     @include justify-content(center);
     @include align-items(center);
-    .registercontainer{
+    .registerContainer{
       height: 600px;
       width: 400px;
       background-color: rgba(0,0,0,0.98);
       color: white;
       text-align: center;
-    }
-    .login{
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      color: black;
     }
   }
   main{
@@ -53,7 +53,7 @@ body{
         @include justify-content(space-around);
         @include align-items(center);
         @include flex-direction(row);
-        .query-elems{
+        .queryElems{
           input, select{
             margin-right: 15px;
           }
@@ -61,4 +61,46 @@ body{
       }
     }
   }
+}
+
+
+
+
+
+/* Style the list */
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
 }
