@@ -172,13 +172,36 @@ giggity.loopThroughEvents = function (data) {
     var lat = $info.data('lat');
     var lng = $info.data('lng');
     var latLng = { lat: lat, lng: lng };
-
     var service = new google.maps.places.PlacesService(giggity.map);
     service.nearbySearch({
       location: latLng,
       radius: 500,
       types: ['pub']
     }, giggity.callback);
+  });
+
+  $formContainer.on("click", '#getDirectionsButton', function () {
+    console.log("IN DIRECTIONS");
+    var $info = $('.eventObects');
+    var lat = $info.data('lat');
+    var lng = $info.data('lng');
+    var latLng = { lat: lat, lng: lng };
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRequest = {
+      origin: "SW166QX",
+      destination: latLng,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING,
+      unitSystem: google.maps.UnitSystem.METRIC
+    };
+
+    directionsService.route(directionsRequest, function (response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        new google.maps.DirectionsRenderer({
+          map: giggity.map,
+          directions: response
+        });
+      } else $("#error").append("Unable to retrieve your route<br />");
+    });
   });
 };
 

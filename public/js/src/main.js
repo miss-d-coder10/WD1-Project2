@@ -169,7 +169,7 @@
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
     this.createPartial('formContainer', '.formContainer');
-    this.createPartial('header', 'header')
+    this.createPartial('header', 'header');
     setTimeout(function(){
       giggity.formHandler();
     }, 1000);
@@ -222,13 +222,38 @@
       let lat = $info.data('lat');
       let lng = $info.data('lng');
       let latLng = { lat: lat, lng: lng };
-
       let service = new google.maps.places.PlacesService(giggity.map);
       service.nearbySearch({
         location: latLng,
         radius: 500,
         types: ['pub']
       }, giggity.callback);
+    });
+
+    $formContainer.on("click", '#getDirectionsButton', function() {
+      console.log("IN DIRECTIONS");
+      let $info = $('.eventObects');
+      let lat = $info.data('lat');
+      let lng = $info.data('lng');
+      let latLng = { lat: lat, lng: lng };
+      let directionsService = new google.maps.DirectionsService();
+       let directionsRequest = {
+         origin: "SW166QX",
+         destination: latLng,
+         travelMode: google.maps.DirectionsTravelMode.DRIVING,
+         unitSystem: google.maps.UnitSystem.METRIC
+       };
+
+    directionsService.route(directionsRequest, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          new google.maps.DirectionsRenderer({
+          map: giggity.map,
+          directions: response
+        });
+      }
+        else
+          $("#error").append("Unable to retrieve your route<br />");
+      });
     });
   };
 
