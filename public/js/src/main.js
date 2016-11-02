@@ -1,10 +1,39 @@
   let giggity = giggity || {};
-  let $main = $('main');
   let markers = [];
 
-  giggity.map = null;
-  giggity.currentLat = null;
-  giggity.currentLng = null;
+  giggity.init = function() {
+    this.map = null;
+    this.currentLat = null;
+    this.currentLng = null;
+    this.eventObject = null;
+    this.$main = $('main');
+    this.$header = $('header');
+    this.$formContainer = $('.formContainer');
+    this.$newSearchButton = $('#newSearchButton');
+    this.$removeEventButton = $('#removeEventButton');
+    this.$locationButton = $(".locationbutton");
+    this.$signUpForm = $(".signupform");
+    this.initEventListeners();
+    this.mapSetup();
+    this.checkLoginStatus();
+  };
+
+  giggity.initEventListeners = function() {
+    this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
+    this.$formContainer.on("click", '#newSearchButton', giggity.createFormContainer);
+    this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
+    this.$formContainer.on("click", '.locationButton', giggity.getLocation);
+    this.$header.on("click", ".signUpButton", giggity.signUp);
+    this.$signUpForm.on("submit", "form", giggity.handleUserForm);
+  };
+
+  giggity.checkLoginStatus = function(){
+    if (giggity.isLoggedIn()){
+      $('.accountButton').show();
+    } else {
+      $('.signUpButton').show();
+    }
+  };
 
   //BUILDING THE MAP IN THE MAP
   giggity.mapSetup = function() {
@@ -13,167 +42,61 @@
 
     let mapOptions = {
       zoom: 12,
-      styles: [
-                {
-                    "featureType": "administrative",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#6195a0"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "color": "#f2f2f2"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#ffffff"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi.park",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#e6f3d6"
-                        },
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "saturation": -100
-                        },
-                        {
-                            "lightness": 45
-                        },
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#f4d2c5"
-                        },
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        {
-                            "color": "#4e4e4e"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#f4f4f4"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#787878"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "color": "#eaf6f8"
-                        },
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#eaf6f8"
-                        }
-                    ]
-                }
-            ]
+      styles: giggity.mapSettings
     };
 
     this.map = new google.maps.Map($mapDiv[0], mapOptions);
-    this.createPartial('formContainer', '.formContainer');
-    this.createPartial('header', 'header');
-    setTimeout(function(){
-      giggity.formHandler();
-    }, 1000);
+    this.createFormContainer();
+    this.createHeader();
   };
+
+
+
+  giggity.formHandler = function(e) {
+      giggity.deleteMarkers();
+      let $form = $(this);
+      event.preventDefault();
+      let data = $form.serializeArray();
+      let unformattedDate = data[0];
+      let date = giggity.dateFormat(unformattedDate);
+      let lat = giggity.currentLat;
+      let lng = giggity.currentLng;
+      let radius = data[2].value;
+      let eventcode = data[3].value;
+      giggity.getEvents(date, lat, lng, radius, eventcode);
+      $('.formContainer').html(giggity.submittedFormContainerObject);
+  };
+
+  giggity.dateFormat = function(date){
+    let today = moment();
+    let maxDate;
+
+    if (date.value === 'Today') {
+      maxDate = moment(today).format("YYYY-MM-DD");
+    } else if (date.value === 'Next 7 days') {
+        let week = today.add(7, 'days');
+        maxDate = moment(week).format("YYYY-MM-DD");
+    } else if (date.value === 'Tomorrow') {
+        let tomorrow = today.add(1, 'days');
+        maxDate = moment(tomorrow).format("YYYY-MM-DD");
+    } else if (date.value === 'Next 14 days'){
+        let twoWeeks = today.add(14, 'days');
+        maxDate = moment(twoWeeks).format("YYYY-MM-DD");
+    } else if (date.value === 'Next 1 Month'){
+        let month = today.add(30, 'days');
+        maxDate = moment(month).format("YYYY-MM-DD");
+    }
+    return maxDate;
+  };
+
+  giggity.createFormContainer = function(){
+    $('.formContainer').html(giggity.formContainerObject);
+  };
+
+  giggity.createHeader = function(){
+    $('header').html(giggity.headerObject);
+  };
+
 
   giggity.getEvents = function(date, lat, lng, radius, eventcode) {
     $.ajax({
@@ -191,15 +114,15 @@
     .done(this.loopThroughEvents.bind(giggity));
   };
 
+  giggity.removeEventObject = function(){
+    $('.eventObects').remove();
+  };
+
   giggity.loopThroughEvents = function(data) {
     $.each(data, (index, eventObject) => {
-      giggity.createMarker(eventObject, "pin");
+      this.createMarker(eventObject, "pin");
     });
-    let $formContainer = $('.formContainer');
-    $formContainer.on("click", '#removeEventButton', function() {
-      console.log("In the remove section");
-      $('.eventObects').remove();
-    });
+
 
     //RESTAURANTS
     $formContainer.on("click", '#nearbyRestaurantsButton', function() {
@@ -257,9 +180,10 @@
     });
   };
 
+
+
   giggity.callback = function(results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
-      console.log(results);
       for (var i = 0; i < results.length; i++) {
         giggity.restaurantMarkerFunction(results[i]);
       }
@@ -333,35 +257,12 @@
 };
 
 
-$(giggity.mapSetup.bind(giggity));
-
-
-
-
-giggity.createPartial = function(partial, toGoIn){
-  let loadFrom = `/partials/_${partial}.html`;
-  let data = "";
-  $.get(loadFrom, data, function(data){
-      $(`${toGoIn}`).html(data);
-      if (partial === "formContainer"){
-        giggity.autoComplete();
-      }
-  });
-  return;
-};
-
-
-
-
-
 giggity.autoComplete = function(){
-
-  let map = giggity.map;
   var input = document.getElementById('pac-input');
   let searchBox = new google.maps.places.SearchBox(input);
 
-  map.addListener('bounds_changed', function(){
-    searchBox.setBounds(map.getBounds());
+  this.map.addListener('bounds_changed', function(){
+    searchBox.setBounds(this.map.getBounds());
   });
 
 
@@ -389,53 +290,7 @@ giggity.autoComplete = function(){
         bounds.extend(place.geometry.location);
       }
     });
-    map.fitBounds(bounds);
-  });
-};
-
-giggity.dateFormat = function(date){
-  let today = moment();
-  let maxDate;
-
-  if (date.value === 'Today') {
-    maxDate = moment(today).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 7 days') {
-      let week = today.add(7, 'days');
-      maxDate = moment(week).format("YYYY-MM-DD");
-  } else if (date.value === 'Tomorrow') {
-      let tomorrow = today.add(1, 'days');
-      maxDate = moment(tomorrow).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 14 days'){
-      let twoWeeks = today.add(14, 'days');
-      maxDate = moment(twoWeeks).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 1 Month'){
-      let month = today.add(30, 'days');
-      maxDate = moment(month).format("YYYY-MM-DD");
-  }
-  return maxDate;
-};
-
-giggity.formHandler = function() {
-  let $formContainer = $('.formContainer');
-  let $newSearchButton = $('#newSearchButton');
-  $formContainer.on("submit", '#event-selector', function(e) {
-    giggity.deleteMarkers();
-    let $form = $(this);
-    e.preventDefault();
-    let data = $form.serializeArray();
-    let unformattedDate = data[0];
-    let date = giggity.dateFormat(unformattedDate);
-    let lat = giggity.currentLat;
-    let lng = giggity.currentLng;
-    let radius = data[2].value;
-    let eventcode = data[3].value;
-    giggity.getEvents(date, lat, lng, radius, eventcode);
-    giggity.createPartial('submittedFormContainer', '.formContainer');
-    setTimeout(function(){
-      $formContainer.on("click", '#newSearchButton', function() {
-        giggity.createPartial('formContainer', '.formContainer');
-      });
-    }, 500);
+    this.map.fitBounds(bounds);
   });
 };
 
@@ -463,30 +318,26 @@ giggity.formHandler = function() {
   };
 
   giggity.eventInformation = function(eventObject, marker) {
-    // console.log(eventObject);
-    let $removeEventButton = $('#removeEventButton');
-    let $formContainer = $('.formContainer');
     google.maps.event.addListener(marker, "click", () => {
-      $formContainer.append(`<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
-        <h2>${eventObject.eventname}</h2>
-        <p>${eventObject.venue.name}</p>
-        <p>${eventObject.venue.address}</p>
-        <p>${eventObject.date}</p>
-        <p>${eventObject.entryprice}</p>
-        <img src='${eventObject.imageurl}'>
-        <button id="removeEventButton">Remove</button>
-        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
-        <button id="getDirectionsButton">Get Directions</button>
-      </div>`);
+      this.$formContainer.append(
+        `<div class="eventObects" data-lat=${giggity.eventObject.venue.latitude} data-lng=${giggity.eventObject.venue.longitude}>
+          <h2>${giggity.eventObject.eventname}</h2>
+          <p>${giggity.eventObject.venue.name}</p>
+          <p>${giggity.eventObject.venue.address}</p>
+          <p>${giggity.eventObject.date}</p>
+          <p>${giggity.eventObject.entryprice}</p>
+          <img src='${giggity.eventObject.imageurl}'>
+          <button id="removeEventButton">Remove</button>
+          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+          <button id="getDirectionsButton">Get Directions</button>
+        </div>`
+      );
     });
   };
 
-//current location
-setTimeout(function(){
-  $(".locationbutton").on("click", giggity.getLocation);
-}, 500);
 
+// Current Location
 giggity.getLocation = function(){
   markers.forEach(function(marker){
     if (marker.metadata.id == "location"){
@@ -506,3 +357,26 @@ giggity.getLocation = function(){
   });
   return;
 };
+
+
+giggity.openTab = function(evt, tabName) {
+  var i, tabcontent, tablinks;
+
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+  }
+
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+};
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    giggity.init();
+});

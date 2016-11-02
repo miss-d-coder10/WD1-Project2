@@ -1,6 +1,4 @@
-const mapSettings = mapSettings || {};
-
-mapSettings.settings = [
+giggity.mapSettings = [
           {
               "featureType": "administrative",
               "elementType": "labels.text.fill",

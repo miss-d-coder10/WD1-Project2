@@ -1,12 +1,41 @@
 'use strict';
 
 var giggity = giggity || {};
-var $main = $('main');
 var markers = [];
 
-giggity.map = null;
-giggity.currentLat = null;
-giggity.currentLng = null;
+giggity.init = function () {
+  this.map = null;
+  this.currentLat = null;
+  this.currentLng = null;
+  this.eventObject = null;
+  this.$main = $('main');
+  this.$header = $('header');
+  this.$formContainer = $('.formContainer');
+  this.$newSearchButton = $('#newSearchButton');
+  this.$removeEventButton = $('#removeEventButton');
+  this.$locationButton = $(".locationbutton");
+  this.$signUpForm = $(".signupform");
+  this.initEventListeners();
+  this.mapSetup();
+  this.checkLoginStatus();
+};
+
+giggity.initEventListeners = function () {
+  this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
+  this.$formContainer.on("click", '#newSearchButton', giggity.createFormContainer);
+  this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
+  this.$formContainer.on("click", '.locationButton', giggity.getLocation);
+  this.$header.on("click", ".signUpButton", giggity.signUp);
+  this.$signUpForm.on("submit", "form", giggity.handleUserForm);
+};
+
+giggity.checkLoginStatus = function () {
+  if (giggity.isLoggedIn()) {
+    $('.accountButton').show();
+  } else {
+    $('.signUpButton').show();
+  }
+};
 
 //BUILDING THE MAP IN THE MAP
 giggity.mapSetup = function () {
@@ -15,115 +44,57 @@ giggity.mapSetup = function () {
 
   var mapOptions = {
     zoom: 12,
-    styles: [{
-      "featureType": "administrative",
-      "elementType": "labels.text.fill",
-      "stylers": [{
-        "color": "#6195a0"
-      }]
-    }, {
-      "featureType": "landscape",
-      "elementType": "all",
-      "stylers": [{
-        "color": "#f2f2f2"
-      }]
-    }, {
-      "featureType": "landscape",
-      "elementType": "geometry.fill",
-      "stylers": [{
-        "color": "#ffffff"
-      }]
-    }, {
-      "featureType": "poi",
-      "elementType": "all",
-      "stylers": [{
-        "visibility": "off"
-      }]
-    }, {
-      "featureType": "poi.park",
-      "elementType": "geometry.fill",
-      "stylers": [{
-        "color": "#e6f3d6"
-      }, {
-        "visibility": "on"
-      }]
-    }, {
-      "featureType": "road",
-      "elementType": "all",
-      "stylers": [{
-        "saturation": -100
-      }, {
-        "lightness": 45
-      }, {
-        "visibility": "simplified"
-      }]
-    }, {
-      "featureType": "road.highway",
-      "elementType": "all",
-      "stylers": [{
-        "visibility": "simplified"
-      }]
-    }, {
-      "featureType": "road.highway",
-      "elementType": "geometry.fill",
-      "stylers": [{
-        "color": "#f4d2c5"
-      }, {
-        "visibility": "simplified"
-      }]
-    }, {
-      "featureType": "road.highway",
-      "elementType": "labels.text",
-      "stylers": [{
-        "color": "#4e4e4e"
-      }]
-    }, {
-      "featureType": "road.arterial",
-      "elementType": "geometry.fill",
-      "stylers": [{
-        "color": "#f4f4f4"
-      }]
-    }, {
-      "featureType": "road.arterial",
-      "elementType": "labels.text.fill",
-      "stylers": [{
-        "color": "#787878"
-      }]
-    }, {
-      "featureType": "road.arterial",
-      "elementType": "labels.icon",
-      "stylers": [{
-        "visibility": "off"
-      }]
-    }, {
-      "featureType": "transit",
-      "elementType": "all",
-      "stylers": [{
-        "visibility": "off"
-      }]
-    }, {
-      "featureType": "water",
-      "elementType": "all",
-      "stylers": [{
-        "color": "#eaf6f8"
-      }, {
-        "visibility": "on"
-      }]
-    }, {
-      "featureType": "water",
-      "elementType": "geometry.fill",
-      "stylers": [{
-        "color": "#eaf6f8"
-      }]
-    }]
+    styles: giggity.mapSettings
   };
 
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
-  this.createPartial('formContainer', '.formContainer');
-  this.createPartial('header', 'header');
-  setTimeout(function () {
-    giggity.formHandler();
-  }, 1000);
+  this.createFormContainer();
+  this.createHeader();
+};
+
+giggity.formHandler = function (e) {
+  giggity.deleteMarkers();
+  var $form = $(this);
+  event.preventDefault();
+  var data = $form.serializeArray();
+  var unformattedDate = data[0];
+  var date = giggity.dateFormat(unformattedDate);
+  var lat = giggity.currentLat;
+  var lng = giggity.currentLng;
+  var radius = data[2].value;
+  var eventcode = data[3].value;
+  giggity.getEvents(date, lat, lng, radius, eventcode);
+  $('.formContainer').html(giggity.submittedFormContainerObject);
+};
+
+giggity.dateFormat = function (date) {
+  var today = moment();
+  var maxDate = void 0;
+
+  if (date.value === 'Today') {
+    maxDate = moment(today).format("YYYY-MM-DD");
+  } else if (date.value === 'Next 7 days') {
+    var week = today.add(7, 'days');
+    maxDate = moment(week).format("YYYY-MM-DD");
+  } else if (date.value === 'Tomorrow') {
+    var tomorrow = today.add(1, 'days');
+    maxDate = moment(tomorrow).format("YYYY-MM-DD");
+  } else if (date.value === 'Next 14 days') {
+    var twoWeeks = today.add(14, 'days');
+    maxDate = moment(twoWeeks).format("YYYY-MM-DD");
+  } else if (date.value === 'Next 1 Month') {
+    var month = today.add(30, 'days');
+    maxDate = moment(month).format("YYYY-MM-DD");
+  }
+  return maxDate;
+};
+
+giggity.createFormContainer = function () {
+  $('.formContainer').html(giggity.formContainerObject);
+};
+
+giggity.createHeader = function () {
+  $('header').html(giggity.headerObject);
 };
 
 giggity.getEvents = function (date, lat, lng, radius, eventcode) {
@@ -141,14 +112,15 @@ giggity.getEvents = function (date, lat, lng, radius, eventcode) {
   }).done(this.loopThroughEvents.bind(giggity));
 };
 
+giggity.removeEventObject = function () {
+  $('.eventObects').remove();
+};
+
 giggity.loopThroughEvents = function (data) {
+  var _this = this;
+
   $.each(data, function (index, eventObject) {
-    giggity.createMarker(eventObject, "pin");
-  });
-  var $formContainer = $('.formContainer');
-  $formContainer.on("click", '#removeEventButton', function () {
-    console.log("In the remove section");
-    $('.eventObects').remove();
+    _this.createMarker(eventObject, "pin");
   });
 
   //RESTAURANTS
@@ -207,7 +179,6 @@ giggity.loopThroughEvents = function (data) {
 
 giggity.callback = function (results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
-    console.log(results);
     for (var i = 0; i < results.length; i++) {
       giggity.restaurantMarkerFunction(results[i]);
     }
@@ -264,41 +235,25 @@ giggity.icons = {
 
 //ADDING INFO WINDOW
 giggity.addInfoWindow = function (eventObject, marker) {
-  var _this = this;
+  var _this2 = this;
 
   google.maps.event.addListener(marker, "click", function () {
-    if (_this.infoWindow) {
-      _this.infoWindow.close();
+    if (_this2.infoWindow) {
+      _this2.infoWindow.close();
     }
-    _this.infoWindow = new google.maps.InfoWindow({
+    _this2.infoWindow = new google.maps.InfoWindow({
       content: '<h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.venue.name + '</p>\n                <p>' + eventObject.venue.address + '</p>\n                <p>' + eventObject.date + '</p>\n                <p>' + eventObject.entryprice + '</p>\n                <img src=\'' + eventObject.imageurl + '\'</>'
     });
-    _this.infoWindow.open(_this.map, marker);
+    _this2.infoWindow.open(_this2.map, marker);
   });
-};
-
-$(giggity.mapSetup.bind(giggity));
-
-giggity.createPartial = function (partial, toGoIn) {
-  var loadFrom = '/partials/_' + partial + '.html';
-  var data = "";
-  $.get(loadFrom, data, function (data) {
-    $('' + toGoIn).html(data);
-    if (partial === "formContainer") {
-      giggity.autoComplete();
-    }
-  });
-  return;
 };
 
 giggity.autoComplete = function () {
-
-  var map = giggity.map;
   var input = document.getElementById('pac-input');
   var searchBox = new google.maps.places.SearchBox(input);
 
-  map.addListener('bounds_changed', function () {
-    searchBox.setBounds(map.getBounds());
+  this.map.addListener('bounds_changed', function () {
+    searchBox.setBounds(this.map.getBounds());
   });
 
   // Listen for the event fired when the user selects a prediction and retrieve
@@ -325,53 +280,7 @@ giggity.autoComplete = function () {
         bounds.extend(place.geometry.location);
       }
     });
-    map.fitBounds(bounds);
-  });
-};
-
-giggity.dateFormat = function (date) {
-  var today = moment();
-  var maxDate = void 0;
-
-  if (date.value === 'Today') {
-    maxDate = moment(today).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 7 days') {
-    var week = today.add(7, 'days');
-    maxDate = moment(week).format("YYYY-MM-DD");
-  } else if (date.value === 'Tomorrow') {
-    var tomorrow = today.add(1, 'days');
-    maxDate = moment(tomorrow).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 14 days') {
-    var twoWeeks = today.add(14, 'days');
-    maxDate = moment(twoWeeks).format("YYYY-MM-DD");
-  } else if (date.value === 'Next 1 Month') {
-    var month = today.add(30, 'days');
-    maxDate = moment(month).format("YYYY-MM-DD");
-  }
-  return maxDate;
-};
-
-giggity.formHandler = function () {
-  var $formContainer = $('.formContainer');
-  var $newSearchButton = $('#newSearchButton');
-  $formContainer.on("submit", '#event-selector', function (e) {
-    giggity.deleteMarkers();
-    var $form = $(this);
-    e.preventDefault();
-    var data = $form.serializeArray();
-    var unformattedDate = data[0];
-    var date = giggity.dateFormat(unformattedDate);
-    var lat = giggity.currentLat;
-    var lng = giggity.currentLng;
-    var radius = data[2].value;
-    var eventcode = data[3].value;
-    giggity.getEvents(date, lat, lng, radius, eventcode);
-    giggity.createPartial('submittedFormContainer', '.formContainer');
-    setTimeout(function () {
-      $formContainer.on("click", '#newSearchButton', function () {
-        giggity.createPartial('formContainer', '.formContainer');
-      });
-    }, 500);
+    this.map.fitBounds(bounds);
   });
 };
 
@@ -399,19 +308,14 @@ giggity.deleteMarkers = function () {
 };
 
 giggity.eventInformation = function (eventObject, marker) {
-  // console.log(eventObject);
-  var $removeEventButton = $('#removeEventButton');
-  var $formContainer = $('.formContainer');
+  var _this3 = this;
+
   google.maps.event.addListener(marker, "click", function () {
-    $formContainer.append('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n        <h2>' + eventObject.eventname + '</h2>\n        <p>' + eventObject.venue.name + '</p>\n        <p>' + eventObject.venue.address + '</p>\n        <p>' + eventObject.date + '</p>\n        <p>' + eventObject.entryprice + '</p>\n        <img src=\'' + eventObject.imageurl + '\'>\n        <button id="removeEventButton">Remove</button>\n        <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n        <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n        <button id="getDirectionsButton">Get Directions</button>\n      </div>');
+    _this3.$formContainer.append('<div class="eventObects" data-lat=' + giggity.eventObject.venue.latitude + ' data-lng=' + giggity.eventObject.venue.longitude + '>\n          <h2>' + giggity.eventObject.eventname + '</h2>\n          <p>' + giggity.eventObject.venue.name + '</p>\n          <p>' + giggity.eventObject.venue.address + '</p>\n          <p>' + giggity.eventObject.date + '</p>\n          <p>' + giggity.eventObject.entryprice + '</p>\n          <img src=\'' + giggity.eventObject.imageurl + '\'>\n          <button id="removeEventButton">Remove</button>\n          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n          <button id="getDirectionsButton">Get Directions</button>\n        </div>');
   });
 };
 
-//current location
-setTimeout(function () {
-  $(".locationbutton").on("click", giggity.getLocation);
-}, 500);
-
+// Current Location
 giggity.getLocation = function () {
   markers.forEach(function (marker) {
     if (marker.metadata.id == "location") {
@@ -431,214 +335,24 @@ giggity.getLocation = function () {
   });
   return;
 };
-"use strict";
 
-var mapSettings = mapSettings || {};
+giggity.openTab = function (evt, tabName) {
+  var i, tabcontent, tablinks;
 
-mapSettings.settings = [{
-    "featureType": "administrative",
-    "elementType": "labels.text.fill",
-    "stylers": [{
-        "color": "#6195a0"
-    }]
-}, {
-    "featureType": "landscape",
-    "elementType": "all",
-    "stylers": [{
-        "color": "#f2f2f2"
-    }]
-}, {
-    "featureType": "landscape",
-    "elementType": "geometry.fill",
-    "stylers": [{
-        "color": "#ffffff"
-    }]
-}, {
-    "featureType": "poi",
-    "elementType": "all",
-    "stylers": [{
-        "visibility": "off"
-    }]
-}, {
-    "featureType": "poi.park",
-    "elementType": "geometry.fill",
-    "stylers": [{
-        "color": "#e6f3d6"
-    }, {
-        "visibility": "on"
-    }]
-}, {
-    "featureType": "road",
-    "elementType": "all",
-    "stylers": [{
-        "saturation": -100
-    }, {
-        "lightness": 45
-    }, {
-        "visibility": "simplified"
-    }]
-}, {
-    "featureType": "road.highway",
-    "elementType": "all",
-    "stylers": [{
-        "visibility": "simplified"
-    }]
-}, {
-    "featureType": "road.highway",
-    "elementType": "geometry.fill",
-    "stylers": [{
-        "color": "#f4d2c5"
-    }, {
-        "visibility": "simplified"
-    }]
-}, {
-    "featureType": "road.highway",
-    "elementType": "labels.text",
-    "stylers": [{
-        "color": "#4e4e4e"
-    }]
-}, {
-    "featureType": "road.arterial",
-    "elementType": "geometry.fill",
-    "stylers": [{
-        "color": "#f4f4f4"
-    }]
-}, {
-    "featureType": "road.arterial",
-    "elementType": "labels.text.fill",
-    "stylers": [{
-        "color": "#787878"
-    }]
-}, {
-    "featureType": "road.arterial",
-    "elementType": "labels.icon",
-    "stylers": [{
-        "visibility": "off"
-    }]
-}, {
-    "featureType": "transit",
-    "elementType": "all",
-    "stylers": [{
-        "visibility": "off"
-    }]
-}, {
-    "featureType": "water",
-    "elementType": "all",
-    "stylers": [{
-        "color": "#eaf6f8"
-    }, {
-        "visibility": "on"
-    }]
-}, {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [{
-        "color": "#eaf6f8"
-    }]
-}];
-'use strict';
-
-$(function () {
-  setTimeout(function () {
-    if (user.isLoggedIn()) {
-      $('.accountButton').show();
-    } else {
-      $('.signUpButton').show();
-    }
-  }, 100);
-
-  giggity.openTab = function (evt, tabName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
-
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // Show the current tab, and add an "active" class to the link that opened the tab
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-  };
-});
-"use strict";
-
-var user = user || {};
-
-user.isLoggedIn = function () {
-  return !!localStorage.getItem('token');
-};
-
-$("header").on("click", ".signUpButton", user.signUp);
-
-//create user
-user.signUp = function () {
-  console.log("CLICK");
-  if (!$(".signupform").length) {
-    $("body").prepend("\n          <div class='signupform'>\n            <ul class=\"tab\">\n              <li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"giggity.openTab(event, 'signUp')\">signUp</a></li>\n              <li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"giggity.openTab(event, 'signIn')\">signIn</a></li>\n            </ul>\n\n            <div id=\"signUp\" class=\"tabcontent\">\n              <div class=\"registercontainer\">\n                <h2>Register</h2>\n                <form method=\"post\" action=\"/api/register\">\n                <div>\n                  <input name=\"user[firstName]\" placeholder=\"First Name\">\n                </div>\n                <div>\n                  <input name=\"user[lastName]\" placeholder=\"Last Name\">\n                </div>\n                <div>\n                  <input name=\"user[email]\" placeholder=\"Email\">\n                </div>\n                <div>\n                  <input type=\"password\" name=\"user[password]\" placeholder=\"Password\">\n                </div>\n                <div>\n                  <input type=\"password\" name=\"user[passwordConfirmation]\" placeholder=\"Password Confirmation\">\n                </div>\n                <button>Register</button>\n                </form>\n              </div>\n            </div>\n\n            <div id=\"signIn\" class=\"tabcontent\">\n              <div class='loginform'>\n                <div class=\"logincontainer\">\n                  <h2>Log in</h2>\n                  <form method=\"post\" action=\"/api/login\">\n                  <div>\n                    <input name=\"user[firstName]\" placeholder=\"First Name\">\n                  </div>\n                  <div>\n                    <input name=\"user[lastName]\" placeholder=\"Last Name\">\n                  </div>\n                  <div>\n                    <input name=\"user[email]\" placeholder=\"Email\">\n                  </div>\n                  <button>Log in</button>\n                  </form>\n                </div>\n              </div>\n            </div>\n          </div>\n    ");
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
   }
-  $(".signupform").on("submit", "form", handleForm);
-  $(".loginform").on("submit", "form", handleForm);
+
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
 };
 
-//handle form
-
-function handleForm() {
-  if (event) event.preventDefault();
-
-  var token = localStorage.getItem("token");
-
-  var $form = $(this);
-  var url = $form.attr("action");
-  var method = $form.attr("method");
-  var data = $form.serialize();
-
-  $.ajax({
-    url: url,
-    method: method,
-    data: data,
-    beforeSend: function beforeSend(jqXHR) {
-      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
-    }
-  }).done(function (data) {
-    if (data.token) localStorage.setItem('token', data.token);
-    $('.signupform').remove();
-    $('.accountButton').show();
-    $('.signUpButton').hide();
-  }).fail(console.log("failed to log in"));
-}
-
-//get users
-function getUsers() {
-  if (event) event.preventDefault();
-  // let token = localStorage.getItem("token");
-
-  $.ajax({
-    url: "/api/users",
-    method: "GET"
-    // beforeSend: function(jqXHR) {
-    //   if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-  }).done(function () {
-    console.log("test");
-    console.log(data);
-  });
-}
-
-//show users
-
-//show log in form
-// user.login = function () {
-//   if(!($(".loginform").length)){
-//     $("body").prepend(`
-//
-//     `);
-//   }
-//
-// };
+document.addEventListener('DOMContentLoaded', function () {
+  giggity.init();
+});
