@@ -1,25 +1,23 @@
 "use strict";
 
-var user = user || {};
-
-setTimeout(function () {
-  $(".signupbutton").on("click", user.signUp);
-}, 500);
+giggity.isLoggedIn = function () {
+  return !!localStorage.getItem('token');
+};
 
 //create user
-user.signUp = function () {
+giggity.signUp = function () {
   if (!$(".signupform").length) {
-    $("body").prepend("\n      <div class='signupform'>\n        <div class=\"registercontainer\">\n          <h2>Register</h2>\n          <form method=\"post\" action=\"/api/register\">\n          <div>\n            <input name=\"user[firstName]\" placeholder=\"First Name\">\n          </div>\n          <div>\n            <input name=\"user[lastName]\" placeholder=\"Last Name\">\n          </div>\n          <div>\n            <input name=\"user[email]\" placeholder=\"Email\">\n          </div>\n          <div>\n            <input type=\"password\" name=\"user[password]\" placeholder=\"Password\">\n          </div>\n          <div>\n            <input type=\"password\" name=\"user[passwordConfirmation]\" placeholder=\"Password Confirmation\">\n          </div>\n          <button>Register</button>\n          </form>\n        </div>\n      </div>\n    ");
+    console.log("CLICK");
+    $("body").prepend(giggity.signUpFormObject);
   }
-  $(".signupform").on("submit", "form", handleForm);
 };
 
 //handle form
 
-function handleForm() {
+giggity.handleUserForm = function () {
   if (event) event.preventDefault();
-
-  // let token = localStorage.getItem("token");
+  console.log("test");
+  var token = localStorage.getItem("token");
 
   var $form = $(this);
   var url = $form.attr("action");
@@ -29,19 +27,20 @@ function handleForm() {
   $.ajax({
     url: url,
     method: method,
-    data: data
-    // beforeSend: function(jqXHR) {
-    //   if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-    // }
+    data: data,
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
+    }
   }).done(function (data) {
-    console.log(data);
-    // if(data.token) localStorage.setItem('token', data.token);
-    getUsers();
-  });
-}
+    if (data.token) localStorage.setItem('token', data.token);
+    $('.signupform').remove();
+    $('.accountButton').show();
+    $('.signUpButton').hide();
+  }).fail(console.log("failed to log in"));
+};
 
 //get users
-function getUsers() {
+giggity.getUsers = function () {
   if (event) event.preventDefault();
   // let token = localStorage.getItem("token");
 
@@ -54,14 +53,4 @@ function getUsers() {
     console.log("test");
     console.log(data);
   });
-}
-
-//show users
-
-//show log in form
-user.login = function () {
-  if (!$(".loginform").length) {
-    $("body").prepend("\n      <div class='loginform'>\n        <div class=\"logincontainer\">\n          <h2>Log in</h2>\n          <form method=\"post\" action=\"/api/login\">\n          <div>\n            <input name=\"user[firstName]\" placeholder=\"First Name\">\n          </div>\n          <div>\n            <input name=\"user[lastName]\" placeholder=\"Last Name\">\n          </div>\n          <div>\n            <input name=\"user[email]\" placeholder=\"Email\">\n          </div>\n          <button>Log in</button>\n          </form>\n        </div>\n      </div>\n    ");
-  }
-  $(".loginform").on("submit", "form", handleForm);
 };
