@@ -66,6 +66,15 @@ body {
     -ms-flex-align: center; }
     body .header .signUpButton, body .header .accountButton {
       display: none; }
+    body .header .accountMenu {
+      display: none;
+      position: fixed;
+      top: 10vh;
+      right: 0;
+      background: red;
+      z-index: 3;
+      width: 125px;
+      height: 176px; }
   body .signUpForm {
     position: absolute;
     width: 100vw;

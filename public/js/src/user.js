@@ -56,3 +56,8 @@ giggity.handleUserForm = function() {
       console.log(data.users);
     });
   };
+
+  giggity.toggleAccountMenu = function(){
+    console.log('CLICK');
+    $('.accountMenu').toggle();
+  };

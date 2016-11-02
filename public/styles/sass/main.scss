@@ -16,6 +16,16 @@ body{
     .signUpButton, .accountButton{
       display: none;
     }
+    .accountMenu{
+      display: none;
+      position: fixed;
+      top: 10vh;
+      right: 0;
+      background: red;
+      z-index: 3;
+      width: 125px;
+      height: 176px;
+    }
   }
   .signUpForm{
     position: absolute;

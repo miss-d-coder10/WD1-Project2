@@ -30,6 +30,7 @@ giggity.initEventListeners = function () {
   this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
   this.$formContainer.on("click", '.locationButton', giggity.getLocation);
   this.$header.on("click", ".signUpButton", giggity.signUp);
+  this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
   this.$body.on("submit", ".authform", giggity.handleUserForm);
 };
 
@@ -163,7 +164,7 @@ giggity.loopThroughEvents = function (data) {
   });
   //DIRECTIONS
   giggity.$formContainer.on("click", '#getDirectionsButton', function () {
-    var directionsDisplay;
+
     var $methodOfTravel = $('#methodofTravel').val();
     navigator.geolocation.getCurrentPosition(function (position) {
       currentlatLng = { lat: position.coords.latitude,
@@ -173,7 +174,7 @@ giggity.loopThroughEvents = function (data) {
       lat = $info.data('lat');
       lng = $info.data('lng');
       var latLng = { lat: lat, lng: lng };
-      var directionsService = new google.maps.DirectionsService();
+      directionsService = new google.maps.DirectionsService();
       var directionsRequest = {
         origin: currentlatLng,
         destination: latLng,

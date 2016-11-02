@@ -28,6 +28,7 @@
     this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
     this.$formContainer.on("click", '.locationButton', giggity.getLocation);
     this.$header.on("click", ".signUpButton", giggity.signUp);
+    this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
     this.$body.on("submit", ".authform", giggity.handleUserForm);
   };
 
