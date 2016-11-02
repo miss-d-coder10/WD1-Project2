@@ -14,6 +14,10 @@ button, input, select{
   @include box-sizing(initial);
 }
 
+input{
+  cursor: text;
+}
+
 .locationButton{
   width: 30px;
   cursor: pointer;

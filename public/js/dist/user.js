@@ -30,9 +30,8 @@ giggity.handleUserForm = function () {
       if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
     }
   }).done(function (data) {
-    console.log(data);
+    if (data.user._id) localStorage.setItem('userId', data.user._id);
     if (data.token) localStorage.setItem('token', data.token);
-    giggity.getUsers();
     $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();

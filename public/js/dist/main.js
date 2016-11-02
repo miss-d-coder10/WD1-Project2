@@ -11,6 +11,7 @@ giggity.init = function () {
   this.map = null;
   this.currentLat = null;
   this.currentLng = null;
+  this.currentEvent = null;
   this.$main = $('main');
   this.$header = $('header');
   this.$formContainer = $('.formContainer');
@@ -27,6 +28,7 @@ giggity.init = function () {
 giggity.initEventListeners = function () {
   this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
   this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
+  this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
   this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
   this.$formContainer.on("click", '.locationButton', giggity.getLocation);
   this.$header.on("click", ".signUpButton", giggity.signUp);
@@ -314,8 +316,8 @@ giggity.deleteMarkers = function () {
 
 giggity.eventInformation = function (eventObject, marker) {
   google.maps.event.addListener(marker, "click", function () {
-    // if (!$eventContainer.contains('.eventObects')) {
-    giggity.$formContainer.html('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <h2>' + eventObject.eventname + '</h2>\n          <p>' + eventObject.venue.name + '</p>\n          <p>' + eventObject.venue.address + '</p>\n          <p>' + eventObject.date + '</p>\n          <p>' + eventObject.entryprice + '</p>\n          <img src=\'' + eventObject.imageurl + '\'>\n          <button id="removeEventButton">Remove</button>\n          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n          <button id="getDirectionsButton">Get Directions</button>\n          <select id="methodofTravel">\n          <option disabled="disabled">How are you travelling?</option>\n            <option value="DRIVING">DRIVING</option>\n            <option value="WALKING">WALKING</option>\n            <option value="BICYCLING">BICYCLING</option>\n            <option value="TRANSIT">TRANSIT</option>\n          </select>\n          <button id="newSearchButton">New Search</button>\n        </div>');
+    giggity.currentEvent = eventObject.id;
+    giggity.$formContainer.html('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <h2>' + eventObject.eventname + '</h2>\n          <p>' + eventObject.venue.name + '</p>\n          <p>' + eventObject.venue.address + '</p>\n          <p>' + eventObject.date + '</p>\n          <p>' + eventObject.entryprice + '</p>\n          <img src=\'' + eventObject.imageurl + '\'>\n          <button id="removeEventButton">Remove</button>\n          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n          <button id="getDirectionsButton">Get Directions</button>\n          <select id="methodofTravel">\n          <option disabled="disabled">How are you travelling?</option>\n            <option value="DRIVING">DRIVING</option>\n            <option value="WALKING">WALKING</option>\n            <option value="BICYCLING">BICYCLING</option>\n            <option value="TRANSIT">TRANSIT</option>\n          </select>\n          <button id="saveEventButton">Save Event</button>\n          <button id="newSearchButton">New Search</button>\n        </div>');
   });
 };
 
@@ -355,6 +357,35 @@ giggity.openTab = function (evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 };
+
+giggity.saveEventFunction = function () {
+  if (!giggity.isLoggedIn()) {
+    giggity.signUp();
+    return;
+  }
+  var token = localStorage.getItem("token");
+  var currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    contentType: 'application/json',
+    url: "/api/saveEvents",
+    method: "POST",
+    data: JSON.stringify({
+      "skiddleId": giggity.currentEvent,
+      "userId": currentUser
+    }),
+    dataType: 'json',
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+  }).done(function (data) {
+    console.log(data);
+  }).fail(function (data) {
+    console.log("failed to save Event");
+  });
+};
+
+giggity.isEventSaved = function () {};
 
 document.addEventListener('DOMContentLoaded', function () {
   giggity.init();

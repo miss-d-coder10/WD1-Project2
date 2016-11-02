@@ -9,6 +9,7 @@
     this.map = null;
     this.currentLat = null;
     this.currentLng = null;
+    this.currentEvent = null;
     this.$main = $('main');
     this.$header = $('header');
     this.$formContainer = $('.formContainer');
@@ -25,6 +26,7 @@
   giggity.initEventListeners = function() {
     this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
     this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
+    this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
     this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
     this.$formContainer.on("click", '.locationButton', giggity.getLocation);
     this.$header.on("click", ".signUpButton", giggity.signUp);
@@ -322,7 +324,7 @@ giggity.autoComplete = function(){
 
   giggity.eventInformation = function(eventObject, marker) {
     google.maps.event.addListener(marker, "click", () => {
-      // if (!$eventContainer.contains('.eventObects')) {
+      giggity.currentEvent = eventObject.id;
       giggity.$formContainer.html(
         `<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
           <h2>${eventObject.eventname}</h2>
@@ -342,6 +344,7 @@ giggity.autoComplete = function(){
             <option value="BICYCLING">BICYCLING</option>
             <option value="TRANSIT">TRANSIT</option>
           </select>
+          <button id="saveEventButton">Save Event</button>
           <button id="newSearchButton">New Search</button>
         </div>`
       );
@@ -386,6 +389,44 @@ giggity.openTab = function(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 };
+
+
+giggity.saveEventFunction = function(){
+  if(!giggity.isLoggedIn()){
+    giggity.signUp();
+    return;
+  }
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    contentType: 'application/json',
+    url:"/api/saveEvents",
+    method: "POST",
+    data: JSON.stringify({
+      "skiddleId": giggity.currentEvent,
+      "userId": currentUser
+    }),
+    dataType: 'json',
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    console.log(data);
+  })
+  .fail((data) => {console.log("failed to save Event");});
+};
+
+giggity.isEventSaved = function(){
+
+};
+
+
+
+
+
+
 
 
 document.addEventListener('DOMContentLoaded', function() {

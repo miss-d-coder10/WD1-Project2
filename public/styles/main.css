@@ -19,6 +19,9 @@ button, input, select {
   -moz-box-sizing: initial;
   box-sizing: initial; }
 
+input {
+  cursor: text; }
+
 .locationButton {
   width: 30px;
   cursor: pointer; }
