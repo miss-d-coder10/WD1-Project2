@@ -1,12 +1,12 @@
 giggity.signUpFormObject = `
-      <div class='signupform'>
+      <div class='signUpForm'>
         <ul class="tab">
           <li><a href="javascript:void(0)" class="tablinks" onclick="giggity.openTab(event, 'signUp')">signUp</a></li>
           <li><a href="javascript:void(0)" class="tablinks" onclick="giggity.openTab(event, 'signIn')">signIn</a></li>
         </ul>
 
         <div id="signUp" class="tabcontent">
-          <div class="registercontainer">
+          <div class="registerContainer">
             <h2>Register</h2>
             <form method="post" action="/api/register">
             <div>

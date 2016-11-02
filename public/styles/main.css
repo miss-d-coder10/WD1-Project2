@@ -19,7 +19,7 @@ button, input, select {
   -moz-box-sizing: initial;
   box-sizing: initial; }
 
-.locationbutton {
+.locationButton {
   width: 30px;
   cursor: pointer; }
 
@@ -66,7 +66,7 @@ body {
     -ms-flex-align: center; }
     body .header .signUpButton, body .header .accountButton {
       display: none; }
-  body .signupform {
+  body .signUpForm {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -97,7 +97,7 @@ body {
     -o-align-items: center;
     align-items: center;
     -ms-flex-align: center; }
-    body .signupform .registercontainer {
+    body .signUpForm .registerContainer {
       height: 600px;
       width: 400px;
       background-color: rgba(0, 0, 0, 0.98);
@@ -183,7 +183,7 @@ body {
       -moz-flex-direction: row;
       flex-direction: row;
       -ms-flex-direction: row; }
-      body main .formContainer form .query-elems input, body main .formContainer form .query-elems select {
+      body main .formContainer form .queryElems input, body main .formContainer form .queryElems select {
         margin-right: 15px; }
 
 /* Style the list */

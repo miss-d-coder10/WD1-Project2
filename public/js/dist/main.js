@@ -17,8 +17,8 @@ giggity.init = function () {
   this.$newSearchButton = $('#newSearchButton');
   this.$removeEventButton = $('#removeEventButton');
   this.$eventContainer = $('.eventContainer');
-  this.$locationButton = $(".locationbutton");
-  this.$signUpForm = $(".signupform");
+  this.$locationButton = $(".locationButton");
+  this.$signUpForm = $(".signUpForm");
   this.initEventListeners();
   this.mapSetup();
   this.checkLoginStatus();

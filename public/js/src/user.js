@@ -4,7 +4,7 @@ giggity.isLoggedIn = function(){
 
 //create user
 giggity.signUp = function () {
-  if(!($(".signupform").length)){
+  if(!($(".signUpForm").length)){
     console.log("CLICK");
     $("body").prepend(giggity.signUpFormObject);
   }
@@ -32,7 +32,7 @@ giggity.signUp = function () {
   })
   .done((data) =>{
     if(data.token) localStorage.setItem('token', data.token);
-    $('.signupform').remove();
+    $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
   })

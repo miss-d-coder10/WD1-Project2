@@ -17,7 +17,7 @@ body{
       display: none;
     }
   }
-  .signupform{
+  .signUpForm{
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -26,7 +26,7 @@ body{
     @include display(flex);
     @include justify-content(center);
     @include align-items(center);
-    .registercontainer{
+    .registerContainer{
       height: 600px;
       width: 400px;
       background-color: rgba(0,0,0,0.98);
@@ -53,7 +53,7 @@ body{
         @include justify-content(space-around);
         @include align-items(center);
         @include flex-direction(row);
-        .query-elems{
+        .queryElems{
           input, select{
             margin-right: 15px;
           }

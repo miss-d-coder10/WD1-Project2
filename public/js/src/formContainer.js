@@ -1,6 +1,6 @@
 giggity.formContainerObject = `
     <form id="event-selector">
-      <div class="query-elems">
+      <div class="queryElems">
         <select class="formInput" name="date" placeholder="When">
           <option selected="selected" disabled="disabled">Anytime</option>
           <option type="date">Today</option>
@@ -11,7 +11,7 @@ giggity.formContainerObject = `
 
         <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
 
-        <img src="/assets/images/currentLocation.png" class="locationbutton" alt="currentLocation" />
+        <img src="/assets/images/currentLocation.png" class="locationButton" alt="currentLocation" />
         <input class="formInput" type="number" name="radius" class="radius" placeholder="radius">
 
         <select class="formInput" type="text" name="eventcode" placeholder="Category">
