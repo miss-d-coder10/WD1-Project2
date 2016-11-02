@@ -1,3 +1,0 @@
-"use strict";
-
-giggity.eventInfoContainerObject = "<div class=\"eventObects\" data-lat=" + giggity.eventObject.venue.latitude + " data-lng=" + giggity.eventObject.venue.longitude + ">\n  <h2>" + giggity.eventObject.eventname + "</h2>\n  <p>" + giggity.eventObject.venue.name + "</p>\n  <p>" + giggity.eventObject.venue.address + "</p>\n  <p>" + giggity.eventObject.date + "</p>\n  <p>" + giggity.eventObject.entryprice + "</p>\n  <img src='" + giggity.eventObject.imageurl + "'>\n  <button id=\"removeEventButton\">Remove</button>\n  <button id=\"nearbyRestaurantsButton\">Nearby Restaurant</button>\n  <button id=\"nearbyPubsButton\">Nearby Pubs and Bars</button>\n  <button id=\"getDirectionsButton\">Get Directions</button>\n</div>";
