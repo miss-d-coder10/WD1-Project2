@@ -14,10 +14,11 @@ giggity.init = function () {
   this.$newSearchButton = $('#newSearchButton');
   this.$removeEventButton = $('#removeEventButton');
   this.$locationButton = $(".locationbutton");
-  this.$signUpForm = $(".signupform");
+  this.$body = $("body");
   this.initEventListeners();
   this.mapSetup();
   this.checkLoginStatus();
+  this.autoComplete();
 };
 
 giggity.initEventListeners = function () {
@@ -26,7 +27,7 @@ giggity.initEventListeners = function () {
   this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
   this.$formContainer.on("click", '.locationButton', giggity.getLocation);
   this.$header.on("click", ".signUpButton", giggity.signUp);
-  this.$signUpForm.on("submit", "form", giggity.handleUserForm);
+  this.$body.on("submit", ".authform", giggity.handleUserForm);
 };
 
 giggity.checkLoginStatus = function () {
@@ -253,7 +254,7 @@ giggity.autoComplete = function () {
   var searchBox = new google.maps.places.SearchBox(input);
 
   this.map.addListener('bounds_changed', function () {
-    searchBox.setBounds(this.map.getBounds());
+    searchBox.setBounds(giggity.map.getBounds());
   });
 
   // Listen for the event fired when the user selects a prediction and retrieve
@@ -280,7 +281,7 @@ giggity.autoComplete = function () {
         bounds.extend(place.geometry.location);
       }
     });
-    this.map.fitBounds(bounds);
+    giggity.map.fitBounds(bounds);
   });
 };
 

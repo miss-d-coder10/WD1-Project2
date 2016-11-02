@@ -2,7 +2,7 @@ giggity.isLoggedIn = function(){
   return !!localStorage.getItem('token');
 };
 
-//create user
+//create user and log in
 giggity.signUp = function () {
   if(!($(".signupform").length)){
     console.log("CLICK");
@@ -12,11 +12,9 @@ giggity.signUp = function () {
 
 //handle form
 
- giggity.handleUserForm = function() {
+giggity.handleUserForm = function() {
   if(event) event.preventDefault();
-  console.log("test");
   let token = localStorage.getItem("token");
-
   let $form = $(this);
   let url = $form.attr("action");
   let method = $form.attr("method");
@@ -30,35 +28,34 @@ giggity.signUp = function () {
       if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
     }
   })
-  .done((data) =>{
+  .done((data) => {
+    console.log(data);
     if(data.token) localStorage.setItem('token', data.token);
+    giggity.getUsers();
     $('.signupform').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
   })
-  .fail(console.log("failed to log in"));
+  .fail(() => {console.log("failed to log in");});
 };
 
 //get users
  giggity.getUsers = function(){
     if (event) event.preventDefault();
-    // let token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
 
     $.ajax({
       url: "/api/users",
-      method: "GET"
-      // beforeSend: function(jqXHR) {
-      //   if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+      method: "GET",
+      beforeSend: function(jqXHR) {
+        if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+      }
       })
-    .done(() => {
-      console.log("test");
-      console.log(data);
+    .done((data) => {
+      console.log("success");
+      console.log(data.users);
     });
   };
-
-
-
-
 
 //show users
 
