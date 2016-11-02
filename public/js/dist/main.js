@@ -10,10 +10,10 @@ giggity.currentLng = null;
 
 //BUILDING THE MAP IN THE MAP
 giggity.mapSetup = function () {
+  giggity.getLocation();
   var $mapDiv = $('#map');
 
   var mapOptions = {
-    center: { lat: 51.5074, lng: -0.1278 },
     zoom: 12,
     styles: [{
       "featureType": "administrative",
@@ -280,16 +280,14 @@ giggity.addInfoWindow = function (eventObject, marker) {
 $(giggity.mapSetup.bind(giggity));
 
 giggity.createPartial = function (partial, toGoIn) {
-  var load_from = '/partials/_' + partial + '.html';
+  var loadFrom = '/partials/_' + partial + '.html';
   var data = "";
-  $.get(load_from, data, function (data) {
+  $.get(loadFrom, data, function (data) {
     $('' + toGoIn).html(data);
-  });
-  setTimeout(function () {
     if (partial === "formContainer") {
       giggity.autoComplete();
     }
-  }, 500);
+  });
   return;
 };
 
@@ -431,21 +429,163 @@ giggity.getLocation = function () {
     giggity.map.panTo(latLng);
     giggity.map.setZoom(16);
   });
+  return;
 };
+"use strict";
+
+var mapSettings = mapSettings || {};
+
+mapSettings.settings = [{
+    "featureType": "administrative",
+    "elementType": "labels.text.fill",
+    "stylers": [{
+        "color": "#6195a0"
+    }]
+}, {
+    "featureType": "landscape",
+    "elementType": "all",
+    "stylers": [{
+        "color": "#f2f2f2"
+    }]
+}, {
+    "featureType": "landscape",
+    "elementType": "geometry.fill",
+    "stylers": [{
+        "color": "#ffffff"
+    }]
+}, {
+    "featureType": "poi",
+    "elementType": "all",
+    "stylers": [{
+        "visibility": "off"
+    }]
+}, {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [{
+        "color": "#e6f3d6"
+    }, {
+        "visibility": "on"
+    }]
+}, {
+    "featureType": "road",
+    "elementType": "all",
+    "stylers": [{
+        "saturation": -100
+    }, {
+        "lightness": 45
+    }, {
+        "visibility": "simplified"
+    }]
+}, {
+    "featureType": "road.highway",
+    "elementType": "all",
+    "stylers": [{
+        "visibility": "simplified"
+    }]
+}, {
+    "featureType": "road.highway",
+    "elementType": "geometry.fill",
+    "stylers": [{
+        "color": "#f4d2c5"
+    }, {
+        "visibility": "simplified"
+    }]
+}, {
+    "featureType": "road.highway",
+    "elementType": "labels.text",
+    "stylers": [{
+        "color": "#4e4e4e"
+    }]
+}, {
+    "featureType": "road.arterial",
+    "elementType": "geometry.fill",
+    "stylers": [{
+        "color": "#f4f4f4"
+    }]
+}, {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [{
+        "color": "#787878"
+    }]
+}, {
+    "featureType": "road.arterial",
+    "elementType": "labels.icon",
+    "stylers": [{
+        "visibility": "off"
+    }]
+}, {
+    "featureType": "transit",
+    "elementType": "all",
+    "stylers": [{
+        "visibility": "off"
+    }]
+}, {
+    "featureType": "water",
+    "elementType": "all",
+    "stylers": [{
+        "color": "#eaf6f8"
+    }, {
+        "visibility": "on"
+    }]
+}, {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [{
+        "color": "#eaf6f8"
+    }]
+}];
+'use strict';
+
+$(function () {
+  setTimeout(function () {
+    if (user.isLoggedIn()) {
+      $('.accountButton').show();
+    } else {
+      $('.signUpButton').show();
+    }
+  }, 100);
+
+  giggity.openTab = function (evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the link that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  };
+});
 "use strict";
 
 var user = user || {};
 
-setTimeout(function () {
-  $(".signupbutton").on("click", user.signUp);
-}, 500);
+user.isLoggedIn = function () {
+  return !!localStorage.getItem('token');
+};
+
+$("header").on("click", ".signUpButton", user.signUp);
 
 //create user
 user.signUp = function () {
+  console.log("CLICK");
   if (!$(".signupform").length) {
-    $("body").prepend("\n      <div class='signupform'>\n        <div class=\"registercontainer\">\n          <h2>Register</h2>\n          <form method=\"post\" action=\"/api/register\">\n          <div>\n            <input name=\"user[firstName]\" placeholder=\"First Name\">\n          </div>\n          <div>\n            <input name=\"user[lastName]\" placeholder=\"Last Name\">\n          </div>\n          <div>\n            <input name=\"user[email]\" placeholder=\"Email\">\n          </div>\n          <div>\n            <input type=\"password\" name=\"user[password]\" placeholder=\"Password\">\n          </div>\n          <div>\n            <input type=\"password\" name=\"user[passwordConfirmation]\" placeholder=\"Password Confirmation\">\n          </div>\n          <button>Register</button>\n          </form>\n        </div>\n      </div>\n    ");
+    $("body").prepend("\n          <div class='signupform'>\n            <ul class=\"tab\">\n              <li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"giggity.openTab(event, 'signUp')\">signUp</a></li>\n              <li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"giggity.openTab(event, 'signIn')\">signIn</a></li>\n            </ul>\n\n            <div id=\"signUp\" class=\"tabcontent\">\n              <div class=\"registercontainer\">\n                <h2>Register</h2>\n                <form method=\"post\" action=\"/api/register\">\n                <div>\n                  <input name=\"user[firstName]\" placeholder=\"First Name\">\n                </div>\n                <div>\n                  <input name=\"user[lastName]\" placeholder=\"Last Name\">\n                </div>\n                <div>\n                  <input name=\"user[email]\" placeholder=\"Email\">\n                </div>\n                <div>\n                  <input type=\"password\" name=\"user[password]\" placeholder=\"Password\">\n                </div>\n                <div>\n                  <input type=\"password\" name=\"user[passwordConfirmation]\" placeholder=\"Password Confirmation\">\n                </div>\n                <button>Register</button>\n                </form>\n              </div>\n            </div>\n\n            <div id=\"signIn\" class=\"tabcontent\">\n              <div class='loginform'>\n                <div class=\"logincontainer\">\n                  <h2>Log in</h2>\n                  <form method=\"post\" action=\"/api/login\">\n                  <div>\n                    <input name=\"user[firstName]\" placeholder=\"First Name\">\n                  </div>\n                  <div>\n                    <input name=\"user[lastName]\" placeholder=\"Last Name\">\n                  </div>\n                  <div>\n                    <input name=\"user[email]\" placeholder=\"Email\">\n                  </div>\n                  <button>Log in</button>\n                  </form>\n                </div>\n              </div>\n            </div>\n          </div>\n    ");
   }
   $(".signupform").on("submit", "form", handleForm);
+  $(".loginform").on("submit", "form", handleForm);
 };
 
 //handle form
@@ -453,7 +593,7 @@ user.signUp = function () {
 function handleForm() {
   if (event) event.preventDefault();
 
-  // let token = localStorage.getItem("token");
+  var token = localStorage.getItem("token");
 
   var $form = $(this);
   var url = $form.attr("action");
@@ -463,15 +603,16 @@ function handleForm() {
   $.ajax({
     url: url,
     method: method,
-    data: data
-    // beforeSend: function(jqXHR) {
-    //   if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-    // }
+    data: data,
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
+    }
   }).done(function (data) {
-    console.log(data);
-    // if(data.token) localStorage.setItem('token', data.token);
-    getUsers();
-  });
+    if (data.token) localStorage.setItem('token', data.token);
+    $('.signupform').remove();
+    $('.accountButton').show();
+    $('.signUpButton').hide();
+  }).fail(console.log("failed to log in"));
 }
 
 //get users
@@ -493,9 +634,11 @@ function getUsers() {
 //show users
 
 //show log in form
-user.login = function () {
-  if (!$(".loginform").length) {
-    $("body").prepend("\n      <div class='loginform'>\n        <div class=\"logincontainer\">\n          <h2>Log in</h2>\n          <form method=\"post\" action=\"/api/login\">\n          <div>\n            <input name=\"user[firstName]\" placeholder=\"First Name\">\n          </div>\n          <div>\n            <input name=\"user[lastName]\" placeholder=\"Last Name\">\n          </div>\n          <div>\n            <input name=\"user[email]\" placeholder=\"Email\">\n          </div>\n          <button>Log in</button>\n          </form>\n        </div>\n      </div>\n    ");
-  }
-  $(".loginform").on("submit", "form", handleForm);
-};
+// user.login = function () {
+//   if(!($(".loginform").length)){
+//     $("body").prepend(`
+//
+//     `);
+//   }
+//
+// };

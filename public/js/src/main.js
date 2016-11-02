@@ -8,10 +8,10 @@
 
   //BUILDING THE MAP IN THE MAP
   giggity.mapSetup = function() {
+    giggity.getLocation();
     let $mapDiv = $('#map');
 
     let mapOptions = {
-      center: { lat: 51.5074, lng: -0.1278 },
       zoom: 12,
       styles: [
                 {
@@ -335,20 +335,24 @@
 
 $(giggity.mapSetup.bind(giggity));
 
+
+
+
 giggity.createPartial = function(partial, toGoIn){
-  let load_from = `/partials/_${partial}.html`;
+  let loadFrom = `/partials/_${partial}.html`;
   let data = "";
-  $.get(load_from, data, function(data)
-  {
+  $.get(loadFrom, data, function(data){
       $(`${toGoIn}`).html(data);
+      if (partial === "formContainer"){
+        giggity.autoComplete();
+      }
   });
-  setTimeout(function() {
-    if (partial === "formContainer"){
-    giggity.autoComplete();
-  }
-}, 500);
   return;
 };
+
+
+
+
 
 giggity.autoComplete = function(){
 
@@ -500,4 +504,5 @@ giggity.getLocation = function(){
     giggity.map.panTo(latLng);
     giggity.map.setZoom(16);
   });
+  return;
 };
