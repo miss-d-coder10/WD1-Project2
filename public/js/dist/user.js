@@ -109,6 +109,7 @@ giggity.deleteUser = function () {
 giggity.showEventsPage = function () {
   event.preventDefault();
   console.log('CLICK');
+  // giggity.$main.html('<div class="cardContainer"><h1>My Events</h1></div>');
   giggity.$main.html('<div class="cardContainer"></div>');
   giggity.getUserEvents(false);
 };

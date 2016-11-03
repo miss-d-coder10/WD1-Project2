@@ -480,8 +480,14 @@ giggity.eventPageIndex = function (data) {
 
 giggity.createEventCard = function (data) {
   console.log(data);
-  $('.cardContainer').append('\n      <div>\n        <h1>' + data.results.eventname + '</h1>\n      </div>\n    ');
+  $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div>\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/infologo3.png"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebookicon2.png"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitterlogo.png"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trashred.png"/ class="icons" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When? ' + data.results.date + ' <strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n\n\n\n        </div>\n\n      </div>\n    ');
 };
+// <ul>
+//   <li>When? ${data.results.date} <strong>Doors open</strong> at ${data.results.openingtimes.doorsopen} </li>
+//   <li><a href="${data.results.venue.link}">More details</a></li>
+// </ul>
+// <div><button>Remove</button></div>
+
 
 document.addEventListener('DOMContentLoaded', function () {
   giggity.init();
