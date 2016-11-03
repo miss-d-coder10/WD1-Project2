@@ -21,14 +21,6 @@ const savesEventShow = (req, res) =>{
   });
 };
 
-const savesEventUserSearch = (req, res) =>{
-  saveEvent.find({ userId: req.params.userId}, (err, saveEvent) => {
-    if(err) return res.status(500).json({ error: "500: Server Error" });
-    res.json(saveEvent);
-  });
-};
-
-
 const savesEventUpdate = (req, res) =>{
   saveEvent.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, saveEvent) => {
     if(err) return res.status(400).json({ error: "400: Invalid data" });
@@ -48,7 +40,6 @@ module.exports = {
   index: saveEventsIndex,
   create: saveEventsCreate,
   show: savesEventShow,
-  userSearch: savesEventUserSearch,
   update: savesEventUpdate,
   delete: savesEventDelete
 };

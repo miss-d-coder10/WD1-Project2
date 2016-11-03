@@ -10,6 +10,7 @@
     this.currentLat = null;
     this.currentLng = null;
     this.currentEvent = null;
+    this.currentUserEvents = null;
     this.$main = $('main');
     this.$header = $('header');
     this.$formContainer = $('.formContainer');
@@ -27,12 +28,12 @@
     this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
     this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
     this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
+    this.$formContainer.on("click", '#savedEventButton', giggity.individualEventFunction);
     this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
     this.$formContainer.on("click", '.locationButton', giggity.getLocation);
     this.$header.on("click", ".signUpButton", giggity.signUp);
     this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
     this.$header.on("click", ".profileButton", giggity.showProfilePage);
-    this.$header.on("click", ".eventsButton", giggity.showEventsPage);
     this.$body.on("submit", ".authform", giggity.handleUserForm);
   };
 
@@ -325,6 +326,7 @@ giggity.autoComplete = function(){
 
   giggity.eventInformation = function(eventObject, marker) {
     google.maps.event.addListener(marker, "click", () => {
+      giggity.getUserEvents(true);
       giggity.currentEvent = eventObject.id;
       giggity.$formContainer.html(
         `<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
@@ -345,7 +347,6 @@ giggity.autoComplete = function(){
             <option value="BICYCLING">BICYCLING</option>
             <option value="TRANSIT">TRANSIT</option>
           </select>
-          <button id="saveEventButton">Save Event</button>
           <button id="newSearchButton">New Search</button>
         </div>`
       );
@@ -414,18 +415,83 @@ giggity.saveEventFunction = function(){
     }
   })
   .done((data) => {
-    console.log(data);
+    $('#saveEventButton').remove();
+    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
   })
   .fail((data) => {console.log("failed to save Event");});
 };
 
-giggity.isEventSaved = function(){
 
+
+giggity.individualEventFunction = function(){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/users/${currentUser}/events/${giggity.currentEvent}`,
+    method: "GET",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    giggity.deleteEventFunction(data[0]._id);
+  })
+  .fail((data) => {console.log("failed to get event");});
+};
+
+giggity.deleteEventFunction = function(eventId){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/saveEvents/${eventId}`,
+    method: "DELETE",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    $('#savedEventButton').remove();
+    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  })
+  .fail((data) => {console.log("failed to delete Event");});
 };
 
 
+giggity.getUserEvents = function(checking){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/users/${currentUser}/events`,
+    method: "GET",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    if(checking){
+      giggity.isSavedEvent(data);
+    } else {
+      console.log("returning all values");
+    }
+  })
+  .fail((data) => {console.log("failed to get events");});
+};
 
 
+giggity.isSavedEvent = function(data){
+  var item = $.grep(data, function(item) {
+    return item.skiddleId == giggity.currentEvent;
+  });
+
+  if (item.length) {
+      giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+  } else {
+      giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  }
+};
 
 
 

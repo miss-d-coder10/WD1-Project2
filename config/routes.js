@@ -41,6 +41,12 @@ router.route("/users/:id")
   .put(usersController.update)
   .delete(usersController.delete);
 
+router.route("/users/:id/events")
+  .get(usersController.eventIndex);
+
+router.route("/users/:id/events/:eventId")
+  .get(usersController.eventSearch);
+
 router.route("/saveEvents")
   // .all(secureRoutes)
   .get(saveEventsController.index)
@@ -51,8 +57,5 @@ router.route("/saveEvents/:id")
   .get(saveEventsController.show)
   .put(saveEventsController.update)
   .delete(saveEventsController.delete);
-
-router.route("/saveEvents/users/:userId")
-  .get(saveEventsController.userSearch);
 
 module.exports = router;
