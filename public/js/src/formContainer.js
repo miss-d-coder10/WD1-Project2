@@ -1,4 +1,4 @@
-giggity.formContainerObject = `
+gigcity.formContainerObject = `
     <form id="event-selector">
       <div class="queryElems">
         <select class="formInput" name="date" placeholder="When">
@@ -10,13 +10,13 @@ giggity.formContainerObject = `
           <option>Next 1 Month</option>
 
         <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
-
         <img src="/assets/images/currentLocation.png" class="locationButton" alt="currentLocation" />
+
         <input class="formInput" type="number" name="radius" class="radius" placeholder="radius">
 
         <select class="formInput" type="text" name="eventcode" placeholder="Category">
+          <option selected="selected" value="LIVE">Gigs</option>
           <option value="FEST">Festivals</option>
-          <option value="LIVE">Gigs</option>
           <option value="CLUB">Clubbing</option>
           <option value="DATE">Dating</option>
           <option value="THEATRE">Theatre</option>

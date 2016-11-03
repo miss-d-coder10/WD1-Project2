@@ -1,11 +1,11 @@
 button, input, select {
-  width: 100px;
+  width: 150px;
   background: transparent;
-  border: 4px solid white;
+  border: 2px solid #ff0;
   height: 40px;
-  border-radius: 500px;
+  border-radius: 5px;
   text-align: center;
-  color: white;
+  color: #ff0;
   font-family: brandon;
   font-size: 18px;
   cursor: pointer;
@@ -21,6 +21,15 @@ button, input, select {
 
 input {
   cursor: text; }
+
+button {
+  border-radius: 500px;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  transition: all 0.5s ease; }
+  button:hover {
+    background: #ff0;
+    color: #24272B; }
 
 .locationButton {
   width: 30px;
@@ -41,7 +50,7 @@ body {
   body .header {
     width: 100vw;
     height: 10vh;
-    background: #62748C;
+    background: #ff0;
     display: -webkit-box;
     display: -moz-box;
     display: box;
@@ -49,15 +58,15 @@ body {
     display: -moz-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: end;
-    -moz-box-pack: end;
-    box-pack: end;
-    -webkit-justify-content: flex-end;
-    -moz-justify-content: flex-end;
-    -ms-justify-content: flex-end;
-    -o-justify-content: flex-end;
-    justify-content: flex-end;
-    -ms-flex-pack: end;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    box-pack: justify;
+    -webkit-justify-content: space-between;
+    -moz-justify-content: space-between;
+    -ms-justify-content: space-between;
+    -o-justify-content: space-between;
+    justify-content: space-between;
+    -ms-flex-pack: justify;
     -webkit-box-align: center;
     -moz-box-align: center;
     box-align: center;
@@ -66,7 +75,22 @@ body {
     -ms-align-items: center;
     -o-align-items: center;
     align-items: center;
-    -ms-flex-align: center; }
+    -ms-flex-align: center;
+    color: #24272B; }
+    body .header .home {
+      cursor: pointer; }
+    body .header h1 {
+      margin-left: 50px; }
+    body .header button {
+      margin-right: 50px;
+      border-color: #24272B;
+      color: #24272B;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      transition: all 0.5s ease; }
+      body .header button:hover {
+        background: #24272B;
+        color: #ff0; }
     body .header .signUpButton, body .header .accountButton {
       display: none; }
     body .header .accountMenu {
@@ -74,15 +98,34 @@ body {
       position: fixed;
       top: 10vh;
       right: 0;
-      background: red;
+      background: #ff0;
       z-index: 3;
-      width: 125px;
-      height: 176px; }
+      width: 165px;
+      margin-right: 50px; }
+      body .header .accountMenu ul {
+        list-style: none;
+        margin: 0;
+        width: 100%;
+        padding: 0;
+        text-align: center; }
+        body .header .accountMenu ul li {
+          height: 50px;
+          line-height: 50px;
+          -webkit-transition: all 0.5s ease;
+          -moz-transition: all 0.5s ease;
+          transition: all 0.5s ease; }
+          body .header .accountMenu ul li:hover {
+            background: #24272B; }
+          body .header .accountMenu ul li a {
+            text-decoration: none;
+            color: #24272B; }
+            body .header .accountMenu ul li a:hover {
+              color: #ff0; }
   body .signUpForm {
     position: absolute;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(36, 39, 43, 0.7);
     z-index: 2;
     display: -webkit-box;
     display: -moz-box;
@@ -108,20 +151,76 @@ body {
     -ms-align-items: center;
     -o-align-items: center;
     align-items: center;
-    -ms-flex-align: center; }
+    -ms-flex-align: center;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column; }
+    body .signUpForm .closeSignForm {
+      position: absolute;
+      top: 50px;
+      right: 50px;
+      height: 50px;
+      cursor: pointer; }
+    body .signUpForm .tab {
+      width: 300px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 2px solid #ff0;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px; }
+      body .signUpForm .tab li {
+        width: 50%;
+        text-align: center;
+        float: left; }
+        body .signUpForm .tab li a:focus, body .signUpForm .tab li .active {
+          background-color: #ff0;
+          color: #24272B; }
+        body .signUpForm .tab li:hover {
+          background: #ff0; }
+        body .signUpForm .tab li a {
+          width: 100%;
+          color: #ff0;
+          padding: 14px 0;
+          display: inline-block;
+          text-align: center;
+          text-decoration: none;
+          transition: 0.3s;
+          font-size: 17px; }
+          body .signUpForm .tab li a:hover {
+            color: #24272B;
+            background-color: #ff0; }
+    body .signUpForm #signUp {
+      display: block; }
+    body .signUpForm #signIn {
+      display: none; }
     body .signUpForm .registerContainer {
-      height: 600px;
-      width: 400px;
-      background-color: rgba(0, 0, 0, 0.98);
-      color: white;
-      text-align: center; }
+      height: 400px;
+      width: 300px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #ff0;
+      text-align: center;
+      border: 2px solid #ff0;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px; }
+      body .signUpForm .registerContainer input {
+        width: 200px;
+        margin: 5px 0; }
   body main #map {
     width: 100vw;
     height: 60vh;
     z-index: 1; }
   body main .formContainer {
-    background-image: -webkit-radial-gradient(30vh 0, circle farthest-corner, #62748C 60%, #DB5560 100%);
-    background-image: radial-gradient(circle farthest-corner at 30vh 0, #62748C 60%, #DB5560 100%);
+    background: #24272B;
     height: 30vh;
     display: -webkit-box;
     display: -moz-box;
@@ -195,8 +294,280 @@ body {
       -moz-flex-direction: row;
       flex-direction: row;
       -ms-flex-direction: row; }
-      body main .formContainer form .queryElems input, body main .formContainer form .queryElems select {
-        margin-right: 15px; }
+      body main .formContainer form .queryElems {
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: distribute;
+        -moz-box-pack: distribute;
+        box-pack: distribute;
+        -webkit-justify-content: space-around;
+        -moz-justify-content: space-around;
+        -ms-justify-content: space-around;
+        -o-justify-content: space-around;
+        justify-content: space-around;
+        -ms-flex-pack: distribute;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -moz-box-direction: normal;
+        box-direction: normal;
+        -webkit-flex-direction: row;
+        -moz-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-direction: row; }
+        body main .formContainer form .queryElems input, body main .formContainer form .queryElems select, body main .formContainer form .queryElems img {
+          margin-right: 15px; }
+    body main .formContainer .eventObjects {
+      display: -webkit-box;
+      display: -moz-box;
+      display: box;
+      display: -webkit-flex;
+      display: -moz-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: distribute;
+      -moz-box-pack: distribute;
+      box-pack: distribute;
+      -webkit-justify-content: space-around;
+      -moz-justify-content: space-around;
+      -ms-justify-content: space-around;
+      -o-justify-content: space-around;
+      justify-content: space-around;
+      -ms-flex-pack: distribute;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
+      -webkit-align-items: center;
+      -moz-align-items: center;
+      -ms-align-items: center;
+      -o-align-items: center;
+      align-items: center;
+      -ms-flex-align: center;
+      -webkit-box-orient: horizontal;
+      -moz-box-orient: horizontal;
+      box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -moz-box-direction: normal;
+      box-direction: normal;
+      -webkit-flex-direction: row;
+      -moz-flex-direction: row;
+      flex-direction: row;
+      -ms-flex-direction: row; }
+      body main .formContainer .eventObjects .column--one {
+        width: 50vw;
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -moz-box-pack: center;
+        box-pack: center;
+        -webkit-justify-content: center;
+        -moz-justify-content: center;
+        -ms-justify-content: center;
+        -o-justify-content: center;
+        justify-content: center;
+        -ms-flex-pack: center;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -moz-box-direction: normal;
+        box-direction: normal;
+        -webkit-flex-direction: row;
+        -moz-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-direction: row; }
+        body main .formContainer .eventObjects .column--one--one {
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-pack: center;
+          -moz-box-pack: center;
+          box-pack: center;
+          -webkit-justify-content: center;
+          -moz-justify-content: center;
+          -ms-justify-content: center;
+          -o-justify-content: center;
+          justify-content: center;
+          -ms-flex-pack: center;
+          -webkit-box-align: center;
+          -moz-box-align: center;
+          box-align: center;
+          -webkit-align-items: center;
+          -moz-align-items: center;
+          -ms-align-items: center;
+          -o-align-items: center;
+          align-items: center;
+          -ms-flex-align: center;
+          -webkit-box-orient: vertical;
+          -moz-box-orient: vertical;
+          box-orient: vertical;
+          -webkit-box-direction: normal;
+          -moz-box-direction: normal;
+          box-direction: normal;
+          -webkit-flex-direction: column;
+          -moz-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-direction: column; }
+        body main .formContainer .eventObjects .column--one--two {
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-pack: center;
+          -moz-box-pack: center;
+          box-pack: center;
+          -webkit-justify-content: center;
+          -moz-justify-content: center;
+          -ms-justify-content: center;
+          -o-justify-content: center;
+          justify-content: center;
+          -ms-flex-pack: center;
+          -webkit-box-align: center;
+          -moz-box-align: center;
+          box-align: center;
+          -webkit-align-items: center;
+          -moz-align-items: center;
+          -ms-align-items: center;
+          -o-align-items: center;
+          align-items: center;
+          -ms-flex-align: center;
+          -webkit-box-orient: vertical;
+          -moz-box-orient: vertical;
+          box-orient: vertical;
+          -webkit-box-direction: normal;
+          -moz-box-direction: normal;
+          box-direction: normal;
+          -webkit-flex-direction: column;
+          -moz-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-direction: column; }
+      body main .formContainer .eventObjects .column--two {
+        width: 50vw;
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: distribute;
+        -moz-box-pack: distribute;
+        box-pack: distribute;
+        -webkit-justify-content: space-around;
+        -moz-justify-content: space-around;
+        -ms-justify-content: space-around;
+        -o-justify-content: space-around;
+        justify-content: space-around;
+        -ms-flex-pack: distribute;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -moz-box-direction: normal;
+        box-direction: normal;
+        -webkit-flex-direction: row;
+        -moz-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-direction: row; }
+        body main .formContainer .eventObjects .column--two .nearby {
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -moz-box-orient: vertical;
+          box-orient: vertical;
+          -webkit-box-direction: normal;
+          -moz-box-direction: normal;
+          box-direction: normal;
+          -webkit-flex-direction: column;
+          -moz-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-direction: column; }
+        body main .formContainer .eventObjects .column--two .directions {
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -moz-box-orient: vertical;
+          box-orient: vertical;
+          -webkit-box-direction: normal;
+          -moz-box-direction: normal;
+          box-direction: normal;
+          -webkit-flex-direction: column;
+          -moz-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-direction: column; }
+        body main .formContainer .eventObjects .column--two .controlButtons {
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -moz-box-orient: vertical;
+          box-orient: vertical;
+          -webkit-box-direction: normal;
+          -moz-box-direction: normal;
+          box-direction: normal;
+          -webkit-flex-direction: column;
+          -moz-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-direction: column; }
   body main .cardContainer {
     background-color: black; }
     body main .cardContainer .eventcard {
@@ -227,7 +598,7 @@ body {
       -ms-flex-align: center;
       height: 200px;
       width: 550px;
-      background: #62748C;
+      background: #62748c;
       border-radius: 10px;
       margin: 20px; }
       body main .cardContainer .eventcard .column--one {
@@ -282,7 +653,7 @@ body {
         -ms-flex-direction: column;
         font-size: 14px;
         color: white;
-        background: #62748C;
+        background: #62748c;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px; }
         body main .cardContainer .eventcard .column--two div {
@@ -324,49 +695,43 @@ body {
           -ms-flex-direction: row; }
         body main .cardContainer .eventcard .column--two ul {
           list-style: none; }
-  body .accountSettingsForm input {
-    color: black; }
-  body .accountSettingsForm button {
-    color: black;
-    border: black; }
-  body .deleteProfileButton {
-    color: black;
-    border: black; }
-
-/* Style the list */
-ul.tab {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1; }
-
-/* Float the list items side by side */
-ul.tab li {
-  float: left; }
-
-/* Style the links inside the list items */
-ul.tab li a {
-  display: inline-block;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  transition: 0.3s;
-  font-size: 17px; }
-
-/* Change background color of links on hover */
-ul.tab li a:hover {
-  background-color: #ddd; }
-
-/* Create an active/current tablink class */
-ul.tab li a:focus, .active {
-  background-color: #ccc; }
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none; }
+  body .popUp {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 4;
+    height: 100vh;
+    background-color: rgba(36, 39, 43, 0.7);
+    display: none; }
+    body .popUp img {
+      height: 25px;
+      width: 25px;
+      height: 25px;
+      position: relative;
+      right: 0;
+      top: 0;
+      display: block;
+      cursor: pointer; }
+    body .popUp .accountSettings {
+      background-color: #24272B;
+      color: #ff0;
+      padding: 30px;
+      width: 50%;
+      position: fixed;
+      text-align: center;
+      border: 2px solid #ff0;
+      border-radius: 5px;
+      margin-top: 30px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+      body .popUp .accountSettings .accountSettingsForm input, body .popUp .accountSettings .accountSettingsForm textarea {
+        color: #ff0;
+        border: 2px solid #ff0;
+        width: 100%;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        max-width: 100%; }
+      body .popUp .accountSettings .accountSettingsForm textarea {
+        padding: 10px 0;
+        color: #24272B; }

@@ -66,7 +66,6 @@ userSchema.methods.validatePassword = validatePassword;
 userSchema.set("toJSON", {
   transform: function(doc, json) {
     delete json.passwordHash;
-    delete json.email;
     delete json.__v;
     return json;
   }

@@ -1,20 +1,21 @@
 let $userFirstName;
 let $userLastName;
 
-giggity.isLoggedIn = function(){
+gigcity.isLoggedIn = function(){
   return !!localStorage.getItem('token');
 };
 
 //create user and log in
-giggity.signUp = function () {
+gigcity.signUp = function () {
   if(!($(".signUpForm").length)){
-    console.log("CLICK");
-    $("body").prepend(giggity.signUpFormObject);
+    $("body").prepend(gigcity.signUpFormObject);
+  } else {
+    $('.signUpForm').show();
   }
 };
 
 //handle form
-giggity.handleUserForm = function() {
+gigcity.handleUserForm = function() {
   if(event) event.preventDefault();
   let token = localStorage.getItem("token");
   let $form = $(this);
@@ -40,11 +41,12 @@ giggity.handleUserForm = function() {
   .fail(() => {console.log("failed to log in");});
 };
 
-  giggity.toggleAccountMenu = function(){
+  gigcity.toggleAccountMenu = function(){
     $('.accountMenu').toggle();
   };
 // ----------------------------------------------------------------------------------------------------------------
-  giggity.getUserData = function() {
+  gigcity.getUserData = function() {
+    $('.accountMenu').toggle();
     console.log("In get User Data");
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('userId');
@@ -57,28 +59,35 @@ giggity.handleUserForm = function() {
     }).done((data) => {
       console.log("Weve got the data");
       console.log(data.user);
-      giggity.showProfilePage(data.user);
+      gigcity.showProfilePage(data.user);
     });
   };
 
-  giggity.showProfilePage = function(user){
+  gigcity.showProfilePage = function(user){
     let token = localStorage.getItem('token');
     console.log("In the edit user form");
     let userId = localStorage.getItem('userId');
-    giggity.$main.html(`<h1>Hi ${user.firstName}</h1>
-                          <h2>Account Settings</h2>
-                          <form class="accountSettingsForm" method="put" action="/api/users/${user._id}">
-                            <input type="text" name="user[firstName]" value="${user.firstName}" placeholder="First name">
-                            <input type="text" name="user[lastName]" value="${user.lastName}" placeholder="Last name">
-                            <input type="text" name="user[email]" value="${user.email}" placeholder="Email">
+    $(".popUp").html(`
+                      <div class="accountSettings">
+                        <img class="closePageImage" src='../../assets/images/close.svg'>
+                        <h3>Account Settings</h3>
+                        <form class="accountSettingsForm" method="put" action="/api/users/${user._id}">
+                          <input type="text" name="user[firstName]" value="${user.firstName}" placeholder="First name">
+                          <input type="text" name="user[lastName]" value="${user.lastName}" placeholder="Last name">
+                          <input type="text" name="user[email]" value="${user.email}" placeholder="Email">
+                          <textarea class="u-full-width" name="user[bio]" placeholder="Bio …" id="exampleMessage">${user.bio}</textarea>
+                          <button class="btn btn-primary u-full-width">Update details</button>
+                          <button class="deleteProfileButton u-full-width">Delete Profile</button>
+                        </form>
+                      </div>`);
+                    $(".popUp").show();
 
-                            <button class="btn btn-primary">Update details</button>
-                          </form>
-                          <button class="deleteProfileButton">Delete Profile</button>`);
-
+    $(".closePageImage").on("click", () => {
+      $(".popUp").hide();
+    });
   };
 
-  giggity.updateUserForm = function() {
+  gigcity.updateUserForm = function() {
     if(event) event.preventDefault();
     let token = localStorage.getItem("token");
     let $form = $(this);
@@ -98,7 +107,7 @@ giggity.handleUserForm = function() {
     });
   };
 
-  giggity.deleteUser = function () {
+  gigcity.deleteUser = function () {
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('userId');
 
@@ -112,14 +121,14 @@ giggity.handleUserForm = function() {
     })
       .done((data) => {
         console.log("User profile deleted");
-        giggity.refreshPage();
+        gigcity.refreshPage();
       });
   };
 
-  giggity.showEventsPage = function(){
+  gigcity.showEventsPage = function(){
     event.preventDefault();
     console.log('CLICK');
-    // giggity.$main.html('<div class="cardContainer"><h1>My Events</h1></div>');
-    giggity.$main.html('<div class="cardContainer"></div>');
-    giggity.getUserEvents(false);
+    // gigcity.$main.html('<div class="cardContainer"><h1>My Events</h1></div>');
+    gigcity.$main.html('<div class="cardContainer"></div>');
+    gigcity.getUserEvents(false);
   };

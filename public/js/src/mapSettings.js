@@ -1,4 +1,4 @@
-giggity.mapSettings = [
+gigcity.mapSettings = [
           {
               "featureType": "administrative",
               "elementType": "labels.text.fill",
