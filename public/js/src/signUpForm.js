@@ -1,13 +1,15 @@
-giggity.signUpFormObject = `
+gigcity.signUpFormObject = `
+
       <div class='signUpForm'>
+        <img class="closeSignForm" src='../../assets/images/close.svg'>
         <ul class="tab">
-          <li><a href="javascript:void(0)" class="tablinks" onclick="giggity.openTab(event, 'signUp')">signUp</a></li>
-          <li><a href="javascript:void(0)" class="tablinks" onclick="giggity.openTab(event, 'signIn')">signIn</a></li>
+          <li><a href="javascript:void(0)" class="tablinks" onclick="gigcity.openTab('signUp')">Sign Up</a></li>
+          <li><a href="javascript:void(0)" class="tablinks" onclick="gigcity.openTab('signIn')">Sign In</a></li>
         </ul>
 
-        <div id="signUp" class="tabcontent">
+        <div id="signUp">
           <div class="registerContainer">
-            <h2>Register</h2>
+            <h4>Register</h4>
             <form method="post" action="/api/register" class="authform">
             <div>
               <input name="user[firstName]" placeholder="First Name">
@@ -29,10 +31,10 @@ giggity.signUpFormObject = `
           </div>
         </div>
 
-        <div id="signIn" class="tabcontent">
+        <div id="signIn">
           <div class='loginform'>
-            <div class="logincontainer">
-              <h2>Log in</h2>
+            <div class="registerContainer">
+              <h4>Log in</h4>
               <form method="post" action="/api/login" class="authform">
               <div>
                 <input name="email" placeholder="Email">

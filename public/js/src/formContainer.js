@@ -1,4 +1,4 @@
-giggity.formContainerObject = `
+gigcity.formContainerObject = `
     <form id="event-selector">
       <div class="queryElems">
         <select class="formInput" name="date" placeholder="When">

@@ -1,13 +1,13 @@
 'use strict';
 
-var giggity = giggity || {};
+var gigcity = gigcity || {};
 var markers = [];
 var currentlatLng = void 0;
 var lat = void 0;
 var lng = void 0;
 var $info = $('.eventObjects');
 
-giggity.init = function () {
+gigcity.init = function () {
   this.map = null;
   this.currentLat = null;
   this.currentLng = null;
@@ -26,26 +26,27 @@ giggity.init = function () {
   this.autoComplete();
 };
 
-giggity.initEventListeners = function () {
-  this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
-  this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
-  this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
-  this.$formContainer.on("click", '#savedEventButton', giggity.individualEventFunction);
-  this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
-  this.$formContainer.on("click", '.locationButton', giggity.getLocation);
-  this.$header.on("click", ".signUpButton", giggity.signUp);
-  this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
-  this.$header.on("click", ".profileButton", giggity.getUserData);
-  this.$header.on("click", ".home", giggity.refreshPage);
-  this.$body.on("click", ".deleteProfileButton", giggity.deleteUser);
-  this.$body.on("click", ".logoutButton", giggity.refreshPage);
-  this.$header.on("click", ".eventsButton", giggity.showEventsPage);
-  this.$body.on("submit", ".authform", giggity.handleUserForm);
-  this.$body.on("submit", ".accountSettingsForm", giggity.updateUserForm);
+gigcity.initEventListeners = function () {
+  this.$formContainer.on("submit", '#event-selector', gigcity.formHandler);
+  this.$formContainer.on("click", '#newSearchButton', gigcity.newSearchFunction);
+  this.$formContainer.on("click", '#saveEventButton', gigcity.saveEventFunction);
+  this.$formContainer.on("click", '#savedEventButton', gigcity.individualEventFunction);
+  this.$formContainer.on("click", '#removeEventButton', gigcity.removeEventObject);
+  this.$formContainer.on("click", '.locationButton', gigcity.getLocation);
+  this.$header.on("click", ".signUpButton", gigcity.signUp);
+  this.$header.on("click", ".accountButton", gigcity.toggleAccountMenu);
+  this.$header.on("click", ".profileButton", gigcity.getUserData);
+  this.$header.on("click", ".home", gigcity.liteRefreshPage);
+  this.$body.on("click", ".deleteProfileButton", gigcity.deleteUser);
+  this.$body.on("click", ".logoutButton", gigcity.refreshPage);
+  this.$header.on("click", ".eventsButton", gigcity.showEventsPage);
+  this.$body.on("submit", ".authform", gigcity.handleUserForm);
+  this.$body.on("submit", ".accountSettingsForm", gigcity.updateUserForm);
+  this.$body.on("click", ".closeSignForm", gigcity.closeSignForm);
 };
 
-giggity.checkLoginStatus = function () {
-  if (giggity.isLoggedIn()) {
+gigcity.checkLoginStatus = function () {
+  if (gigcity.isLoggedIn()) {
     $('.accountButton').show();
   } else {
     $('.signUpButton').show();
@@ -53,12 +54,12 @@ giggity.checkLoginStatus = function () {
 };
 
 //BUILDING THE MAP IN THE MAP
-giggity.mapSetup = function () {
-  giggity.getLocation();
+gigcity.mapSetup = function () {
+  gigcity.getLocation();
   var $mapDiv = $('#map');
   var mapOptions = {
     zoom: 12,
-    styles: giggity.mapSettings
+    styles: gigcity.mapSettings
   };
 
   this.map = new google.maps.Map($mapDiv[0], mapOptions);
@@ -66,21 +67,21 @@ giggity.mapSetup = function () {
   this.createHeader();
 };
 
-giggity.formHandler = function (e) {
-  giggity.deleteMarkers();
+gigcity.formHandler = function (e) {
+  gigcity.deleteMarkers();
   var $form = $(this);
   event.preventDefault();
   var data = $form.serializeArray();
   var unformattedDate = data[0];
-  var date = giggity.dateFormat(unformattedDate);
-  var lat = giggity.currentLat;
-  var lng = giggity.currentLng;
+  var date = gigcity.dateFormat(unformattedDate);
+  var lat = gigcity.currentLat;
+  var lng = gigcity.currentLng;
   var radius = data[2].value;
   var eventcode = data[3].value;
-  giggity.getEvents(date, lat, lng, radius, eventcode);
+  gigcity.getEvents(date, lat, lng, radius, eventcode);
 };
 
-giggity.dateFormat = function (date) {
+gigcity.dateFormat = function (date) {
   var today = moment();
   var maxDate = void 0;
 
@@ -102,21 +103,21 @@ giggity.dateFormat = function (date) {
   return maxDate;
 };
 
-giggity.newSearchFunction = function () {
-  giggity.deleteMarkers();
-  giggity.createFormContainer();
+gigcity.newSearchFunction = function () {
+  gigcity.deleteMarkers();
+  gigcity.createFormContainer();
 };
 
-giggity.createFormContainer = function () {
-  $('.formContainer').html(giggity.formContainerObject);
+gigcity.createFormContainer = function () {
+  $('.formContainer').html(gigcity.formContainerObject);
   this.autoComplete();
 };
 
-giggity.createHeader = function () {
-  $('header').html(giggity.headerObject);
+gigcity.createHeader = function () {
+  $('header').html(gigcity.headerObject);
 };
 
-giggity.getEvents = function (date, lat, lng, radius, eventcode) {
+gigcity.getEvents = function (date, lat, lng, radius, eventcode) {
   $.ajax({
     url: '/api/events',
     method: "GET",
@@ -128,26 +129,26 @@ giggity.getEvents = function (date, lat, lng, radius, eventcode) {
       eventcode: eventcode,
       limit: 100
     }
-  }).done(this.loopThroughEvents.bind(giggity));
+  }).done(this.loopThroughEvents.bind(gigcity));
 };
 
-giggity.getIndividualEvent = function (eventId) {
+gigcity.getIndividualEvent = function (eventId) {
   $.ajax({
     contentType: 'application/json',
     url: '/api/events/' + eventId,
     method: "GET",
     dataType: 'json'
   }).done(function (data) {
-    giggity.createEventCard(data);
+    gigcity.createEventCard(data);
   });
 };
 
-giggity.removeEventObject = function () {
+gigcity.removeEventObject = function () {
   $('.eventObjects').remove();
-  giggity.createFormContainer();
+  gigcity.createFormContainer();
 };
 
-giggity.loopThroughEvents = function (data) {
+gigcity.loopThroughEvents = function (data) {
   var _this = this;
 
   $.each(data, function (index, eventObject) {
@@ -155,36 +156,36 @@ giggity.loopThroughEvents = function (data) {
   });
 
   //RESTAURANTS
-  giggity.$formContainer.on("click", '#nearbyRestaurantsButton', function () {
+  gigcity.$formContainer.on("click", '#nearbyRestaurantsButton', function () {
     $info = $('.eventObjects');
     lat = $info.data('lat');
     lng = $info.data('lng');
 
     var latLng = { lat: lat, lng: lng };
 
-    var service = new google.maps.places.PlacesService(giggity.map);
+    var service = new google.maps.places.PlacesService(gigcity.map);
     service.nearbySearch({
       location: latLng,
       radius: 500,
       types: ['restaurant']
-    }, giggity.callback);
+    }, gigcity.callback);
   });
   //PUBS AND BARS
-  giggity.$formContainer.on("click", '#nearbyPubsButton', function () {
+  gigcity.$formContainer.on("click", '#nearbyPubsButton', function () {
     var methodOfTravel = void 0;
     $info = $('.eventObjects');
     lat = $info.data('lat');
     lng = $info.data('lng');
     var latLng = { lat: lat, lng: lng };
-    var service = new google.maps.places.PlacesService(giggity.map);
+    var service = new google.maps.places.PlacesService(gigcity.map);
     service.nearbySearch({
       location: latLng,
       radius: 500,
       types: ['pub']
-    }, giggity.callback);
+    }, gigcity.callback);
   });
   //DIRECTIONS
-  giggity.$formContainer.on("click", '#getDirectionsButton', function () {
+  gigcity.$formContainer.on("click", '#getDirectionsButton', function () {
 
     var $methodOfTravel = $('#methodofTravel').val();
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -206,7 +207,7 @@ giggity.loopThroughEvents = function (data) {
       directionsService.route(directionsRequest, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
           directionsDisplay = new google.maps.DirectionsRenderer({
-            map: giggity.map,
+            map: gigcity.map,
             directions: response
           });
         } else $("#error").append("Unable to retrieve your route<br />");
@@ -215,15 +216,15 @@ giggity.loopThroughEvents = function (data) {
   });
 };
 
-giggity.callback = function (results, status) {
+gigcity.callback = function (results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      giggity.restaurantMarkerFunction(results[i]);
+      gigcity.restaurantMarkerFunction(results[i]);
     }
   }
 };
 
-giggity.restaurantMarkerFunction = function (place) {
+gigcity.restaurantMarkerFunction = function (place) {
   var placeLoc = place.geometry.location;
   var marker = new google.maps.Marker({
     map: this.map,
@@ -239,7 +240,7 @@ giggity.restaurantMarkerFunction = function (place) {
 };
 
 //ADD FUNCTION WHICH DROPS THE MARKER ONTO THE MAP
-giggity.createMarker = function (markerObject, markerType) {
+gigcity.createMarker = function (markerObject, markerType) {
   var latLng = void 0;
   if (markerObject.venue) {
     latLng = new google.maps.LatLng(markerObject.venue.latitude, markerObject.venue.longitude);
@@ -249,18 +250,18 @@ giggity.createMarker = function (markerObject, markerType) {
 
   var marker = new google.maps.Marker({
     position: latLng,
-    icon: giggity.icons[markerType].icon,
+    icon: gigcity.icons[markerType].icon,
     map: this.map,
     metadata: {
       id: markerType
     }
   });
   markers.push(marker);
-  giggity.eventInformation(markerObject, marker);
+  gigcity.eventInformation(markerObject, marker);
   markers.push(marker);
 };
 
-giggity.icons = {
+gigcity.icons = {
   pin: {
     icon: "../../assets/images/pin.png"
   },
@@ -272,13 +273,13 @@ giggity.icons = {
   }
 };
 
-giggity.autoComplete = function () {
+gigcity.autoComplete = function () {
   var input = document.getElementById('pac-input');
   var searchBox = new google.maps.places.SearchBox(input);
 
-  giggity.map.addListener('bounds_changed', function () {
+  gigcity.map.addListener('bounds_changed', function () {
 
-    searchBox.setBounds(giggity.map.getBounds());
+    searchBox.setBounds(gigcity.map.getBounds());
   });
 
   // Listen for the event fired when the user selects a prediction and retrieve
@@ -296,8 +297,8 @@ giggity.autoComplete = function () {
         console.log("Returned place contains no geometry");
         return;
       }
-      giggity.currentLat = place.geometry.location.lat();
-      giggity.currentLng = place.geometry.location.lng();
+      gigcity.currentLat = place.geometry.location.lat();
+      gigcity.currentLng = place.geometry.location.lng();
       if (place.geometry.viewport) {
         // Only geocodes have viewport.
         bounds.union(place.geometry.viewport);
@@ -305,43 +306,43 @@ giggity.autoComplete = function () {
         bounds.extend(place.geometry.location);
       }
     });
-    giggity.map.fitBounds(bounds);
+    gigcity.map.fitBounds(bounds);
   });
 };
 
 // Sets the map on all markers in the array.
-giggity.setMapOnAll = function (map) {
+gigcity.setMapOnAll = function (map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
 };
 
 // Removes the markers from the map, but keeps them in the array.
-giggity.clearMarkers = function () {
-  giggity.setMapOnAll(null);
+gigcity.clearMarkers = function () {
+  gigcity.setMapOnAll(null);
 };
 
 // Shows any markers currently in the array.
-giggity.showMarkers = function () {
-  giggity.setMapOnAll(map);
+gigcity.showMarkers = function () {
+  gigcity.setMapOnAll(map);
 };
 
 // Deletes all markers in the array by removing references to them.
-giggity.deleteMarkers = function () {
-  giggity.clearMarkers();
+gigcity.deleteMarkers = function () {
+  gigcity.clearMarkers();
   markers = [];
 };
 
-giggity.eventInformation = function (eventObject, marker) {
+gigcity.eventInformation = function (eventObject, marker) {
   google.maps.event.addListener(marker, "click", function () {
-    giggity.getUserEvents(true);
-    giggity.currentEvent = eventObject.id;
-    giggity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.date + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>' + eventObject.entryprice + '</p>\n              <p>' + eventObject.venue.name + '</p>\n              <p>' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <button id="getDirectionsButton">Get Directions</button>\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
+    gigcity.getUserEvents(true);
+    gigcity.currentEvent = eventObject.id;
+    gigcity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.date + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>' + eventObject.entryprice + '</p>\n              <p>' + eventObject.venue.name + '</p>\n              <p>' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <button id="getDirectionsButton">Get Directions</button>\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
   });
 };
 
 // Current Location
-giggity.getLocation = function () {
+gigcity.getLocation = function () {
   markers.forEach(function (marker) {
     if (marker.metadata.id == "location") {
       var index = markers.indexOf(marker);
@@ -353,33 +354,26 @@ giggity.getLocation = function () {
     var latLng = { lat: position.coords.latitude,
       lng: position.coords.longitude
     };
-    giggity.createMarker(position, "location");
-    giggity.map.panTo(latLng);
-    giggity.map.setZoom(16);
+    gigcity.createMarker(position, "location");
+    gigcity.map.panTo(latLng);
+    gigcity.map.setZoom(16);
   });
   return;
 };
 
-giggity.openTab = function (evt, tabName) {
-  var i, tabcontent, tablinks;
-
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+gigcity.openTab = function (tabName) {
+  if (tabName == 'signUp') {
+    $('#signUp').show();
+    $('#signIn').hide();
+  } else if (tabName == 'signIn') {
+    $('#signUp').hide();
+    $('#signIn').show();
   }
-
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
 };
 
-giggity.saveEventFunction = function () {
-  if (!giggity.isLoggedIn()) {
-    giggity.signUp();
+gigcity.saveEventFunction = function () {
+  if (!gigcity.isLoggedIn()) {
+    gigcity.signUp();
     return;
   }
   var token = localStorage.getItem("token");
@@ -390,7 +384,7 @@ giggity.saveEventFunction = function () {
     url: "/api/saveEvents",
     method: "POST",
     data: JSON.stringify({
-      "skiddleId": giggity.currentEvent,
+      "skiddleId": gigcity.currentEvent,
       "userId": currentUser
     }),
     dataType: 'json',
@@ -405,24 +399,24 @@ giggity.saveEventFunction = function () {
   });
 };
 
-giggity.individualEventFunction = function () {
+gigcity.individualEventFunction = function () {
   var token = localStorage.getItem("token");
   var currentUser = localStorage.getItem("userId");
 
   $.ajax({
-    url: '/api/users/' + currentUser + '/events/' + giggity.currentEvent,
+    url: '/api/users/' + currentUser + '/events/' + gigcity.currentEvent,
     method: "GET",
     beforeSend: function beforeSend(jqXHR) {
       if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
     }
   }).done(function (data) {
-    giggity.deleteEventFunction(data[0]._id);
+    gigcity.deleteEventFunction(data[0]._id);
   }).fail(function (data) {
     console.log("failed to get event");
   });
 };
 
-giggity.deleteEventFunction = function (eventId) {
+gigcity.deleteEventFunction = function (eventId) {
   var token = localStorage.getItem("token");
   var currentUser = localStorage.getItem("userId");
 
@@ -440,7 +434,7 @@ giggity.deleteEventFunction = function (eventId) {
   });
 };
 
-giggity.getUserEvents = function (checking) {
+gigcity.getUserEvents = function (checking) {
   var token = localStorage.getItem("token");
   var currentUser = localStorage.getItem("userId");
 
@@ -452,18 +446,18 @@ giggity.getUserEvents = function (checking) {
     }
   }).done(function (data) {
     if (checking) {
-      giggity.isSavedEvent(data);
+      gigcity.isSavedEvent(data);
     } else {
-      giggity.eventPageIndex(data);
+      gigcity.eventPageIndex(data);
     }
   }).fail(function (data) {
     console.log("failed to get events");
   });
 };
 
-giggity.isSavedEvent = function (data) {
+gigcity.isSavedEvent = function (data) {
   var item = $.grep(data, function (item) {
-    return item.skiddleId == giggity.currentEvent;
+    return item.skiddleId == gigcity.currentEvent;
   });
 
   if (item.length) {
@@ -473,23 +467,31 @@ giggity.isSavedEvent = function (data) {
   }
 };
 
-giggity.eventPageIndex = function (data) {
+gigcity.eventPageIndex = function (data) {
   data.forEach(function (element) {
-    giggity.getIndividualEvent(element.skiddleId);
+    gigcity.getIndividualEvent(element.skiddleId);
   });
 };
 
-giggity.createEventCard = function (data) {
+gigcity.createEventCard = function (data) {
   console.log(data);
   $('.cardContainer').append('\n      <div>\n        <h1>' + data.results.eventname + '</h1>\n      </div>\n    ');
 };
 
-document.addEventListener('DOMContentLoaded', function () {
-  giggity.init();
-});
-
-giggity.refreshPage = function () {
+gigcity.refreshPage = function () {
   localStorage.removeItem('token');
   localStorage.removeItem('userId');
   location.reload();
 };
+
+gigcity.liteRefreshPage = function () {
+  location.reload();
+};
+
+gigcity.closeSignForm = function () {
+  $('.signUpForm').hide();
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  gigcity.init();
+});
