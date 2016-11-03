@@ -9,10 +9,24 @@ body{
   .header{
     width: 100vw;
     height: 10vh;
-    background: $blue-color;
+    background: $yellow-color;
     @include display(flex);
-    @include justify-content(flex-end);
+    @include justify-content(space-between);
     @include align-items(center);
+    color: $text-color;
+    h1{
+      margin-left:50px;
+    }
+    button{
+      margin-right: 50px;
+      border-color: $text-color;
+      color: $text-color;
+      @include transition(all 0.5s ease);
+      &:hover{
+        background:$text-color;
+        color: $yellow-color;
+      }
+    }
     .signUpButton, .accountButton{
       display: none;
     }
@@ -21,7 +35,7 @@ body{
       position: fixed;
       top: 10vh;
       right: 0;
-      background: red;
+      background: $yellow-color;
       z-index: 3;
       width: 125px;
       height: 176px;
@@ -51,7 +65,9 @@ body{
       z-index: 1;
     }
     .formContainer{
-      @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $blue-color 60%, $red-color 100%));
+      // @include background-image(linear-gradient(to bottom, $blue-color, $red-color));
+      // @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $off-black 60%, $red-color 100%));
+      background: $off-black;
       height: 30vh;
       @include display(flex);
       @include justify-content(center);
@@ -64,7 +80,11 @@ body{
         @include align-items(center);
         @include flex-direction(row);
         .queryElems{
-          input, select{
+          @include display(flex);
+          @include justify-content(space-around);
+          @include align-items(center);
+          @include flex-direction(row);
+          input, select,img{
             margin-right: 15px;
           }
         }
