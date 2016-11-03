@@ -3,7 +3,7 @@ gigcity.headerObject = `
 
     <h1 class="home">GIGCITY</h1>
     <button class="signUpButton">Sign up/in</button>
-    <button class="accountButton">Account</button>
+    <button class="accountButton">My Account</button>
     <div class="accountMenu">
       <ul>
         <li><a href="#" class="profileButton">Profile</a></li>
