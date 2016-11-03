@@ -64,3 +64,7 @@ giggity.handleUserForm = function() {
   giggity.showProfilePage = function(){
     giggity.$main.html('');
   };
+
+  giggity.showEventsPage = function(){
+    giggity.$main.html('');
+  };
