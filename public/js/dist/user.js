@@ -1,5 +1,8 @@
 "use strict";
 
+var $userFirstName = void 0;
+var $userLastName = void 0;
+
 giggity.isLoggedIn = function () {
   return !!localStorage.getItem('token');
 };
@@ -13,7 +16,6 @@ giggity.signUp = function () {
 };
 
 //handle form
-
 giggity.handleUserForm = function () {
   if (event) event.preventDefault();
   var token = localStorage.getItem("token");
@@ -21,7 +23,7 @@ giggity.handleUserForm = function () {
   var url = $form.attr("action");
   var method = $form.attr("method");
   var data = $form.serialize();
-
+  console.log(data);
   $.ajax({
     url: url,
     method: method,
@@ -32,7 +34,7 @@ giggity.handleUserForm = function () {
   }).done(function (data) {
     console.log(data);
     if (data.token) localStorage.setItem('token', data.token);
-    giggity.getUsers();
+    if (data.user) localStorage.setItem('userId', data.user._id);
     $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
@@ -43,6 +45,7 @@ giggity.handleUserForm = function () {
 
 //get users
 giggity.getUsers = function () {
+  console.log("in get users");
   if (event) event.preventDefault();
   var token = localStorage.getItem("token");
 
@@ -54,7 +57,7 @@ giggity.getUsers = function () {
     }
   }).done(function (data) {
     console.log("success");
-    console.log(data.users);
+    // console.log(data);
   });
 };
 
@@ -62,7 +65,64 @@ giggity.toggleAccountMenu = function () {
   console.log('CLICK');
   $('.accountMenu').toggle();
 };
+// ----------------------------------------------------------------------------------------------------------------
+giggity.getUserData = function () {
+  console.log("In get User Data");
+  var token = localStorage.getItem('token');
+  var userId = localStorage.getItem('userId');
+  $.ajax({
+    url: "/api/users/" + userId,
+    method: "GET",
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
+    }
+  }).done(function (data) {
+    console.log("Weve got the data");
+    console.log(data.user);
+    giggity.showProfilePage(data.user);
+  });
+};
 
-giggity.showProfilePage = function () {
-  giggity.$main.html('');
+giggity.showProfilePage = function (user) {
+  var token = localStorage.getItem('token');
+  console.log("In the edit user form");
+  var userId = localStorage.getItem('userId');
+  giggity.$main.html("<h1>Hi " + user.firstName + "</h1>\n                          <h2>Account Settings</h2>\n                          <form class=\"accountSettingsForm\" method=\"put\" action=\"/api/users/" + user._id + "\">\n                            <input type=\"text\" name=\"user[firstName]\" value=\"" + user.firstName + "\" placeholder=\"First name\">\n                            <input type=\"text\" name=\"user[lastName]\" value=\"" + user.lastName + "\" placeholder=\"Last name\">\n                            <input type=\"text\" name=\"user[email]\" value=\"" + user.email + "\" placeholder=\"Email\">\n\n                            <button class=\"btn btn-primary\">Update details</button>\n                          </form>\n                          <button class=\"deleteProfileButton\">Delete Profile</button>");
+};
+
+giggity.updateUserForm = function () {
+
+  if (event) event.preventDefault();
+  var token = localStorage.getItem("token");
+  var $form = $(this);
+  var url = $form.attr("action");
+  var method = $form.attr("method");
+  var data = $form.serialize();
+  $.ajax({
+    url: url,
+    method: method,
+    data: data,
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
+    }
+  }).done(function (data) {
+    console.log(data);
+  });
+};
+
+giggity.deleteUser = function () {
+  var token = localStorage.getItem('token');
+  var userId = localStorage.getItem('userId');
+
+  console.log("in delete user");
+  $.ajax({
+    url: "/api/users/" + userId,
+    method: 'DELETE',
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader("Authorization", "Bearer " + token);
+    }
+  }).done(function (data) {
+    console.log("User profile deleted");
+    giggity.refreshPage();
+  });
 };

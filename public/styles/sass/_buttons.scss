@@ -5,13 +5,17 @@ button, input, select{
   height: 40px;
   border-radius: 500px;
   text-align: center;
-  color: white!important;
+  color: white;
   font-family: brandon;
   font-size: 18px;
   cursor: pointer;
   outline:none;
   @include appearance(none);
   @include box-sizing(initial);
+}
+
+input {
+  cursor: text;
 }
 
 .locationButton{

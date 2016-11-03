@@ -29,8 +29,11 @@
     this.$formContainer.on("click", '.locationButton', giggity.getLocation);
     this.$header.on("click", ".signUpButton", giggity.signUp);
     this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
-    this.$header.on("click", ".profileButton", giggity.showProfilePage);
+    this.$header.on("click", ".profileButton", giggity.getUserData);
+    this.$body.on("click", ".deleteProfileButton", giggity.deleteUser);
+    this.$body.on("click", ".logoutButton", giggity.refreshPage);
     this.$body.on("submit", ".authform", giggity.handleUserForm);
+    this.$body.on("submit", ".accountSettingsForm", giggity.updateUserForm);
   };
 
   giggity.checkLoginStatus = function(){
@@ -391,3 +394,9 @@ giggity.openTab = function(evt, tabName) {
 document.addEventListener('DOMContentLoaded', function() {
     giggity.init();
 });
+
+giggity.refreshPage = function(){
+  localStorage.removeItem('token');
+  localStorage.removeItem('userId');
+  location.reload();
+};

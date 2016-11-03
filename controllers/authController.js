@@ -11,7 +11,7 @@ function register(req, res){
     let token = jwt.sign(payload, secret, {expiresIn: 60*60*24}); //make a a code and encode it with payload and secret.
 
     return res.status(201).json({
-      message: `welcome ${user.firstName}`,
+      message: `welcome ${user.firstName} ${user._id}`,
       user,
       token
     });

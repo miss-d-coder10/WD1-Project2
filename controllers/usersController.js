@@ -17,6 +17,7 @@ const usersShow = (req, res) => {
 
 const usersUpdate = (req, res) => {
  User.findByIdAndUpdate(req.params.id, req.body.user, { new: true },  (err, user) => {
+   console.log(err);
    if (err) return res.status(500).json({ message: "Something went wrong." });
    if (!user) return res.status(404).json({ message: "User not found." });
    return res.status(200).json({ user });
@@ -25,6 +26,7 @@ const usersUpdate = (req, res) => {
 
 const usersDelete = (req, res) => {
  User.findByIdAndRemove(req.params.id, (err, user) => {
+
    if (err) return res.status(500).json({ message: "Something went wrong." });
    if (!user) return res.status(404).json({ message: "User not found." });
    return res.status(204).send();
