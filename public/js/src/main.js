@@ -9,6 +9,8 @@
     this.map = null;
     this.currentLat = null;
     this.currentLng = null;
+    this.currentEvent = null;
+    this.currentUserEvents = null;
     this.$main = $('main');
     this.$header = $('header');
     this.$formContainer = $('.formContainer');
@@ -25,6 +27,8 @@
   giggity.initEventListeners = function() {
     this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
     this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
+    this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
+    this.$formContainer.on("click", '#savedEventButton', giggity.individualEventFunction);
     this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
     this.$formContainer.on("click", '.locationButton', giggity.getLocation);
     this.$header.on("click", ".signUpButton", giggity.signUp);
@@ -32,6 +36,7 @@
     this.$header.on("click", ".profileButton", giggity.getUserData);
     this.$body.on("click", ".deleteProfileButton", giggity.deleteUser);
     this.$body.on("click", ".logoutButton", giggity.refreshPage);
+    this.$header.on("click", ".eventsButton", giggity.showEventsPage);
     this.$body.on("submit", ".authform", giggity.handleUserForm);
     this.$body.on("submit", ".accountSettingsForm", giggity.updateUserForm);
   };
@@ -125,6 +130,18 @@
       }
     })
     .done(this.loopThroughEvents.bind(giggity));
+  };
+
+  giggity.getIndividualEvent = function(eventId) {
+    $.ajax({
+      contentType: 'application/json',
+      url: `/api/events/${eventId}`,
+      method: "GET",
+      dataType: 'json'
+    })
+    .done((data) => {
+      giggity.createEventCard(data);
+    });
   };
 
   giggity.removeEventObject = function(){
@@ -325,7 +342,8 @@ giggity.autoComplete = function(){
 
   giggity.eventInformation = function(eventObject, marker) {
     google.maps.event.addListener(marker, "click", () => {
-      // if (!$eventContainer.contains('.eventObects')) {
+      giggity.getUserEvents(true);
+      giggity.currentEvent = eventObject.id;
       giggity.$formContainer.html(
         `<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
           <h2>${eventObject.eventname}</h2>
@@ -389,6 +407,124 @@ giggity.openTab = function(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 };
+
+
+giggity.saveEventFunction = function(){
+  if(!giggity.isLoggedIn()){
+    giggity.signUp();
+    return;
+  }
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    contentType: 'application/json',
+    url:"/api/saveEvents",
+    method: "POST",
+    data: JSON.stringify({
+      "skiddleId": giggity.currentEvent,
+      "userId": currentUser
+    }),
+    dataType: 'json',
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    $('#saveEventButton').remove();
+    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+  })
+  .fail((data) => {console.log("failed to save Event");});
+};
+
+
+
+giggity.individualEventFunction = function(){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/users/${currentUser}/events/${giggity.currentEvent}`,
+    method: "GET",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    giggity.deleteEventFunction(data[0]._id);
+  })
+  .fail((data) => {console.log("failed to get event");});
+};
+
+giggity.deleteEventFunction = function(eventId){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/saveEvents/${eventId}`,
+    method: "DELETE",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    $('#savedEventButton').remove();
+    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  })
+  .fail((data) => {console.log("failed to delete Event");});
+};
+
+
+giggity.getUserEvents = function(checking){
+  let token = localStorage.getItem("token");
+  let currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url:`/api/users/${currentUser}/events`,
+    method: "GET",
+    beforeSend: function(jqXHR) {
+      if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+  })
+  .done((data) => {
+    if(checking){
+      giggity.isSavedEvent(data);
+    } else {
+      giggity.eventPageIndex(data);
+    }
+  })
+  .fail((data) => {console.log("failed to get events");});
+};
+
+
+giggity.isSavedEvent = function(data){
+  var item = $.grep(data, function(item) {
+    return item.skiddleId == giggity.currentEvent;
+  });
+
+  if (item.length) {
+      giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+  } else {
+      giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  }
+};
+
+
+giggity.eventPageIndex = function(data){
+  data.forEach(function(element) {
+    giggity.getIndividualEvent(element.skiddleId);
+});
+};
+
+giggity.createEventCard = function(data){
+  console.log(data);
+  $('.cardContainer').append(`
+      <div>
+        <h1>${data.results.eventname}</h1>
+      </div>
+    `);
+};
+
 
 
 document.addEventListener('DOMContentLoaded', function() {

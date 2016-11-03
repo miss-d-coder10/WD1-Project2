@@ -204,8 +204,7 @@ body {
     border: black; }
   body .deleteProfileButton {
     color: black;
-    border: black;
-  }
+    border: black; }
 
 /* Style the list */
 ul.tab {

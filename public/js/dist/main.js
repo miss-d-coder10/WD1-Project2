@@ -11,6 +11,8 @@ giggity.init = function () {
   this.map = null;
   this.currentLat = null;
   this.currentLng = null;
+  this.currentEvent = null;
+  this.currentUserEvents = null;
   this.$main = $('main');
   this.$header = $('header');
   this.$formContainer = $('.formContainer');
@@ -27,6 +29,8 @@ giggity.init = function () {
 giggity.initEventListeners = function () {
   this.$formContainer.on("submit", '#event-selector', giggity.formHandler);
   this.$formContainer.on("click", '#newSearchButton', giggity.newSearchFunction);
+  this.$formContainer.on("click", '#saveEventButton', giggity.saveEventFunction);
+  this.$formContainer.on("click", '#savedEventButton', giggity.individualEventFunction);
   this.$formContainer.on("click", '#removeEventButton', giggity.removeEventObject);
   this.$formContainer.on("click", '.locationButton', giggity.getLocation);
   this.$header.on("click", ".signUpButton", giggity.signUp);
@@ -34,6 +38,7 @@ giggity.initEventListeners = function () {
   this.$header.on("click", ".profileButton", giggity.getUserData);
   this.$body.on("click", ".deleteProfileButton", giggity.deleteUser);
   this.$body.on("click", ".logoutButton", giggity.refreshPage);
+  this.$header.on("click", ".eventsButton", giggity.showEventsPage);
   this.$body.on("submit", ".authform", giggity.handleUserForm);
   this.$body.on("submit", ".accountSettingsForm", giggity.updateUserForm);
 };
@@ -123,6 +128,17 @@ giggity.getEvents = function (date, lat, lng, radius, eventcode) {
       limit: 100
     }
   }).done(this.loopThroughEvents.bind(giggity));
+};
+
+giggity.getIndividualEvent = function (eventId) {
+  $.ajax({
+    contentType: 'application/json',
+    url: '/api/events/' + eventId,
+    method: "GET",
+    dataType: 'json'
+  }).done(function (data) {
+    giggity.createEventCard(data);
+  });
 };
 
 giggity.removeEventObject = function () {
@@ -317,7 +333,8 @@ giggity.deleteMarkers = function () {
 
 giggity.eventInformation = function (eventObject, marker) {
   google.maps.event.addListener(marker, "click", function () {
-    // if (!$eventContainer.contains('.eventObects')) {
+    giggity.getUserEvents(true);
+    giggity.currentEvent = eventObject.id;
     giggity.$formContainer.html('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <h2>' + eventObject.eventname + '</h2>\n          <p>' + eventObject.venue.name + '</p>\n          <p>' + eventObject.venue.address + '</p>\n          <p>' + eventObject.date + '</p>\n          <p>' + eventObject.entryprice + '</p>\n          <img src=\'' + eventObject.imageurl + '\'>\n          <button id="removeEventButton">Remove</button>\n          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n          <button id="getDirectionsButton">Get Directions</button>\n          <select id="methodofTravel">\n          <option disabled="disabled">How are you travelling?</option>\n            <option value="DRIVING">DRIVING</option>\n            <option value="WALKING">WALKING</option>\n            <option value="BICYCLING">BICYCLING</option>\n            <option value="TRANSIT">TRANSIT</option>\n          </select>\n          <button id="newSearchButton">New Search</button>\n        </div>');
   });
 };
@@ -357,6 +374,113 @@ giggity.openTab = function (evt, tabName) {
 
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
+};
+
+giggity.saveEventFunction = function () {
+  if (!giggity.isLoggedIn()) {
+    giggity.signUp();
+    return;
+  }
+  var token = localStorage.getItem("token");
+  var currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    contentType: 'application/json',
+    url: "/api/saveEvents",
+    method: "POST",
+    data: JSON.stringify({
+      "skiddleId": giggity.currentEvent,
+      "userId": currentUser
+    }),
+    dataType: 'json',
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+  }).done(function (data) {
+    $('#saveEventButton').remove();
+    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+  }).fail(function (data) {
+    console.log("failed to save Event");
+  });
+};
+
+giggity.individualEventFunction = function () {
+  var token = localStorage.getItem("token");
+  var currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url: '/api/users/' + currentUser + '/events/' + giggity.currentEvent,
+    method: "GET",
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+  }).done(function (data) {
+    giggity.deleteEventFunction(data[0]._id);
+  }).fail(function (data) {
+    console.log("failed to get event");
+  });
+};
+
+giggity.deleteEventFunction = function (eventId) {
+  var token = localStorage.getItem("token");
+  var currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url: '/api/saveEvents/' + eventId,
+    method: "DELETE",
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+  }).done(function (data) {
+    $('#savedEventButton').remove();
+    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  }).fail(function (data) {
+    console.log("failed to delete Event");
+  });
+};
+
+giggity.getUserEvents = function (checking) {
+  var token = localStorage.getItem("token");
+  var currentUser = localStorage.getItem("userId");
+
+  $.ajax({
+    url: '/api/users/' + currentUser + '/events',
+    method: "GET",
+    beforeSend: function beforeSend(jqXHR) {
+      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+  }).done(function (data) {
+    if (checking) {
+      giggity.isSavedEvent(data);
+    } else {
+      giggity.eventPageIndex(data);
+    }
+  }).fail(function (data) {
+    console.log("failed to get events");
+  });
+};
+
+giggity.isSavedEvent = function (data) {
+  var item = $.grep(data, function (item) {
+    return item.skiddleId == giggity.currentEvent;
+  });
+
+  if (item.length) {
+    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+  } else {
+    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+  }
+};
+
+giggity.eventPageIndex = function (data) {
+  data.forEach(function (element) {
+    giggity.getIndividualEvent(element.skiddleId);
+  });
+};
+
+giggity.createEventCard = function (data) {
+  console.log(data);
+  $('.cardContainer').append('\n      <div>\n        <h1>' + data.results.eventname + '</h1>\n      </div>\n    ');
 };
 
 document.addEventListener('DOMContentLoaded', function () {

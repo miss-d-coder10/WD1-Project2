@@ -30,6 +30,9 @@ router.route("/login")
 
 router.route("/events")
   .get(skiddleController.index);
+  
+router.route("/events/:eventId")
+  .get(skiddleController.show);
 
 router.route("/users")
   // .all(secureRoutes)
@@ -40,6 +43,12 @@ router.route("/users/:id")
   .get(usersController.show)
   .put(usersController.update)
   .delete(usersController.delete);
+
+router.route("/users/:id/events")
+  .get(usersController.eventIndex);
+
+router.route("/users/:id/events/:eventId")
+  .get(usersController.eventSearch);
 
 router.route("/saveEvents")
   // .all(secureRoutes)

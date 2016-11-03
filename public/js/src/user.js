@@ -31,9 +31,8 @@ giggity.handleUserForm = function() {
     }
   })
   .done((data) => {
-    console.log(data);
+    if(data.user._id) localStorage.setItem('userId' ,data.user._id);
     if(data.token) localStorage.setItem('token', data.token);
-    if(data.user) localStorage.setItem('userId', data.user._id);
     $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
@@ -41,27 +40,7 @@ giggity.handleUserForm = function() {
   .fail(() => {console.log("failed to log in");});
 };
 
-//get users
- giggity.getUsers = function(){
-   console.log("in get users");
-    if (event) event.preventDefault();
-    let token = localStorage.getItem("token");
-
-    $.ajax({
-      url: "/api/users",
-      method: "GET",
-      beforeSend: function(jqXHR) {
-        if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-      }
-    })
-    .done((data) => {
-      console.log("success");
-      // console.log(data);
-    });
-  };
-
   giggity.toggleAccountMenu = function(){
-    console.log('CLICK');
     $('.accountMenu').toggle();
   };
 // ----------------------------------------------------------------------------------------------------------------
@@ -97,10 +76,9 @@ giggity.handleUserForm = function() {
                           </form>
                           <button class="deleteProfileButton">Delete Profile</button>`);
 
-                        };
+  };
 
   giggity.updateUserForm = function() {
-
     if(event) event.preventDefault();
     let token = localStorage.getItem("token");
     let $form = $(this);
@@ -136,4 +114,11 @@ giggity.handleUserForm = function() {
         console.log("User profile deleted");
         giggity.refreshPage();
       });
+  };
+
+  giggity.showEventsPage = function(){
+    event.preventDefault();
+    console.log('CLICK');
+    giggity.$main.html('<div class="cardContainer"></div>');
+    giggity.getUserEvents(false);
   };

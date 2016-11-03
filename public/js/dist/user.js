@@ -32,9 +32,8 @@ giggity.handleUserForm = function () {
       if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
     }
   }).done(function (data) {
-    console.log(data);
+    if (data.user._id) localStorage.setItem('userId', data.user._id);
     if (data.token) localStorage.setItem('token', data.token);
-    if (data.user) localStorage.setItem('userId', data.user._id);
     $('.signUpForm').remove();
     $('.accountButton').show();
     $('.signUpButton').hide();
@@ -43,26 +42,7 @@ giggity.handleUserForm = function () {
   });
 };
 
-//get users
-giggity.getUsers = function () {
-  console.log("in get users");
-  if (event) event.preventDefault();
-  var token = localStorage.getItem("token");
-
-  $.ajax({
-    url: "/api/users",
-    method: "GET",
-    beforeSend: function beforeSend(jqXHR) {
-      if (token) return jqXHR.setRequestHeader('Authorization', "Bearer " + token);
-    }
-  }).done(function (data) {
-    console.log("success");
-    // console.log(data);
-  });
-};
-
 giggity.toggleAccountMenu = function () {
-  console.log('CLICK');
   $('.accountMenu').toggle();
 };
 // ----------------------------------------------------------------------------------------------------------------
@@ -91,7 +71,6 @@ giggity.showProfilePage = function (user) {
 };
 
 giggity.updateUserForm = function () {
-
   if (event) event.preventDefault();
   var token = localStorage.getItem("token");
   var $form = $(this);
@@ -125,4 +104,11 @@ giggity.deleteUser = function () {
     console.log("User profile deleted");
     giggity.refreshPage();
   });
+};
+
+giggity.showEventsPage = function () {
+  event.preventDefault();
+  console.log('CLICK');
+  giggity.$main.html('<div class="cardContainer"></div>');
+  giggity.getUserEvents(false);
 };
