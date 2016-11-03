@@ -6,6 +6,8 @@ var currentlatLng = void 0;
 var lat = void 0;
 var lng = void 0;
 var $info = $('.eventObjects');
+var gigClicked = false;
+var directionsDisplay = null;
 
 giggity.init = function () {
   this.map = null;
@@ -85,7 +87,12 @@ giggity.dateFormat = function (date) {
   var maxDate = void 0;
 
   if (date.value === 'Today') {
+    console.log(date.value);
     maxDate = moment(today).format("YYYY-MM-DD");
+  } else if (date.value === 'Anytime') {
+    console.log(date.value);
+    var anytime = today.add(30, 'days');
+    maxDate = moment(anytime).format("YYYY-MM-DD");
   } else if (date.value === 'Next 7 days') {
     var week = today.add(7, 'days');
     maxDate = moment(week).format("YYYY-MM-DD");
@@ -185,33 +192,47 @@ giggity.loopThroughEvents = function (data) {
   });
   //DIRECTIONS
   giggity.$formContainer.on("click", '#getDirectionsButton', function () {
+    gigClicked = true;
+    var directionsService = void 0;
 
-    var $methodOfTravel = $('#methodofTravel').val();
-    navigator.geolocation.getCurrentPosition(function (position) {
-      currentlatLng = { lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      $info = $('.eventObjects');
-      lat = $info.data('lat');
-      lng = $info.data('lng');
-      var latLng = { lat: lat, lng: lng };
-      directionsService = new google.maps.DirectionsService();
-      var directionsRequest = {
-        origin: currentlatLng,
-        destination: latLng,
-        travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
-        unitSystem: google.maps.UnitSystem.METRIC
-      };
+    if (directionsDisplay) directionsDisplay.setMap(null);
+    if (gigClicked) {
+      (function () {
+        console.log("this runs");
+        var $methodOfTravel = $('#methodofTravel').val();
+        navigator.geolocation.getCurrentPosition(function (position) {
+          currentlatLng = { lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          $info = $('.eventObjects');
+          lat = $info.data('lat');
+          lng = $info.data('lng');
+          var latLng = { lat: lat, lng: lng };
+          directionsService = new google.maps.DirectionsService();
+          var directionsRequest = {
+            origin: currentlatLng,
+            destination: latLng,
+            travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
+            unitSystem: google.maps.UnitSystem.METRIC
+          };
 
-      directionsService.route(directionsRequest, function (response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          directionsDisplay = new google.maps.DirectionsRenderer({
-            map: giggity.map,
-            directions: response
+          directionsService.route(directionsRequest, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay = new google.maps.DirectionsRenderer({
+                map: giggity.map,
+                directions: response
+              });
+            } else $("#error").append("Unable to retrieve your route<br />");
           });
-        } else $("#error").append("Unable to retrieve your route<br />");
-      });
-    });
+        });
+        gigClicked = false;
+        console.log("gigClicked is:", gigClicked);
+      })();
+    } else {
+      console.log("does this run?");
+      directionsDisplay.set('directions', null);
+      gigClicked = false;
+    }
   });
 };
 
@@ -353,6 +374,9 @@ giggity.getLocation = function () {
     var latLng = { lat: position.coords.latitude,
       lng: position.coords.longitude
     };
+    giggity.currentLat = position.coords.latitude;
+    giggity.currentLng = position.coords.longitude;
+
     giggity.createMarker(position, "location");
     giggity.map.panTo(latLng);
     giggity.map.setZoom(16);
