@@ -2,21 +2,30 @@
 @import "variables";
 @import "buttons";
 @import "font";
-
-* {
-  box-sizing: border-box;
-}
-
 body{
   margin: 0;
   font-family: brandon;
   .header{
     width: 100vw;
     height: 10vh;
-    background: $blue-color;
+    background: $yellow-color;
     @include display(flex);
-    @include justify-content(flex-end);
+    @include justify-content(space-between);
     @include align-items(center);
+    color: $text-color;
+    h1{
+      margin-left:50px;
+    }
+    button{
+      margin-right: 50px;
+      border-color: $text-color;
+      color: $text-color;
+      @include transition(all 0.5s ease);
+      &:hover{
+        background:$text-color;
+        color: $yellow-color;
+      }
+    }
     .signUpButton, .accountButton{
       display: none;
     }
@@ -25,8 +34,8 @@ body{
       position: fixed;
       top: 10vh;
       right: 0;
-      background: red;
-      z-index: 5;
+      background: $yellow-color;
+      z-index: 3;
       width: 125px;
       height: 176px;
     }
@@ -55,7 +64,9 @@ body{
       z-index: 1;
     }
     .formContainer{
-      @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $blue-color 60%, $red-color 100%));
+      // @include background-image(linear-gradient(to bottom, $blue-color, $red-color));
+      // @include background-image(radial-gradient(circle farthest-corner at 30vh 0, $off-black 60%, $red-color 100%));
+      background: $off-black;
       height: 30vh;
       @include display(flex);
       @include justify-content(center);
@@ -68,7 +79,11 @@ body{
         @include align-items(center);
         @include flex-direction(row);
         .queryElems{
-          input, select{
+          @include display(flex);
+          @include justify-content(space-around);
+          @include align-items(center);
+          @include flex-direction(row);
+          input, select,img{
             margin-right: 15px;
           }
         }
@@ -133,8 +148,8 @@ body{
   }
   .accountSettingsForm {
     input, textarea {
-      color: #62748C;
-      border: 2px solid #62748C;
+      color: $yellow-color;
+      border: 2px solid $yellow-color;
       width: 100%;
       margin-bottom: 15px;
       border-radius: 5px;
@@ -143,15 +158,14 @@ body{
       padding: 10px;
     }
     button {
-      background-color: #62748C;
-      color: white;
-      border: #62748C;
+      background-color: $text-color;
+      color: $yellow-color;
       border-radius: 5px;
       width: 48%;
       float: left;
       box-sizing: border-box;
       transition: all 0.2s ease;
-      border: 2px solid #62748C;
+      border: 2px solid $yellow-color;
       &:first-of-type {
         margin-right: 4%;
       }
@@ -162,8 +176,8 @@ body{
     }
   }
   .deleteProfileButton {
-    color: black;
-    border: black;
+    color: $text-color;
+    border: $text-color;
   }
   .popUp {
     position: absolute;
@@ -171,21 +185,15 @@ body{
     width: 100%;
     z-index: 4;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: $text-color;
     display: none;
     border-radius: 10;
   }
   .popUp img {
     height:15px;
     width:15px;
-
   }
 }
-
-
-
-
-
 /* Style the list */
 ul.tab {
     list-style-type: none;
@@ -195,10 +203,8 @@ ul.tab {
     border: 1px solid #ccc;
     background-color: #f1f1f1;
 }
-
 /* Float the list items side by side */
 ul.tab li {float: left;}
-
 /* Style the links inside the list items */
 ul.tab li a {
     display: inline-block;
@@ -209,13 +215,10 @@ ul.tab li a {
     transition: 0.3s;
     font-size: 17px;
 }
-
 /* Change background color of links on hover */
 ul.tab li a:hover {background-color: #ddd;}
-
 /* Create an active/current tablink class */
 ul.tab li a:focus, .active {background-color: #ccc;}
-
 /* Style the tab content */
 .tabcontent {
     display: none;

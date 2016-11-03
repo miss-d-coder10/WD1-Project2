@@ -1,6 +1,7 @@
 giggity.headerObject = `
   <div class="header">
-  <h1>Giggity</h1>
+
+    <h1 class="home">GIGGITY</h1>
     <button class="signUpButton">Sign up/in</button>
     <button class="accountButton">Account</button>
     <div class="accountMenu">

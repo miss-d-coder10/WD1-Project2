@@ -36,6 +36,7 @@ giggity.initEventListeners = function () {
   this.$header.on("click", ".signUpButton", giggity.signUp);
   this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
   this.$header.on("click", ".profileButton", giggity.getUserData);
+  this.$header.on("click", ".home", giggity.refreshPage);
   this.$body.on("click", ".deleteProfileButton", giggity.deleteUser);
   this.$body.on("click", ".logoutButton", giggity.refreshPage);
   this.$header.on("click", ".eventsButton", giggity.showEventsPage);

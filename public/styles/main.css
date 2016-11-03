@@ -1,11 +1,11 @@
 button, input, select {
-  width: 100px;
+  width: 150px;
   background: transparent;
-  border: 4px solid white;
+  border: 2px solid #ff0;
   height: 40px;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
-  color: white;
+  color: #ff0;
   font-family: brandon;
   font-size: 18px;
   cursor: pointer;
@@ -23,7 +23,13 @@ input {
   cursor: text; }
 
 button {
-  border-radius: 500px; }
+  border-radius: 500px;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  transition: all 0.5s ease; }
+  button:hover {
+    background: #ff0;
+    color: #24272B; }
 
 .locationButton {
   width: 30px;
@@ -38,16 +44,13 @@ button {
   font-weight: normal;
   font-style: normal; }
 
-* {
-  box-sizing: border-box; }
-
 body {
   margin: 0;
   font-family: brandon; }
   body .header {
     width: 100vw;
     height: 10vh;
-    background: #62748C;
+    background: #ff0;
     display: -webkit-box;
     display: -moz-box;
     display: box;
@@ -55,15 +58,15 @@ body {
     display: -moz-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: end;
-    -moz-box-pack: end;
-    box-pack: end;
-    -webkit-justify-content: flex-end;
-    -moz-justify-content: flex-end;
-    -ms-justify-content: flex-end;
-    -o-justify-content: flex-end;
-    justify-content: flex-end;
-    -ms-flex-pack: end;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    box-pack: justify;
+    -webkit-justify-content: space-between;
+    -moz-justify-content: space-between;
+    -ms-justify-content: space-between;
+    -o-justify-content: space-between;
+    justify-content: space-between;
+    -ms-flex-pack: justify;
     -webkit-box-align: center;
     -moz-box-align: center;
     box-align: center;
@@ -72,7 +75,20 @@ body {
     -ms-align-items: center;
     -o-align-items: center;
     align-items: center;
-    -ms-flex-align: center; }
+    -ms-flex-align: center;
+    color: #24272B; }
+    body .header h1 {
+      margin-left: 50px; }
+    body .header button {
+      margin-right: 50px;
+      border-color: #24272B;
+      color: #24272B;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      transition: all 0.5s ease; }
+      body .header button:hover {
+        background: #24272B;
+        color: #ff0; }
     body .header .signUpButton, body .header .accountButton {
       display: none; }
     body .header .accountMenu {
@@ -80,8 +96,8 @@ body {
       position: fixed;
       top: 10vh;
       right: 0;
-      background: red;
-      z-index: 5;
+      background: #ff0;
+      z-index: 3;
       width: 125px;
       height: 176px; }
   body .signUpForm {
@@ -126,8 +142,7 @@ body {
     height: 60vh;
     z-index: 1; }
   body main .formContainer {
-    background-image: -webkit-radial-gradient(30vh 0, circle farthest-corner, #62748C 60%, #DB5560 100%);
-    background-image: radial-gradient(circle farthest-corner at 30vh 0, #62748C 60%, #DB5560 100%);
+    background: #24272B;
     height: 30vh;
     display: -webkit-box;
     display: -moz-box;
@@ -201,8 +216,44 @@ body {
       -moz-flex-direction: row;
       flex-direction: row;
       -ms-flex-direction: row; }
-      body main .formContainer form .queryElems input, body main .formContainer form .queryElems select {
-        margin-right: 15px; }
+      body main .formContainer form .queryElems {
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: distribute;
+        -moz-box-pack: distribute;
+        box-pack: distribute;
+        -webkit-justify-content: space-around;
+        -moz-justify-content: space-around;
+        -ms-justify-content: space-around;
+        -o-justify-content: space-around;
+        justify-content: space-around;
+        -ms-flex-pack: distribute;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -moz-box-direction: normal;
+        box-direction: normal;
+        -webkit-flex-direction: row;
+        -moz-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-direction: row; }
+        body main .formContainer form .queryElems input, body main .formContainer form .queryElems select, body main .formContainer form .queryElems img {
+          margin-right: 15px; }
     body main .formContainer .eventObjects {
       display: -webkit-box;
       display: -moz-box;
@@ -449,38 +500,37 @@ body {
     left: 50%;
     transform: translate(-50%, -50%); }
   body .accountSettingsForm input, body .accountSettingsForm textarea {
-    color: #62748C;
-    border: 2px solid #62748C;
+    color: #ff0;
+    border: 2px solid #ff0;
     width: 100%;
     margin-bottom: 15px;
     border-radius: 5px; }
   body .accountSettingsForm textarea {
     padding: 10px; }
   body .accountSettingsForm button {
-    background-color: #62748C;
-    color: white;
-    border: #62748C;
+    background-color: #24272B;
+    color: #ff0;
     border-radius: 5px;
     width: 48%;
     float: left;
     box-sizing: border-box;
     transition: all 0.2s ease;
-    border: 2px solid #62748C; }
+    border: 2px solid #ff0; }
     body .accountSettingsForm button:first-of-type {
       margin-right: 4%; }
     body .accountSettingsForm button:hover {
       background-color: white;
       color: #62748C; }
   body .deleteProfileButton {
-    color: black;
-    border: black; }
+    color: #24272B;
+    border: #24272B; }
   body .popUp {
     position: absolute;
     top: 0;
     width: 100%;
     z-index: 4;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #24272B;
     display: none;
     border-radius: 10; }
   body .popUp img {
