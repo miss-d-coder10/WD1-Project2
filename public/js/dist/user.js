@@ -68,8 +68,12 @@ giggity.showProfilePage = function (user) {
   var token = localStorage.getItem('token');
   console.log("In the edit user form");
   var userId = localStorage.getItem('userId');
-  $(".popUp").html("\n                      <div class=\"accountSettings\">\n                        <img src='../../assets/images/noun.png'>\n                        <h3>Account Settings</h3>\n                        <form class=\"accountSettingsForm\" method=\"put\" action=\"/api/users/" + user._id + "\">\n                          <input type=\"text\" name=\"user[firstName]\" value=\"" + user.firstName + "\" placeholder=\"First name\">\n                          <input type=\"text\" name=\"user[lastName]\" value=\"" + user.lastName + "\" placeholder=\"Last name\">\n                          <input type=\"text\" name=\"user[email]\" value=\"" + user.email + "\" placeholder=\"Email\">\n                          <textarea class=\"u-full-width\" placeholder=\"Bio \u2026\" id=\"exampleMessage\"></textarea>\n                          <button class=\"btn btn-primary u-full-width\">Update details</button>\n                          <button class=\"deleteProfileButton u-full-width\">Delete Profile</button>\n                        </form>\n                      </div>");
+  $(".popUp").html("\n                      <div class=\"accountSettings\">\n                        <img class=\"closePageImage\" src='../../assets/images/noun.png'>\n                        <h3>Account Settings</h3>\n                        <form class=\"accountSettingsForm\" method=\"put\" action=\"/api/users/" + user._id + "\">\n                          <input type=\"text\" name=\"user[firstName]\" value=\"" + user.firstName + "\" placeholder=\"First name\">\n                          <input type=\"text\" name=\"user[lastName]\" value=\"" + user.lastName + "\" placeholder=\"Last name\">\n                          <input type=\"text\" name=\"user[email]\" value=\"" + user.email + "\" placeholder=\"Email\">\n                          <textarea class=\"u-full-width\" placeholder=\"Bio \u2026\" id=\"exampleMessage\"></textarea>\n                          <button class=\"btn btn-primary u-full-width\">Update details</button>\n                          <button class=\"deleteProfileButton u-full-width\">Delete Profile</button>\n                        </form>\n                      </div>");
   $(".popUp").show();
+
+  $(".closePageImage").on("click", function () {
+    $(".popUp").hide();
+  });
 };
 
 giggity.updateUserForm = function () {

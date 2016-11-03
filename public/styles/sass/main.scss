@@ -173,6 +173,12 @@ body{
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
+    border-radius: 10;
+  }
+  .popUp img {
+    height:15px;
+    width:15px;
+
   }
 }
 

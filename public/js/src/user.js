@@ -68,7 +68,7 @@ giggity.handleUserForm = function() {
     let userId = localStorage.getItem('userId');
     $(".popUp").html(`
                       <div class="accountSettings">
-                        <img src='../../assets/images/noun.png'>
+                        <img class="closePageImage" src='../../assets/images/noun.png'>
                         <h3>Account Settings</h3>
                         <form class="accountSettingsForm" method="put" action="/api/users/${user._id}">
                           <input type="text" name="user[firstName]" value="${user.firstName}" placeholder="First name">
@@ -81,6 +81,9 @@ giggity.handleUserForm = function() {
                       </div>`);
                     $(".popUp").show();
 
+    $(".closePageImage").on("click", () => {
+      $(".popUp").hide();
+    });
   };
 
   giggity.updateUserForm = function() {
