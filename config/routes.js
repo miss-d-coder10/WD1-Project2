@@ -30,6 +30,9 @@ router.route("/login")
 
 router.route("/events")
   .get(skiddleController.index);
+  
+router.route("/events/:eventId")
+  .get(skiddleController.show);
 
 router.route("/users")
   // .all(secureRoutes)

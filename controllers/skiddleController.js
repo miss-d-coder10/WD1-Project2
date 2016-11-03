@@ -24,6 +24,26 @@ const eventsIndex = (req, res) => {
   });
 };
 
+const eventShow = (req, res) => {
+  request({
+    url:`http://www.skiddle.com/api/v1/events/${req.params.eventId}`,
+    method: "GET",
+    qs: {
+      api_key:process.env.SKIDDLE_KEY
+    },
+    json:true
+  })
+  .then((data) => {
+    res.json(data);
+    console.log(data);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json(err);
+  });
+};
+
 module.exports = {
-  index: eventsIndex
+  index: eventsIndex,
+  show: eventShow
 };

@@ -36,6 +36,7 @@ giggity.initEventListeners = function () {
   this.$header.on("click", ".signUpButton", giggity.signUp);
   this.$header.on("click", ".accountButton", giggity.toggleAccountMenu);
   this.$header.on("click", ".profileButton", giggity.showProfilePage);
+  this.$header.on("click", ".eventsButton", giggity.showEventsPage);
   this.$body.on("submit", ".authform", giggity.handleUserForm);
 };
 
@@ -124,6 +125,17 @@ giggity.getEvents = function (date, lat, lng, radius, eventcode) {
       limit: 100
     }
   }).done(this.loopThroughEvents.bind(giggity));
+};
+
+giggity.getIndividualEvent = function (eventId) {
+  $.ajax({
+    contentType: 'application/json',
+    url: '/api/events/' + eventId,
+    method: "GET",
+    dataType: 'json'
+  }).done(function (data) {
+    giggity.createEventCard(data);
+  });
 };
 
 giggity.removeEventObject = function () {
@@ -438,7 +450,7 @@ giggity.getUserEvents = function (checking) {
     if (checking) {
       giggity.isSavedEvent(data);
     } else {
-      console.log("returning all values");
+      giggity.eventPageIndex(data);
     }
   }).fail(function (data) {
     console.log("failed to get events");
@@ -455,6 +467,17 @@ giggity.isSavedEvent = function (data) {
   } else {
     giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
   }
+};
+
+giggity.eventPageIndex = function (data) {
+  data.forEach(function (element) {
+    giggity.getIndividualEvent(element.skiddleId);
+  });
+};
+
+giggity.createEventCard = function (data) {
+  console.log(data);
+  $('.cardContainer').append('\n      <div>\n        <h1>' + data.results.eventname + '</h1>\n      </div>\n    ');
 };
 
 document.addEventListener('DOMContentLoaded', function () {

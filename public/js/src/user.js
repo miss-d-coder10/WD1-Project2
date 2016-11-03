@@ -38,33 +38,18 @@ giggity.handleUserForm = function() {
   .fail(() => {console.log("failed to log in");});
 };
 
-// //get users
-//  giggity.getUsers = function(){
-//     if (event) event.preventDefault();
-//     let token = localStorage.getItem("token");
-//
-//     $.ajax({
-//       url: "/api/users",
-//       method: "GET",
-//       beforeSend: function(jqXHR) {
-//         if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-//       }
-//       })
-//     .done((data) => {
-//       console.log("success");
-//       console.log(data.users);
-//     });
-//   };
-
   giggity.toggleAccountMenu = function(){
-    console.log('CLICK');
     $('.accountMenu').toggle();
   };
 
   giggity.showProfilePage = function(){
+    event.preventDefault();
     giggity.$main.html('');
   };
 
   giggity.showEventsPage = function(){
-    giggity.$main.html('');
+    event.preventDefault();
+    console.log('CLICK');
+    giggity.$main.html('<div class="cardContainer"></div>');
+    giggity.getUserEvents(false);
   };
