@@ -197,14 +197,27 @@ body {
       -ms-flex-direction: row; }
       body main .formContainer form .queryElems input, body main .formContainer form .queryElems select {
         margin-right: 15px; }
-  body .accountSettingsForm input {
-    color: black; }
-  body .accountSettingsForm button {
+  body .accountSettingsForm
+
+  input {
+    width:100%;
+    display: block;
     color: black;
-    border: black; }
-  body .deleteProfileButton {
+  }
+  .btn-primary button {
+    width:40%
     color: black;
-    border: black; }
+    border: black;
+  }
+  .deleteProfileButton button {
+    color: black;
+    border: black;
+    width:40%;
+    float:right
+   }
+   h3 {
+     text-align: center;
+   }
 
 /* Style the list */
 ul.tab {
