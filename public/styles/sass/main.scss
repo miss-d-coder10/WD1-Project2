@@ -69,6 +69,52 @@ body{
           }
         }
       }
+      .eventObjects{
+        @include display(flex);
+        @include justify-content(space-around);
+        @include align-items(center);
+        @include flex-direction(row);
+        .column{
+          &--one{
+            width: 50vw;
+            @include display(flex);
+            @include justify-content(center);
+            @include align-items(center);
+            @include flex-direction(row);
+            &--one{
+              @include display(flex);
+              @include justify-content(center);
+              @include align-items(center);
+              @include flex-direction(column);
+            }
+            &--two{
+              @include display(flex);
+              @include justify-content(center);
+              @include align-items(center);
+              @include flex-direction(column);
+            }
+          }
+          &--two{
+            width: 50vw;
+            @include display(flex);
+            @include justify-content(space-around);
+            @include align-items(center);
+            @include flex-direction(row);
+            .nearby{
+              @include display(flex);
+              @include flex-direction(column);
+            }
+            .directions{
+              @include display(flex);
+              @include flex-direction(column);
+            }
+            .controlButtons{
+              @include display(flex);
+              @include flex-direction(column);
+            }
+          }
+        }
+      }
     }
   }
   .accountSettingsForm {

@@ -5,7 +5,7 @@ var markers = [];
 var currentlatLng = void 0;
 var lat = void 0;
 var lng = void 0;
-var $info = $('.eventObects');
+var $info = $('.eventObjects');
 
 giggity.init = function () {
   this.map = null;
@@ -142,7 +142,7 @@ giggity.getIndividualEvent = function (eventId) {
 };
 
 giggity.removeEventObject = function () {
-  $('.eventObects').remove();
+  $('.eventObjects').remove();
   giggity.createFormContainer();
 };
 
@@ -155,7 +155,7 @@ giggity.loopThroughEvents = function (data) {
 
   //RESTAURANTS
   giggity.$formContainer.on("click", '#nearbyRestaurantsButton', function () {
-    $info = $('.eventObects');
+    $info = $('.eventObjects');
     lat = $info.data('lat');
     lng = $info.data('lng');
 
@@ -171,7 +171,7 @@ giggity.loopThroughEvents = function (data) {
   //PUBS AND BARS
   giggity.$formContainer.on("click", '#nearbyPubsButton', function () {
     var methodOfTravel = void 0;
-    $info = $('.eventObects');
+    $info = $('.eventObjects');
     lat = $info.data('lat');
     lng = $info.data('lng');
     var latLng = { lat: lat, lng: lng };
@@ -190,7 +190,7 @@ giggity.loopThroughEvents = function (data) {
       currentlatLng = { lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-      $info = $('.eventObects');
+      $info = $('.eventObjects');
       lat = $info.data('lat');
       lng = $info.data('lng');
       var latLng = { lat: lat, lng: lng };
@@ -335,7 +335,7 @@ giggity.eventInformation = function (eventObject, marker) {
   google.maps.event.addListener(marker, "click", function () {
     giggity.getUserEvents(true);
     giggity.currentEvent = eventObject.id;
-    giggity.$formContainer.html('<div class="eventObects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <h2>' + eventObject.eventname + '</h2>\n          <p>' + eventObject.venue.name + '</p>\n          <p>' + eventObject.venue.address + '</p>\n          <p>' + eventObject.date + '</p>\n          <p>' + eventObject.entryprice + '</p>\n          <img src=\'' + eventObject.imageurl + '\'>\n          <button id="removeEventButton">Remove</button>\n          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n          <button id="getDirectionsButton">Get Directions</button>\n          <select id="methodofTravel">\n          <option disabled="disabled">How are you travelling?</option>\n            <option value="DRIVING">DRIVING</option>\n            <option value="WALKING">WALKING</option>\n            <option value="BICYCLING">BICYCLING</option>\n            <option value="TRANSIT">TRANSIT</option>\n          </select>\n          <button id="newSearchButton">New Search</button>\n        </div>');
+    giggity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.date + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>' + eventObject.entryprice + '</p>\n              <p>' + eventObject.venue.name + '</p>\n              <p>' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <button id="getDirectionsButton">Get Directions</button>\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
   });
 };
 
@@ -398,7 +398,7 @@ giggity.saveEventFunction = function () {
     }
   }).done(function (data) {
     $('#saveEventButton').remove();
-    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+    $('.controlButtons').append('<button id="savedEventButton">Saved</button>');
   }).fail(function (data) {
     console.log("failed to save Event");
   });
@@ -433,7 +433,7 @@ giggity.deleteEventFunction = function (eventId) {
     }
   }).done(function (data) {
     $('#savedEventButton').remove();
-    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+    $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
   }).fail(function (data) {
     console.log("failed to delete Event");
   });
@@ -466,9 +466,9 @@ giggity.isSavedEvent = function (data) {
   });
 
   if (item.length) {
-    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+    $('.controlButtons').append('<button id="savedEventButton">Saved</button>');
   } else {
-    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+    $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
   }
 };
 
