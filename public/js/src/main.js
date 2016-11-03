@@ -3,7 +3,7 @@
   let currentlatLng;
   let lat;
   let lng;
-  let $info = $('.eventObects');
+  let $info = $('.eventObjects');
 
   giggity.init = function() {
     this.map = null;
@@ -145,7 +145,7 @@
   };
 
   giggity.removeEventObject = function(){
-    $('.eventObects').remove();
+    $('.eventObjects').remove();
     giggity.createFormContainer();
   };
 
@@ -157,7 +157,7 @@
 
     //RESTAURANTS
     giggity.$formContainer.on("click", '#nearbyRestaurantsButton', function() {
-      $info = $('.eventObects');
+      $info = $('.eventObjects');
       lat = $info.data('lat');
       lng = $info.data('lng');
 
@@ -173,7 +173,7 @@
     //PUBS AND BARS
     giggity.$formContainer.on("click", '#nearbyPubsButton', function() {
       let methodOfTravel;
-      $info = $('.eventObects');
+      $info = $('.eventObjects');
       lat = $info.data('lat');
       lng = $info.data('lng');
       let latLng = { lat: lat, lng: lng };
@@ -192,7 +192,7 @@
         currentlatLng = {     lat: position.coords.latitude,
                               lng: position.coords.longitude
                         };
-        $info = $('.eventObects');
+        $info = $('.eventObjects');
         lat = $info.data('lat');
         lng = $info.data('lng');
         let latLng = { lat: lat, lng: lng };
@@ -345,25 +345,38 @@ giggity.autoComplete = function(){
       giggity.getUserEvents(true);
       giggity.currentEvent = eventObject.id;
       giggity.$formContainer.html(
-        `<div class="eventObects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
-          <h2>${eventObject.eventname}</h2>
-          <p>${eventObject.venue.name}</p>
-          <p>${eventObject.venue.address}</p>
-          <p>${eventObject.date}</p>
-          <p>${eventObject.entryprice}</p>
-          <img src='${eventObject.imageurl}'>
-          <button id="removeEventButton">Remove</button>
-          <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-          <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
-          <button id="getDirectionsButton">Get Directions</button>
-          <select id="methodofTravel">
-          <option disabled="disabled">How are you travelling?</option>
-            <option value="DRIVING">DRIVING</option>
-            <option value="WALKING">WALKING</option>
-            <option value="BICYCLING">BICYCLING</option>
-            <option value="TRANSIT">TRANSIT</option>
-          </select>
-          <button id="newSearchButton">New Search</button>
+        `<div class="eventObjects" data-lat=${eventObject.venue.latitude} data-lng=${eventObject.venue.longitude}>
+          <div class="column--one">
+            <div class="column--one--one">
+              <img src='${eventObject.imageurl}'>
+              <h2>${eventObject.eventname}</h2>
+                <p>${eventObject.date}</p>
+            </div>
+            <div class="column--one--two">
+              <p>${eventObject.entryprice}</p>
+              <p>${eventObject.venue.name}</p>
+              <p>${eventObject.venue.address}</p>
+            </div>
+          </div>
+          <div class="column--two">
+            <div class="nearby">
+              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
+              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+            </div>
+            <div class="directions">
+              <button id="getDirectionsButton">Get Directions</button>
+              <select id="methodofTravel">
+                <option disabled="disabled">How are you travelling?</option>
+                <option value="DRIVING">DRIVING</option>
+                <option value="WALKING">WALKING</option>
+                <option value="BICYCLING">BICYCLING</option>
+                <option value="TRANSIT">TRANSIT</option>
+              </select>
+            </div>
+            <div class="controlButtons">
+              <button id="newSearchButton">New Search</button>
+            </div>
+          </div>
         </div>`
       );
     });
@@ -432,7 +445,7 @@ giggity.saveEventFunction = function(){
   })
   .done((data) => {
     $('#saveEventButton').remove();
-    giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+    $('.controlButtons').append('<button id="savedEventButton">Saved</button>');
   })
   .fail((data) => {console.log("failed to save Event");});
 };
@@ -469,7 +482,7 @@ giggity.deleteEventFunction = function(eventId){
   })
   .done((data) => {
     $('#savedEventButton').remove();
-    giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+    $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
   })
   .fail((data) => {console.log("failed to delete Event");});
 };
@@ -503,9 +516,9 @@ giggity.isSavedEvent = function(data){
   });
 
   if (item.length) {
-      giggity.$formContainer.append('<button id="savedEventButton">Saved</button>');
+      $('.controlButtons').append('<button id="savedEventButton">Saved</button>');
   } else {
-      giggity.$formContainer.append('<button id="saveEventButton">Save Event</button>');
+      $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
   }
 };
 
