@@ -9,7 +9,6 @@ gigcity.signUpFormObject = `
 
         <div id="signUp">
           <div class="registerContainer">
-            <h4>Register</h4>
             <form method="post" action="/api/register" class="authform">
             <div>
               <input name="user[firstName]" placeholder="First Name">
@@ -34,7 +33,6 @@ gigcity.signUpFormObject = `
         <div id="signIn">
           <div class='loginform'>
             <div class="registerContainer">
-              <h4>Log in</h4>
               <form method="post" action="/api/login" class="authform">
               <div>
                 <input name="email" placeholder="Email">

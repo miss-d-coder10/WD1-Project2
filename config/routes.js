@@ -30,33 +30,35 @@ router.route("/login")
 
 router.route("/events")
   .get(skiddleController.index);
-  
+
 router.route("/events/:eventId")
   .get(skiddleController.show);
 
 router.route("/users")
-  // .all(secureRoutes)
+  .all(secureRoutes)
   .get(usersController.index);
 
 router.route("/users/:id")
-  // .all(secureRoutes)
+  .all(secureRoutes)
   .get(usersController.show)
   .put(usersController.update)
   .delete(usersController.delete);
 
 router.route("/users/:id/events")
+  .all(secureRoutes)
   .get(usersController.eventIndex);
 
 router.route("/users/:id/events/:eventId")
+  .all(secureRoutes)
   .get(usersController.eventSearch);
 
 router.route("/saveEvents")
-  // .all(secureRoutes)
+  .all(secureRoutes)
   .get(saveEventsController.index)
   .post(saveEventsController.create);
 
 router.route("/saveEvents/:id")
-  // .all(secureRoutes)
+  .all(secureRoutes)
   .get(saveEventsController.show)
   .put(saveEventsController.update)
   .delete(saveEventsController.delete);

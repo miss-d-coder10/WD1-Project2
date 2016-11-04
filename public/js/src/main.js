@@ -171,34 +171,43 @@
 
 
     //RESTAURANTS
-    gigcity.$formContainer.on("click", '#nearbyRestaurantsButton', function() {
-      $info = $('.eventObjects');
-      lat = $info.data('lat');
-      lng = $info.data('lng');
+  gigcity.$formContainer.on("click", '#nearbyRestaurantsButton', function() {
+    $info = $('.eventObjects');
+    lat = $info.data('lat');
+    lng = $info.data('lng');
 
-      let latLng = { lat: lat, lng: lng };
+    let latLng = { lat: lat, lng: lng };
 
-      let service = new google.maps.places.PlacesService(gigcity.map);
-      service.nearbySearch({
-        location: latLng,
-        radius: 500,
-        types: ['restaurant']
-      }, gigcity.callback);
-    });
-    //PUBS AND BARS
-    gigcity.$formContainer.on("click", '#nearbyPubsButton', function() {
-      let methodOfTravel;
-      $info = $('.eventObjects');
-      lat = $info.data('lat');
-      lng = $info.data('lng');
-      let latLng = { lat: lat, lng: lng };
-      let service = new google.maps.places.PlacesService(gigcity.map);
-      service.nearbySearch({
-        location: latLng,
-        radius: 500,
-        types: ['pub']
-      }, gigcity.callback);
-    });
+    let service = new google.maps.places.PlacesService(gigcity.map);
+    service.nearbySearch({
+      location: latLng,
+      radius: 500,
+      type: ['restaurant'],
+      zagatselected:true,
+      rankby: "prominence"
+    }, gigcity.callback);
+  });
+
+  //PUBS AND BARS
+  gigcity.$formContainer.on("click", '#nearbyPubsButton', function() {
+    let methodOfTravel;
+    $info = $('.eventObjects');
+    lat = $info.data('lat');
+    lng = $info.data('lng');
+    let latLng = { lat: lat, lng: lng };
+    let service = new google.maps.places.PlacesService(gigcity.map);
+    service.nearbySearch({
+      location: latLng,
+      radius: 500,
+      type: ['bar'],
+      zagatselected:true,
+      rankby: "prominence"
+    }, gigcity.callback);
+  });
+
+
+
+
     //DIRECTIONS
     gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
       gigClicked = true;
@@ -237,55 +246,32 @@
     });
   };
 
-    // gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
-    //
-    //   let $methodOfTravel = ($('#methodofTravel').val());
-    //   navigator.geolocation.getCurrentPosition((position) => {
-    //     currentlatLng = {     lat: position.coords.latitude,
-    //                           lng: position.coords.longitude
-    //                     };
-    //     $info = $('.eventObjects');
-    //     lat = $info.data('lat');
-    //     lng = $info.data('lng');
-    //     let latLng = { lat: lat, lng: lng };
-    //     directionsService = new google.maps.DirectionsService();
-    //      let directionsRequest = {
-    //        origin: currentlatLng,
-    //        destination: latLng,
-    //        travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
-    //        unitSystem: google.maps.UnitSystem.METRIC
-    //      };
-    //
-    //     directionsService.route(directionsRequest, function(response, status) {
-    //       if (status == google.maps.DirectionsStatus.OK) {
-    //         directionsDisplay = new google.maps.DirectionsRenderer({
-    //         map: gigcity.map,
-    //         directions: response
-    //       });
-    //     }
-    //     });
-    //   });
-    // });
-
-
-
-
-
-
 
   gigcity.callback = function(results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
       for (var i = 0; i < results.length; i++) {
-        gigcity.restaurantMarkerFunction(results[i]);
+        let type = results[i].types['0'];
+        gigcity.restaurantMarkerFunction(results[i], type);
       }
     }
   };
 
-  gigcity.restaurantMarkerFunction = function(place) {
+  gigcity.restaurantMarkerFunction = function(place, type) {
     let placeLoc = place.geometry.location;
+    let markerIcon;
+    console.log(type);
+    if (type == 'bar'){
+      markerIcon = gigcity.icons.bar.icon;
+    } else {
+      markerIcon = gigcity.icons.restuarant.icon;
+    }
+    console.log(markerIcon);
+
     let marker = new google.maps.Marker({
       map: this.map,
-      position: place.geometry.location
+      position: place.geometry.location,
+      icon: markerIcon,
+      animation: google.maps.Animation.DROP,
     });
 
     let infowindow = new google.maps.InfoWindow();
@@ -309,6 +295,7 @@
       position: latLng,
       icon: gigcity.icons[markerType].icon,
       map: this.map,
+      animation: google.maps.Animation.DROP,
       metadata: {
         id: markerType
       }
@@ -326,7 +313,10 @@
       icon: "../../assets/images/location.png"
     },
     restuarant: {
-      icon: "../../assets/images/location.png"
+      icon: "../../assets/images/restaurant.png"
+    },
+    bar: {
+      icon: "../../assets/images/beer.png"
     }
   };
 
@@ -452,16 +442,11 @@ gigcity.getLocation = function(){
 
     gigcity.createMarker(position, "location");
     gigcity.map.panTo(latLng);
-    gigcity.map.setZoom(16);
+    gigcity.map.setZoom(12);
   });
   return;
 };
 
-    //   gigcity.createMarker(position, "location");
-    //   gigcity.map.panTo(latLng);
-    //   gigcity.map.setZoom(16);
-    // });
-    // return;
 
 gigcity.openTab = function(tabName) {
   if(tabName == 'signUp'){
