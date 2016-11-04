@@ -9,7 +9,7 @@ giggity.formContainerObject = `
           <option>Next 14 days</option>
           <option>Next 1 Month</option>
 
-        <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
+        Address: <input class="formInput" id="pac-input" name="location" type="text" placeholder="Location">
         <img src="/assets/images/currentLocation.png" class="locationButton" alt="currentLocation" />
 
         <input class="formInput" type="number" name="radius" class="radius" placeholder="radius" value="5">
