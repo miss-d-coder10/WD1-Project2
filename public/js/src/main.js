@@ -73,7 +73,7 @@
 
 
 
-  gigcity.formHandler = function(e) { console.log('inside formHandler');
+  gigcity.formHandler = function(e) {
       gigcity.deleteMarkers();
       let $form = $(this);
       event.preventDefault();
@@ -92,10 +92,8 @@
     let maxDate;
 
     if (date.value === 'Today') {
-      console.log(date.value);
       maxDate = moment(today).format("YYYY-MM-DD");
     } else if (date.value === 'Anytime') {
-      console.log(date.value);
         let anytime = today.add(30, 'days');
         maxDate = moment(anytime).format("YYYY-MM-DD");
     } else if (date.value === 'Next 7 days') {
@@ -153,7 +151,6 @@
       dataType: 'json'
     })
     .done((data) => {
-      console.log(elementId);
       gigcity.createEventCard(data, elementId);
     });
   };
@@ -164,7 +161,7 @@
 
   };
 
-  gigcity.loopThroughEvents = function(data) { console.log('inside loopThroughEvents');
+  gigcity.loopThroughEvents = function(data) {
     $.each(data, (index, eventObject) => {
       this.createMarker(eventObject, "pin");
     });
@@ -212,10 +209,7 @@
     gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
       gigClicked = true;
       let directionsService;
-      console.log(directionsDisplay);
       if(directionsDisplay) directionsDisplay.setMap(null);
-
-      console.log("this runs");
       let $methodOfTravel = $('#methodofTravel').val();
       navigator.geolocation.getCurrentPosition((position) => {
         currentlatLng = {     lat: position.coords.latitude,
@@ -239,7 +233,6 @@
               map: gigcity.map,
               directions: response
             });
-            console.log(directionsDisplay);
           }
         });
       });
@@ -259,14 +252,11 @@
   gigcity.restaurantMarkerFunction = function(place, type) {
     let placeLoc = place.geometry.location;
     let markerIcon;
-    console.log(type);
     if (type == 'bar'){
       markerIcon = gigcity.icons.bar.icon;
     } else {
       markerIcon = gigcity.icons.restuarant.icon;
     }
-    console.log(markerIcon);
-
     let marker = new google.maps.Marker({
       map: this.map,
       position: place.geometry.location,
@@ -420,6 +410,9 @@ gigcity.autoComplete = function(){
           </div>
         </div>`
       );
+      if (!gigcity.isLoggedIn()){
+        $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+      }
     });
   };
 
@@ -574,8 +567,6 @@ gigcity.eventPageIndex = function(data){
 };
 
 gigcity.createEventCard = function(data, elementId){
-  console.log(elementId);
-  console.log(data);
   $('.cardContainer').append(`
       <div class="eventcard">
         <div class="column--one">

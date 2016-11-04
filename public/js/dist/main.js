@@ -74,7 +74,6 @@ gigcity.mapSetup = function () {
 };
 
 gigcity.formHandler = function (e) {
-  console.log('inside formHandler');
   gigcity.deleteMarkers();
   var $form = $(this);
   event.preventDefault();
@@ -93,10 +92,8 @@ gigcity.dateFormat = function (date) {
   var maxDate = void 0;
 
   if (date.value === 'Today') {
-    console.log(date.value);
     maxDate = moment(today).format("YYYY-MM-DD");
   } else if (date.value === 'Anytime') {
-    console.log(date.value);
     var anytime = today.add(30, 'days');
     maxDate = moment(anytime).format("YYYY-MM-DD");
   } else if (date.value === 'Next 7 days') {
@@ -151,7 +148,6 @@ gigcity.getIndividualEvent = function (eventId, elementId) {
     method: "GET",
     dataType: 'json'
   }).done(function (data) {
-    console.log(elementId);
     gigcity.createEventCard(data, elementId);
   });
 };
@@ -164,7 +160,6 @@ gigcity.removeEventObject = function () {
 gigcity.loopThroughEvents = function (data) {
   var _this = this;
 
-  console.log('inside loopThroughEvents');
   $.each(data, function (index, eventObject) {
     _this.createMarker(eventObject, "pin");
   });
@@ -208,10 +203,7 @@ gigcity.loopThroughEvents = function (data) {
   gigcity.$formContainer.on("click", '#getDirectionsButton', function () {
     gigClicked = true;
     var directionsService = void 0;
-    console.log(directionsDisplay);
     if (directionsDisplay) directionsDisplay.setMap(null);
-
-    console.log("this runs");
     var $methodOfTravel = $('#methodofTravel').val();
     navigator.geolocation.getCurrentPosition(function (position) {
       currentlatLng = { lat: position.coords.latitude,
@@ -235,7 +227,6 @@ gigcity.loopThroughEvents = function (data) {
             map: gigcity.map,
             directions: response
           });
-          console.log(directionsDisplay);
         }
       });
     });
@@ -254,14 +245,11 @@ gigcity.callback = function (results, status) {
 gigcity.restaurantMarkerFunction = function (place, type) {
   var placeLoc = place.geometry.location;
   var markerIcon = void 0;
-  console.log(type);
   if (type == 'bar') {
     markerIcon = gigcity.icons.bar.icon;
   } else {
     markerIcon = gigcity.icons.restuarant.icon;
   }
-  console.log(markerIcon);
-
   var marker = new google.maps.Marker({
     map: this.map,
     position: place.geometry.location,
@@ -380,6 +368,9 @@ gigcity.eventInformation = function (eventObject, marker) {
     gigcity.getUserEvents(true);
     gigcity.currentEvent = eventObject.id;
     gigcity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n              <p>Price: ' + eventObject.entryprice + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>When: ' + eventObject.date + '</p>\n              <p>' + eventObject.venue.name + ' - ' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Restaurant</button>\n              <button id="nearbyPubsButton">Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n              <button id="getDirectionsButton">Get Directions</button>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
+    if (!gigcity.isLoggedIn()) {
+      $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+    }
   });
 };
 
@@ -523,8 +514,6 @@ gigcity.eventPageIndex = function (data) {
 };
 
 gigcity.createEventCard = function (data, elementId) {
-  console.log(elementId);
-  console.log(data);
   $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div class="socialIconContainer">\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/info.svg"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebook.svg"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitter.svg"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trash.svg"/ class="icons binIcon" id="' + elementId + '" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When: ' + data.results.date + '<strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n        </div>\n      </div>\n    </div>\n  ');
 };
 
