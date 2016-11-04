@@ -4,6 +4,8 @@
   let lat;
   let lng;
   let $info = $('.eventObjects');
+  let gigClicked = false;
+  let directionsDisplay = null;
 
   gigcity.init = function() {
     this.map = null;
@@ -71,7 +73,7 @@
 
 
 
-  gigcity.formHandler = function(e) {
+  gigcity.formHandler = function(e) { console.log('inside formHandler');
       gigcity.deleteMarkers();
       let $form = $(this);
       event.preventDefault();
@@ -90,7 +92,12 @@
     let maxDate;
 
     if (date.value === 'Today') {
+      console.log(date.value);
       maxDate = moment(today).format("YYYY-MM-DD");
+    } else if (date.value === 'Anytime') {
+      console.log(date.value);
+        let anytime = today.add(30, 'days');
+        maxDate = moment(anytime).format("YYYY-MM-DD");
     } else if (date.value === 'Next 7 days') {
         let week = today.add(7, 'days');
         maxDate = moment(week).format("YYYY-MM-DD");
@@ -157,7 +164,7 @@
 
   };
 
-  gigcity.loopThroughEvents = function(data) {
+  gigcity.loopThroughEvents = function(data) { console.log('inside loopThroughEvents');
     $.each(data, (index, eventObject) => {
       this.createMarker(eventObject, "pin");
     });
@@ -194,8 +201,13 @@
     });
     //DIRECTIONS
     gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
+      gigClicked = true;
+      let directionsService;
+      console.log(directionsDisplay);
+      if(directionsDisplay) directionsDisplay.setMap(null);
 
-      let $methodOfTravel = ($('#methodofTravel').val());
+      console.log("this runs");
+      let $methodOfTravel = $('#methodofTravel').val();
       navigator.geolocation.getCurrentPosition((position) => {
         currentlatLng = {     lat: position.coords.latitude,
                               lng: position.coords.longitude
@@ -215,17 +227,49 @@
         directionsService.route(directionsRequest, function(response, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay = new google.maps.DirectionsRenderer({
-            map: gigcity.map,
-            directions: response
-          });
-        }
-          else
-            $("#error").append("Unable to retrieve your route<br />");
+              map: gigcity.map,
+              directions: response
+            });
+            console.log(directionsDisplay);
+          }
         });
       });
-
     });
   };
+
+    // gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
+    //
+    //   let $methodOfTravel = ($('#methodofTravel').val());
+    //   navigator.geolocation.getCurrentPosition((position) => {
+    //     currentlatLng = {     lat: position.coords.latitude,
+    //                           lng: position.coords.longitude
+    //                     };
+    //     $info = $('.eventObjects');
+    //     lat = $info.data('lat');
+    //     lng = $info.data('lng');
+    //     let latLng = { lat: lat, lng: lng };
+    //     directionsService = new google.maps.DirectionsService();
+    //      let directionsRequest = {
+    //        origin: currentlatLng,
+    //        destination: latLng,
+    //        travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
+    //        unitSystem: google.maps.UnitSystem.METRIC
+    //      };
+    //
+    //     directionsService.route(directionsRequest, function(response, status) {
+    //       if (status == google.maps.DirectionsStatus.OK) {
+    //         directionsDisplay = new google.maps.DirectionsRenderer({
+    //         map: gigcity.map,
+    //         directions: response
+    //       });
+    //     }
+    //     });
+    //   });
+    // });
+
+
+
+
 
 
 
@@ -399,10 +443,13 @@ gigcity.getLocation = function(){
     }
   });
 
-navigator.geolocation.getCurrentPosition((position) => {
-  let latLng = {lat: position.coords.latitude,
-                lng: position.coords.longitude
-              };
+  navigator.geolocation.getCurrentPosition((position) => {
+    let latLng = {lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                };
+      gigcity.currentLat = position.coords.latitude;
+      gigcity.currentLng = position.coords.longitude;
+
     gigcity.createMarker(position, "location");
     gigcity.map.panTo(latLng);
     gigcity.map.setZoom(16);
@@ -410,6 +457,11 @@ navigator.geolocation.getCurrentPosition((position) => {
   return;
 };
 
+    //   gigcity.createMarker(position, "location");
+    //   gigcity.map.panTo(latLng);
+    //   gigcity.map.setZoom(16);
+    // });
+    // return;
 
 gigcity.openTab = function(tabName) {
   if(tabName == 'signUp'){
@@ -558,9 +610,9 @@ gigcity.createEventCard = function(data, elementId){
           <div>When: ${data.results.date}<strong>Doors open</strong> at ${data.results.openingtimes.doorsopen}.</div>
         </div>
       </div>
-    `);
+    </div>
+  `);
 };
-
 
 gigcity.refreshPage = function(){
   localStorage.removeItem('token');
@@ -575,6 +627,7 @@ gigcity.liteRefreshPage = function(){
 gigcity.closeSignForm = function(){
   $('.signUpForm').hide();
 };
+
 
 document.addEventListener('DOMContentLoaded', function() {
     gigcity.init();

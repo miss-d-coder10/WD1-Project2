@@ -6,6 +6,8 @@ var currentlatLng = void 0;
 var lat = void 0;
 var lng = void 0;
 var $info = $('.eventObjects');
+var gigClicked = false;
+var directionsDisplay = null;
 
 gigcity.init = function () {
   this.map = null;
@@ -72,6 +74,7 @@ gigcity.mapSetup = function () {
 };
 
 gigcity.formHandler = function (e) {
+  console.log('inside formHandler');
   gigcity.deleteMarkers();
   var $form = $(this);
   event.preventDefault();
@@ -90,7 +93,12 @@ gigcity.dateFormat = function (date) {
   var maxDate = void 0;
 
   if (date.value === 'Today') {
+    console.log(date.value);
     maxDate = moment(today).format("YYYY-MM-DD");
+  } else if (date.value === 'Anytime') {
+    console.log(date.value);
+    var anytime = today.add(30, 'days');
+    maxDate = moment(anytime).format("YYYY-MM-DD");
   } else if (date.value === 'Next 7 days') {
     var week = today.add(7, 'days');
     maxDate = moment(week).format("YYYY-MM-DD");
@@ -156,6 +164,7 @@ gigcity.removeEventObject = function () {
 gigcity.loopThroughEvents = function (data) {
   var _this = this;
 
+  console.log('inside loopThroughEvents');
   $.each(data, function (index, eventObject) {
     _this.createMarker(eventObject, "pin");
   });
@@ -191,7 +200,12 @@ gigcity.loopThroughEvents = function (data) {
   });
   //DIRECTIONS
   gigcity.$formContainer.on("click", '#getDirectionsButton', function () {
+    gigClicked = true;
+    var directionsService = void 0;
+    console.log(directionsDisplay);
+    if (directionsDisplay) directionsDisplay.setMap(null);
 
+    console.log("this runs");
     var $methodOfTravel = $('#methodofTravel').val();
     navigator.geolocation.getCurrentPosition(function (position) {
       currentlatLng = { lat: position.coords.latitude,
@@ -215,11 +229,43 @@ gigcity.loopThroughEvents = function (data) {
             map: gigcity.map,
             directions: response
           });
-        } else $("#error").append("Unable to retrieve your route<br />");
+          console.log(directionsDisplay);
+        }
       });
     });
   });
 };
+
+// gigcity.$formContainer.on("click", '#getDirectionsButton', function() {
+//
+//   let $methodOfTravel = ($('#methodofTravel').val());
+//   navigator.geolocation.getCurrentPosition((position) => {
+//     currentlatLng = {     lat: position.coords.latitude,
+//                           lng: position.coords.longitude
+//                     };
+//     $info = $('.eventObjects');
+//     lat = $info.data('lat');
+//     lng = $info.data('lng');
+//     let latLng = { lat: lat, lng: lng };
+//     directionsService = new google.maps.DirectionsService();
+//      let directionsRequest = {
+//        origin: currentlatLng,
+//        destination: latLng,
+//        travelMode: google.maps.DirectionsTravelMode[$methodOfTravel],
+//        unitSystem: google.maps.UnitSystem.METRIC
+//      };
+//
+//     directionsService.route(directionsRequest, function(response, status) {
+//       if (status == google.maps.DirectionsStatus.OK) {
+//         directionsDisplay = new google.maps.DirectionsRenderer({
+//         map: gigcity.map,
+//         directions: response
+//       });
+//     }
+//     });
+//   });
+// });
+
 
 gigcity.callback = function (results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -359,12 +405,21 @@ gigcity.getLocation = function () {
     var latLng = { lat: position.coords.latitude,
       lng: position.coords.longitude
     };
+    gigcity.currentLat = position.coords.latitude;
+    gigcity.currentLng = position.coords.longitude;
+
     gigcity.createMarker(position, "location");
     gigcity.map.panTo(latLng);
     gigcity.map.setZoom(16);
   });
   return;
 };
+
+//   gigcity.createMarker(position, "location");
+//   gigcity.map.panTo(latLng);
+//   gigcity.map.setZoom(16);
+// });
+// return;
 
 gigcity.openTab = function (tabName) {
   if (tabName == 'signUp') {
@@ -485,7 +540,7 @@ gigcity.eventPageIndex = function (data) {
 gigcity.createEventCard = function (data, elementId) {
   console.log(elementId);
   console.log(data);
-  $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div class="socialIconContainer">\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/info.svg"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebook.svg"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitter.svg"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trash.svg"/ class="icons binIcon" id="' + elementId + '" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When: ' + data.results.date + '<strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n        </div>\n      </div>\n    ');
+  $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div class="socialIconContainer">\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/info.svg"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebook.svg"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitter.svg"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trash.svg"/ class="icons binIcon" id="' + elementId + '" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When: ' + data.results.date + '<strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n        </div>\n      </div>\n    </div>\n  ');
 };
 
 gigcity.refreshPage = function () {
