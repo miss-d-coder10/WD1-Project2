@@ -612,7 +612,9 @@ body {
           text-decoration: none; }
         body main .cardContainer .eventcard .column--one .icons {
           height: 20px;
-          width: 20px; }
+          width: 20px;
+          cursor: pointer;
+          border-radius: 0px; }
       body main .cardContainer .eventcard .column--two {
         padding: 0 10px;
         height: 100%;
