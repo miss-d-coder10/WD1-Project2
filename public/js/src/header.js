@@ -1,14 +1,14 @@
-giggity.headerObject = `
+gigcity.headerObject = `
   <div class="header">
 
-    <h1 class="home">GIGGITY</h1>
+    <h1 class="home">GIGCITY</h1>
     <button class="signUpButton">Sign up/in</button>
-    <button class="accountButton">Account</button>
+    <button class="accountButton">My Account</button>
     <div class="accountMenu">
       <ul>
-        <a href="#" class="profileButton"><li>Profile</li></a>
-        <a href="#" class="eventsButton"><li>Events</li></a>
-        <a href="#" class="logoutButton"><li>Logout</li></a>
+        <li><a href="#" class="profileButton">Profile</a></li>
+        <li><a href="#" class="eventsButton">Events</a></li>
+        <li><a href="#" class="logoutButton">Logout</a></li>
       </ul>
     </div>
   </div>
