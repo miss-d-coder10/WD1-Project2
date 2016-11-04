@@ -10,6 +10,7 @@ button, input, select{
   font-size: 18px;
   cursor: pointer;
   outline:none;
+  padding: 5px;
   @include appearance(none);
   @include box-sizing(initial);
 }

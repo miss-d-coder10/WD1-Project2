@@ -35,7 +35,7 @@ body{
     }
     .accountMenu{
       display: none;
-      position: fixed;
+      position: absolute;
       top: 10vh;
       right: 0;
       background: $yellow-color;
@@ -146,9 +146,11 @@ body{
       width: 100vw;
       height: 60vh;
       z-index: 1;
+      background: url('../assets/images/loader.gif') center center no-repeat;
     }
     .formContainer{
       background: $off-black;
+      color: $yellow-color;
       height: 30vh;
       @include display(flex);
       @include justify-content(center);
@@ -175,32 +177,47 @@ body{
         @include justify-content(space-around);
         @include align-items(center);
         @include flex-direction(row);
+        height: 100%;
         .column{
           &--one{
-            width: 50vw;
+            width: 40vw;
             @include display(flex);
-            @include justify-content(center);
+            @include justify-content(space-between);
             @include align-items(center);
             @include flex-direction(row);
+            h2{
+              font-size: 16px;
+            }
             &--one{
               @include display(flex);
               @include justify-content(center);
-              @include align-items(center);
+              @include align-items(flex-start);
               @include flex-direction(column);
+              margin-right: 20px;
+              img{
+                max-height: 100px;
+              }
             }
             &--two{
               @include display(flex);
               @include justify-content(center);
-              @include align-items(center);
+              @include align-items(flex-start);
               @include flex-direction(column);
+              margin-right: 20px;
             }
           }
           &--two{
             width: 50vw;
+            height: 100%;
             @include display(flex);
             @include justify-content(space-around);
             @include align-items(center);
             @include flex-direction(row);
+            border-left: 2px solid $yellow-color;
+            padding-left: 20px;
+            select, button{
+              margin-bottom: 10px;
+            }
             .nearby{
               @include display(flex);
               @include flex-direction(column);
@@ -212,24 +229,33 @@ body{
             .controlButtons{
               @include display(flex);
               @include flex-direction(column);
+              #savedEventButton{
+                background-color: $yellow-color;
+                color: $text-color;
+              }
             }
           }
         }
       }
     }
     .cardContainer{
-      background-color: black;
+      min-height: 100vh;
+      background-color: $text-color;
       .eventcard{
         @include display(inline-flex);
         @include justify-content(space-between);
         @include align-items(center);
         height: 200px;
         width: 550px;
-        background: $blue-color;
+        background: $yellow-color;
         border-radius: 10px;
         margin: 20px;
+        color: $text-color;
         .column--one{
           height: 100%;
+          .socialIconContainer{
+            text-align: center;
+          }
           img{
             height: 100%;
             border-top-left-radius: 10px;
@@ -254,8 +280,8 @@ body{
           @include align-items(center);
           @include flex-direction(column);
           font-size: 14px;
-          color: white;
-          background: $blue-color;
+          color: $text-color;
+          background: $yellow-color;
           border-top-right-radius: 10px;
           border-bottom-right-radius: 10px;
           div{

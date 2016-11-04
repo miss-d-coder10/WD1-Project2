@@ -41,25 +41,10 @@
     this.$body.on("submit", ".authform", gigcity.handleUserForm);
     this.$body.on("submit", ".accountSettingsForm", gigcity.updateUserForm);
     this.$body.on("click", ".closeSignForm", gigcity.closeSignForm);
-    this.$body.on("click", "#binIcon", gigcity.deleteEventFunctionlist);
-  };
-
-  gigcity.deleteEventFunctionlist = function(eventId){
-    console.log(eventId);
-    let token = localStorage.getItem("token");
-    let currentUser = localStorage.getItem("userId");
-
-    $.ajax({
-      url:`/api/saveEvents/${eventId}`,
-      method: "DELETE",
-      beforeSend: function(jqXHR) {
-        if(token) return jqXHR.setRequestHeader('Authorization', `Bearer ${token}`);
-      }
-    })
-    .done(() => {
-
-    })
-    .fail(() => {console.log("failed to delete Event");});
+    this.$body.on("click", ".binIcon", function(){
+      let eventId = event.srcElement.id;
+      gigcity.deleteEventFunction(eventId, false);
+    });
   };
 
   gigcity.checkLoginStatus = function(){
@@ -153,7 +138,7 @@
     .done(this.loopThroughEvents.bind(gigcity));
   };
 
-  gigcity.getIndividualEvent = function(eventId) {
+  gigcity.getIndividualEvent = function(eventId, elementId) {
     $.ajax({
       contentType: 'application/json',
       url: `/api/events/${eventId}`,
@@ -161,7 +146,8 @@
       dataType: 'json'
     })
     .done((data) => {
-      gigcity.createEventCard(data);
+      console.log(elementId);
+      gigcity.createEventCard(data, elementId);
     });
   };
 
@@ -372,21 +358,19 @@ gigcity.autoComplete = function(){
             <div class="column--one--one">
               <img src='${eventObject.imageurl}'>
               <h2>${eventObject.eventname}</h2>
-                <p>${eventObject.date}</p>
+              <p>Price: ${eventObject.entryprice}</p>
             </div>
             <div class="column--one--two">
-              <p>${eventObject.entryprice}</p>
-              <p>${eventObject.venue.name}</p>
-              <p>${eventObject.venue.address}</p>
+              <p>When: ${eventObject.date}</p>
+              <p>${eventObject.venue.name} - ${eventObject.venue.address}</p>
             </div>
           </div>
           <div class="column--two">
             <div class="nearby">
-              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>
-              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>
+              <button id="nearbyRestaurantsButton">Restaurant</button>
+              <button id="nearbyPubsButton">Pubs and Bars</button>
             </div>
             <div class="directions">
-              <button id="getDirectionsButton">Get Directions</button>
               <select id="methodofTravel">
                 <option disabled="disabled">How are you travelling?</option>
                 <option value="DRIVING">DRIVING</option>
@@ -394,6 +378,7 @@ gigcity.autoComplete = function(){
                 <option value="BICYCLING">BICYCLING</option>
                 <option value="TRANSIT">TRANSIT</option>
               </select>
+              <button id="getDirectionsButton">Get Directions</button>
             </div>
             <div class="controlButtons">
               <button id="newSearchButton">New Search</button>
@@ -479,12 +464,15 @@ gigcity.individualEventFunction = function(){
     }
   })
   .done((data) => {
-    gigcity.deleteEventFunction(data[0]._id);
+    gigcity.deleteEventFunction(data[0]._id, true);
   })
   .fail((data) => {console.log("failed to get event");});
 };
 
-gigcity.deleteEventFunction = function(eventId){
+
+
+
+gigcity.deleteEventFunction = function(eventId, removeControls){
   let token = localStorage.getItem("token");
   let currentUser = localStorage.getItem("userId");
 
@@ -496,10 +484,14 @@ gigcity.deleteEventFunction = function(eventId){
     }
   })
   .done((data) => {
-    $('#savedEventButton').remove();
-    $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+    if (removeControls){
+      $('#savedEventButton').remove();
+      $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+    } else if (!removeControls){
+      gigcity.showEventsPage();
+    }
   })
-  .fail((data) => {console.log("failed to delete Event");});
+  .fail((data) => {console.log("failed to delete Event", event);});
 };
 
 
@@ -540,21 +532,22 @@ gigcity.isSavedEvent = function(data){
 
 gigcity.eventPageIndex = function(data){
   data.forEach(function(element) {
-    gigcity.getIndividualEvent(element.skiddleId);
+    gigcity.getIndividualEvent(element.skiddleId, element._id);
 });
 };
 
-gigcity.createEventCard = function(data){
+gigcity.createEventCard = function(data, elementId){
+  console.log(elementId);
   console.log(data);
   $('.cardContainer').append(`
       <div class="eventcard">
         <div class="column--one">
           <img src='${data.results.largeimageurl}'/>
-          <div>
-          <a href="${data.results.venue.link}" class="btn"><img src="../../assets/images/infologo3.png"/ class="icons" alt="more information"></a>
-          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebookicon2.png"/ class="icons" alt="facebook"></a>
-          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitterlogo.png"/ class="icons" alt="twitter"></a>
-          <img src="../../assets/images/trashred.png"/ class="icons" id="binIcon" alt="delete"></a>
+          <div class="socialIconContainer">
+          <a href="${data.results.venue.link}" class="btn"><img src="../../assets/images/info.svg"/ class="icons" alt="more information"></a>
+          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebook.svg"/ class="icons" alt="facebook"></a>
+          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitter.svg"/ class="icons" alt="twitter"></a>
+          <img src="../../assets/images/trash.svg"/ class="icons binIcon" id="${elementId}" alt="delete"></a>
           </div>
         </div>
         <div class="column--two">
@@ -563,11 +556,7 @@ gigcity.createEventCard = function(data){
           <div><div>Location: ${data.results.venue.address}, ${data.results.venue.town}, ${data.results.venue.postcode}</div></div>
           <div><p> ${data.results.description}.</p></div>
           <div>When: ${data.results.date}<strong>Doors open</strong> at ${data.results.openingtimes.doorsopen}.</div>
-
-
-
         </div>
-
       </div>
     `);
 };

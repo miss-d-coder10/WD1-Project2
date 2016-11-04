@@ -43,21 +43,9 @@ gigcity.initEventListeners = function () {
   this.$body.on("submit", ".authform", gigcity.handleUserForm);
   this.$body.on("submit", ".accountSettingsForm", gigcity.updateUserForm);
   this.$body.on("click", ".closeSignForm", gigcity.closeSignForm);
-  this.$body.on("click", "#binIcon", gigcity.deleteEventFunctionlist);
-};
-
-gigcity.deleteEventFunctionlist = function (eventId) {
-  var token = localStorage.getItem("token");
-  var currentUser = localStorage.getItem("userId");
-
-  $.ajax({
-    url: '/api/saveEvents/' + eventId,
-    method: "DELETE",
-    beforeSend: function beforeSend(jqXHR) {
-      if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
-    }
-  }).done(function () {}).fail(function () {
-    console.log("failed to delete Event");
+  this.$body.on("click", ".binIcon", function () {
+    var eventId = event.srcElement.id;
+    gigcity.deleteEventFunction(eventId, false);
   });
 };
 
@@ -148,14 +136,15 @@ gigcity.getEvents = function (date, lat, lng, radius, eventcode) {
   }).done(this.loopThroughEvents.bind(gigcity));
 };
 
-gigcity.getIndividualEvent = function (eventId) {
+gigcity.getIndividualEvent = function (eventId, elementId) {
   $.ajax({
     contentType: 'application/json',
     url: '/api/events/' + eventId,
     method: "GET",
     dataType: 'json'
   }).done(function (data) {
-    gigcity.createEventCard(data);
+    console.log(elementId);
+    gigcity.createEventCard(data, elementId);
   });
 };
 
@@ -353,7 +342,7 @@ gigcity.eventInformation = function (eventObject, marker) {
   google.maps.event.addListener(marker, "click", function () {
     gigcity.getUserEvents(true);
     gigcity.currentEvent = eventObject.id;
-    gigcity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n                <p>' + eventObject.date + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>' + eventObject.entryprice + '</p>\n              <p>' + eventObject.venue.name + '</p>\n              <p>' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Nearby Restaurant</button>\n              <button id="nearbyPubsButton">Nearby Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <button id="getDirectionsButton">Get Directions</button>\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
+    gigcity.$formContainer.html('<div class="eventObjects" data-lat=' + eventObject.venue.latitude + ' data-lng=' + eventObject.venue.longitude + '>\n          <div class="column--one">\n            <div class="column--one--one">\n              <img src=\'' + eventObject.imageurl + '\'>\n              <h2>' + eventObject.eventname + '</h2>\n              <p>Price: ' + eventObject.entryprice + '</p>\n            </div>\n            <div class="column--one--two">\n              <p>When: ' + eventObject.date + '</p>\n              <p>' + eventObject.venue.name + ' - ' + eventObject.venue.address + '</p>\n            </div>\n          </div>\n          <div class="column--two">\n            <div class="nearby">\n              <button id="nearbyRestaurantsButton">Restaurant</button>\n              <button id="nearbyPubsButton">Pubs and Bars</button>\n            </div>\n            <div class="directions">\n              <select id="methodofTravel">\n                <option disabled="disabled">How are you travelling?</option>\n                <option value="DRIVING">DRIVING</option>\n                <option value="WALKING">WALKING</option>\n                <option value="BICYCLING">BICYCLING</option>\n                <option value="TRANSIT">TRANSIT</option>\n              </select>\n              <button id="getDirectionsButton">Get Directions</button>\n            </div>\n            <div class="controlButtons">\n              <button id="newSearchButton">New Search</button>\n            </div>\n          </div>\n        </div>');
   });
 };
 
@@ -426,13 +415,13 @@ gigcity.individualEventFunction = function () {
       if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
     }
   }).done(function (data) {
-    gigcity.deleteEventFunction(data[0]._id);
+    gigcity.deleteEventFunction(data[0]._id, true);
   }).fail(function (data) {
     console.log("failed to get event");
   });
 };
 
-gigcity.deleteEventFunction = function (eventId) {
+gigcity.deleteEventFunction = function (eventId, removeControls) {
   var token = localStorage.getItem("token");
   var currentUser = localStorage.getItem("userId");
 
@@ -443,10 +432,14 @@ gigcity.deleteEventFunction = function (eventId) {
       if (token) return jqXHR.setRequestHeader('Authorization', 'Bearer ' + token);
     }
   }).done(function (data) {
-    $('#savedEventButton').remove();
-    $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+    if (removeControls) {
+      $('#savedEventButton').remove();
+      $('.controlButtons').append('<button id="saveEventButton">Save Event</button>');
+    } else if (!removeControls) {
+      gigcity.showEventsPage();
+    }
   }).fail(function (data) {
-    console.log("failed to delete Event");
+    console.log("failed to delete Event", event);
   });
 };
 
@@ -485,13 +478,14 @@ gigcity.isSavedEvent = function (data) {
 
 gigcity.eventPageIndex = function (data) {
   data.forEach(function (element) {
-    gigcity.getIndividualEvent(element.skiddleId);
+    gigcity.getIndividualEvent(element.skiddleId, element._id);
   });
 };
 
-gigcity.createEventCard = function (data) {
+gigcity.createEventCard = function (data, elementId) {
+  console.log(elementId);
   console.log(data);
-  $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div>\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/infologo3.png"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebookicon2.png"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitterlogo.png"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trashred.png"/ class="icons" id="binIcon" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When: ' + data.results.date + '<strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n\n\n\n        </div>\n\n      </div>\n    ');
+  $('.cardContainer').append('\n      <div class="eventcard">\n        <div class="column--one">\n          <img src=\'' + data.results.largeimageurl + '\'/>\n          <div class="socialIconContainer">\n          <a href="' + data.results.venue.link + '" class="btn"><img src="../../assets/images/info.svg"/ class="icons" alt="more information"></a>\n          <a href="https://en-gb.facebook.com/"><img src="../../assets/images/facebook.svg"/ class="icons" alt="facebook"></a>\n          <a href="https://twitter.com/intent/tweet?button_hashtag=LoveGigCity" data-show-count="false"><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script><img src="../../assets/images/twitter.svg"/ class="icons" alt="twitter"></a>\n          <img src="../../assets/images/trash.svg"/ class="icons binIcon" id="' + elementId + '" alt="delete"></a>\n          </div>\n        </div>\n        <div class="column--two">\n          <div><h3>' + data.results.eventname + '</h3></div>\n          <div><div>Venue: ' + data.results.venue.name + '</div><div>Price: ' + data.results.entryprice + '</div></div>\n          <div><div>Location: ' + data.results.venue.address + ', ' + data.results.venue.town + ', ' + data.results.venue.postcode + '</div></div>\n          <div><p> ' + data.results.description + '.</p></div>\n          <div>When: ' + data.results.date + '<strong>Doors open</strong> at ' + data.results.openingtimes.doorsopen + '.</div>\n        </div>\n      </div>\n    ');
 };
 
 gigcity.refreshPage = function () {
